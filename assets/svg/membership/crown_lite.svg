@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="105.313" height="105.313" viewBox="0 0 105.313 105.313">
+  <defs>
+    <linearGradient id="linear-gradient" x1="0.5" x2="0.5" y2="1" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#9fdeff"/>
+      <stop offset="1" stop-color="#28bcf3"/>
+    </linearGradient>
+  </defs>
+  <g id="Group_57267" data-name="Group 57267" transform="translate(-166.626 -492.382)">
+    <path id="Shape" d="M48.127,0h8.06a48.127,48.127,0,0,1,48.127,48.127v8.06a48.127,48.127,0,0,1-48.127,48.127h-8.06A48.127,48.127,0,0,1,0,56.187v-8.06A48.127,48.127,0,0,1,48.127,0Z" transform="translate(167.126 492.882)"  fill="url(#linear-gradient)"/>
+    <g id="_Icons_7_Credit_card_Copy" data-name="_Icons / 7 Credit card Copy" transform="translate(194.351 522.829)">
+      <path id="_10_Crown" data-name="10 Crown" d="M42.069,38.126H8.855a5.3,5.3,0,0,1-5.3-4.6L.027,7a3.179,3.179,0,0,1,5.3-2.756l5.935,5.5a3.179,3.179,0,0,0,4.663-.233l7.1-8.373a3.179,3.179,0,0,1,4.875,0L35,9.511a3.179,3.179,0,0,0,4.6.276l5.935-5.575a3.179,3.179,0,0,1,5.3,2.756L47.3,33.463A5.3,5.3,0,0,1,42.069,38.126Z" transform="translate(0 0)" fill="#fff"/>
+    </g>
+  </g>
+</svg>

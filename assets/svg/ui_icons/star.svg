@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="51.957" height="51.957" viewBox="0 0 51.957 51.957">
+  <defs>
+    <linearGradient id="linear-gradient" x1="0.5" x2="0.5" y2="1" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#ffbf35"/>
+      <stop offset="1" stop-color="#ffa900"/>
+    </linearGradient>
+  </defs>
+  <g id="Group_57461" data-name="Group 57461" transform="translate(-233.417 -632.522)">
+    <g id="star" transform="translate(233.417 632.522)">
+      <path id="Oval" d="M25.978,0A25.978,25.978,0,1,1,0,25.978,25.978,25.978,0,0,1,25.978,0Z" transform="translate(0 0)" fill="url(#linear-gradient)"/>
+    </g>
+    <path id="Path_62357" data-name="Path 62357" d="M19.286,10.049H16.03l.182-1.536C16.49,6.233,16.03,4.419,14.536,4H14.4a.931.931,0,0,0-.7.559s-3.25,6.889-4.648,6.889H3.931A.931.931,0,0,0,3,12.376v7.447a.931.931,0,0,0,.931.931H10.12a.745.745,0,0,1,.559.182,10.186,10.186,0,0,0,3.955,1.676H16.96c2.745,0,5.118-1.862,5.351-5.54h0l.232-3.769a3.118,3.118,0,0,0-3.258-3.258ZM4.862,13.307H7.653v5.587H4.862ZM20.451,16.94h0c-.182,2.419-1.489,3.814-3.49,3.814H14.634a10.233,10.233,0,0,1-2.839-1.3,2.7,2.7,0,0,0-1.676-.559h-.6V13.307c.885-.182,2.327-1.024,4.886-5.957a7.538,7.538,0,0,1-.048.977l-.182,1.536-.232,2.047h5.351a1.256,1.256,0,0,1,1.394,1.353Z" transform="translate(246.621 645.194)" fill="#fff"/>
+  </g>
+</svg>

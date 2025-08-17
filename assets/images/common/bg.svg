@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="375" height="813" viewBox="0 0 375 813">
+  <defs>
+    <linearGradient id="linear-gradient" y1="1" x2="0.917" y2="0.062" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#fff"/>
+      <stop offset="0.487" stop-color="#f6f5ff"/>
+      <stop offset="1" stop-color="#dee5ff"/>
+    </linearGradient>
+    <clipPath id="clip-path">
+      <rect id="Rectangle_2129" data-name="Rectangle 2129" width="813" height="375" transform="translate(375 0) rotate(90)" fill="url(#linear-gradient)"/>
+    </clipPath>
+  </defs>
+  <g id="Mask_Group" data-name="Mask Group" transform="translate(-2.594 0.22)">
+    <g id="Screen_BG" data-name="Screen BG" transform="translate(2.594 -0.22)">
+      <g id="Rectangle_2129-2" data-name="Rectangle 2129" transform="translate(0 0)" clip-path="url(#clip-path)">
+        <ellipse id="Ellipse_105" data-name="Ellipse 105" cx="104.342" cy="58.066" rx="104.342" ry="58.066" transform="translate(432.974 76.074) rotate(90)" fill="rgba(134,104,254,0.2)"/>
+        <ellipse id="Ellipse_112" data-name="Ellipse 112" cx="183.5" cy="102.5" rx="183.5" ry="102.5" transform="translate(98 605) rotate(90)" fill="#ffe4f4" opacity="0.6"/>
+        <ellipse id="Ellipse_109" data-name="Ellipse 109" cx="76.412" cy="42.523" rx="76.412" ry="42.523" transform="translate(172.84 -113.747) rotate(90)" fill="#ffe285"/>
+        <ellipse id="Ellipse_107" data-name="Ellipse 107" cx="206.245" cy="114.775" rx="206.245" ry="114.775" transform="translate(532.517 608.918) rotate(90)" fill="rgba(0,210,225,0.2)"/>
+        <ellipse id="Ellipse_106" data-name="Ellipse 106" cx="115.111" cy="64.059" rx="115.111" ry="64.059" transform="translate(244.883 256.194) rotate(90)" fill="#6c4dda" opacity="0.24"/>
+        <ellipse id="Ellipse_111" data-name="Ellipse 111" cx="63.269" cy="35.069" rx="63.269" ry="35.069" transform="translate(42.138 105.416) rotate(90)" fill="#ff4e98" opacity="0.61"/>
+        <ellipse id="Ellipse_110" data-name="Ellipse 110" cx="59" cy="34" rx="59" ry="34" transform="translate(62 703) rotate(90)" fill="#ffc3dd" opacity="0.8"/>
+        <ellipse id="Ellipse_113" data-name="Ellipse 113" cx="77" cy="47.5" rx="77" ry="47.5" transform="translate(383 -40) rotate(90)" fill="#ffc3cb"/>
+        <ellipse id="Ellipse_104" data-name="Ellipse 104" cx="58.851" cy="32.812" rx="58.851" ry="32.812" transform="translate(395.625 406) rotate(90)" fill="#ffbf35"/>
+      </g>
+    </g>
+  </g>
+</svg>

@@ -1,0 +1,18 @@
+<svg id="icons8-share" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="26" height="28" viewBox="0 0 26 28">
+  <defs>
+    <linearGradient id="linear-gradient" x1="0.146" y1="0.146" x2="0.854" y2="0.854" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#33bef0"/>
+      <stop offset="1" stop-color="#0a85d9"/>
+    </linearGradient>
+  </defs>
+  <path id="Path_65329" data-name="Path 65329" d="M24.639,27.741,8.316,19.126a1.55,1.55,0,0,1,0-2.731L24.639,7.781l1.391,2.731L12.295,17.761,26.03,25.01Z" transform="translate(-4.699 -3.955)" fill="#64717c"/>
+  <path id="Path_65330" data-name="Path 65330" d="M36.343,11.333l-5.018,2.6-.376.192A6.383,6.383,0,0,1,29.1,10.581l.384-.2L34.5,7.78Z" transform="translate(-15.012 -3.955)" opacity="0.05"/>
+  <path id="Path_65331" data-name="Path 65331" d="M36.439,11.333l-5.018,2.6a5.9,5.9,0,0,1-1.841-3.553L34.6,7.78Z" transform="translate(-15.108 -3.955)" opacity="0.07"/>
+  <path id="Path_65332" data-name="Path 65332" d="M36.343,35.083l-5.018-2.6-.376-.192A6.383,6.383,0,0,0,29.1,35.835l.384.2,5.018,2.6Z" transform="translate(-15.012 -14.849)" opacity="0.05"/>
+  <path id="Path_65333" data-name="Path 65333" d="M36.439,35.131l-5.018-2.6a5.9,5.9,0,0,0-1.841,3.553l5.018,2.6Z" transform="translate(-15.108 -14.897)" opacity="0.07"/>
+  <circle id="Ellipse_3371" data-name="Ellipse 3371" cx="5.5" cy="5.5" r="5.5" transform="translate(15)" fill="url(#linear-gradient)"/>
+  <ellipse id="Ellipse_3372" data-name="Ellipse 3372" cx="5.5" cy="6" rx="5.5" ry="6" transform="translate(15 16)" fill="url(#linear-gradient)"/>
+  <path id="Path_65334" data-name="Path 65334" d="M16.183,24l.368.192a6.349,6.349,0,0,1-2.065,3.433l-.376-.192L8.58,24.57a2,2,0,0,1,0-3.553l5.53-2.865.376-.192a6.349,6.349,0,0,1,2.065,3.433l-.368.192-2.337,1.208Z" transform="translate(-4.699 -8.94)" opacity="0.05"/>
+  <path id="Path_65335" data-name="Path 65335" d="M13.846,22.842l2.337,1.208a6.053,6.053,0,0,1-2.073,3.433L8.58,24.618a2,2,0,0,1,0-3.553L14.11,18.2a6.053,6.053,0,0,1,2.073,3.433Z" transform="translate(-4.699 -8.988)" opacity="0.07"/>
+  <circle id="Ellipse_3373" data-name="Ellipse 3373" cx="5.5" cy="5.5" r="5.5" transform="translate(0 8)" fill="url(#linear-gradient)"/>
+</svg>

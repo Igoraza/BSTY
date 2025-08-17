@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24" height="21" viewBox="0 0 24 21">
+  <defs>
+    <linearGradient id="linear-gradient" x1="0.5" x2="0.5" y2="1" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#ff9fc7" stop-opacity="0.502"/>
+      <stop offset="1" stop-color="#f32878"/>
+    </linearGradient>
+  </defs>
+  <path id="Icon_awesome-camera" data-name="Icon awesome-camera" d="M24,6.75v13.5a2.251,2.251,0,0,1-2.25,2.25H2.25A2.251,2.251,0,0,1,0,20.25V6.75A2.251,2.251,0,0,1,2.25,4.5H6.375l.577-1.542A2.247,2.247,0,0,1,9.056,1.5h5.883a2.247,2.247,0,0,1,2.1,1.458L17.625,4.5H21.75A2.251,2.251,0,0,1,24,6.75ZM17.625,13.5A5.625,5.625,0,1,0,12,19.125,5.629,5.629,0,0,0,17.625,13.5Zm-1.5,0A4.125,4.125,0,1,1,12,9.375,4.131,4.131,0,0,1,16.125,13.5Z" transform="translate(0 -1.5)" fill="url(#linear-gradient)"/>
+</svg>

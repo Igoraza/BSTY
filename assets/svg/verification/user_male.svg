@@ -1,0 +1,28 @@
+<svg id="icons8-user-male" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="21.855" height="25.496" viewBox="0 0 21.855 25.496">
+  <defs>
+    <linearGradient id="linear-gradient" x1="0.25" y1="0.5" x2="0.882" y2="0.5" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#c48f0c"/>
+      <stop offset="0.251" stop-color="#d19b16"/>
+      <stop offset="0.619" stop-color="#dca51f"/>
+      <stop offset="1" stop-color="#e0a922"/>
+    </linearGradient>
+    <linearGradient id="linear-gradient-2" x1="-51.736" x2="-51.104" xlink:href="#linear-gradient"/>
+    <radialGradient id="radial-gradient" cx="0.5" cy="0.5" r="0.446" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#ffcf54"/>
+      <stop offset="0.261" stop-color="#fdcb4d"/>
+      <stop offset="0.639" stop-color="#f7c13a"/>
+      <stop offset="1" stop-color="#f0b421"/>
+    </radialGradient>
+    <radialGradient id="radial-gradient-2" cx="0.072" cy="0.077" r="1.711" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#c26715"/>
+      <stop offset="0.508" stop-color="#b85515"/>
+      <stop offset="1" stop-color="#ad3f16"/>
+    </radialGradient>
+    <radialGradient id="radial-gradient-3" cx="0.297" cy="0.562" r="4.907" xlink:href="#radial-gradient-2"/>
+  </defs>
+  <path id="Path_65280" data-name="Path 65280" d="M38.606,25H38v5.463h.809a1.214,1.214,0,0,0,1.2-1.01l.4-2.326A1.822,1.822,0,0,0,38.606,25Z" transform="translate(-18.574 -11.645)" fill="url(#linear-gradient)"/>
+  <path id="Path_65281" data-name="Path 65281" d="M7.821,25h.606v5.463H7.619a1.214,1.214,0,0,1-1.2-1.01l-.4-2.326A1.822,1.822,0,0,1,7.821,25Z" transform="translate(-5.999 -11.645)" fill="url(#linear-gradient-2)"/>
+  <path id="Path_65282" data-name="Path 65282" d="M18.106,6C13.612,6,9,7.821,9,17.534v4.424c0,3.467,5.463,7.717,9.106,7.717s9.106-4.249,9.106-7.717V17.534C27.212,7.821,22.6,6,18.106,6Z" transform="translate(-7.178 -4.179)" fill="url(#radial-gradient)"/>
+  <path id="Path_65283" data-name="Path 65283" d="M17.32,4c-4.846,0-6.071,1.821-6.071,1.821C9.279,6.112,7,8.593,7,11.892c0,1.841.4,2.695,1.214,7.285.607-7.285,1.214-9.713,2.428-9.713,1.821,0,1.821,1.214,7.15,1.214,3.049,0,4.384-1.214,5.6-1.214,3.035,0,3.035,8.564,3.035,9.713a65.484,65.484,0,0,0,.607-7.285C27.033,8.075,24.23,4,17.32,4Z" transform="translate(-6.392 -3.393)" fill="url(#radial-gradient-2)"/>
+  <path id="Path_65284" data-name="Path 65284" d="M20.069,3C15.223,3,14,5.428,14,5.428a5.089,5.089,0,0,0,.607,2.428s.886,1.821,5.936,1.821c3.049,0,7.419-1.819,7.419-6.678Z" transform="translate(-9.141 -3)" fill="url(#radial-gradient-3)"/>
+</svg>

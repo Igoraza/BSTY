@@ -1,0 +1,20 @@
+<svg id="Icons_Send" data-name="Icons/Send" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="23.998" height="24" viewBox="0 0 23.998 24">
+  <defs>
+    <linearGradient id="linear-gradient" x1="0.5" x2="0.5" y2="1" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#ff9fc7" stop-opacity="0.502"/>
+      <stop offset="1" stop-color="#f32878"/>
+    </linearGradient>
+    <clipPath id="clip-path">
+      <path id="Shape" d="M5.182,8.291a.923.923,0,0,1-.564-.378L.168,1.452A.923.923,0,0,1,1.324.094L18.861,8.4a.923.923,0,0,1,0,1.668L1.324,18.378A.923.923,0,0,1,.168,17.02l4.45-6.462a.923.923,0,0,1,.564-.378l4.333-.944Z" transform="translate(0 0)" fill="url(#linear-gradient)"/>
+    </clipPath>
+  </defs>
+  <rect id="Icons_Send_background" data-name="Icons/Send background" width="23.998" height="24" fill="none"/>
+  <g id="Group_115" data-name="Group 115" transform="translate(2.769 2.769)">
+    <path id="Shape-2" data-name="Shape" d="M5.182,8.291a.923.923,0,0,1-.564-.378L.168,1.452A.923.923,0,0,1,1.324.094L18.861,8.4a.923.923,0,0,1,0,1.668L1.324,18.378A.923.923,0,0,1,.168,17.02l4.45-6.462a.923.923,0,0,1,.564-.378l4.333-.944Z" transform="translate(0 0)" fill="url(#linear-gradient)"/>
+    <g id="Mask_Group_115" data-name="Mask Group 115" clip-path="url(#clip-path)">
+      <g id="_Color" data-name="↳ 🎨Color" transform="translate(-2.769 -2.769)">
+        <path id="Color" d="M0,0H24V24H0Z" fill="url(#linear-gradient)"/>
+      </g>
+    </g>
+  </g>
+</svg>

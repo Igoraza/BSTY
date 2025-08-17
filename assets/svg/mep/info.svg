@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="5" height="5" viewBox="0 0 5 5">
+  <defs>
+    <linearGradient id="linear-gradient" x1="0.146" y1="0.146" x2="0.854" y2="0.854" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#f90"/>
+      <stop offset="1" stop-color="#d9860a"/>
+    </linearGradient>
+    <radialGradient id="radial-gradient" cx="0.5" cy="0.5" r="0.553" gradientUnits="objectBoundingBox">
+      <stop offset="0.516"/>
+      <stop offset="1" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <g id="icons8-info" transform="translate(-4.041 -4.122)">
+    <path id="Path_65375" data-name="Path 65375" d="M9.041,6.622a2.5,2.5,0,1,1-2.5-2.5A2.5,2.5,0,0,1,9.041,6.622Z" fill="url(#linear-gradient)"/>
+    <path id="Path_65376" data-name="Path 65376" d="M21.125,21.125h.5A.125.125,0,0,0,21.75,21V19.125A.125.125,0,0,0,21.625,19h-.5a.125.125,0,0,0-.125.125V21A.125.125,0,0,0,21.125,21.125Z" transform="translate(-14.839 -13.018)" opacity="0.05"/>
+    <path id="Path_65377" data-name="Path 65377" d="M21.591,21.5h.443a.091.091,0,0,0,.091-.091V19.591a.091.091,0,0,0-.091-.091h-.443a.091.091,0,0,0-.091.091v1.818A.091.091,0,0,0,21.591,21.5Z" transform="translate(-15.277 -13.456)" opacity="0.07"/>
+    <ellipse id="Ellipse_3375" data-name="Ellipse 3375" cx="0.498" cy="0.451" rx="0.498" ry="0.451" transform="translate(6.037 5.081)" opacity="0.15" fill="url(#radial-gradient)"/>
+    <path id="Path_65378" data-name="Path 65378" d="M21.681,13.591a.3.3,0,1,0-.331-.3A.3.3,0,0,0,21.681,13.591Z" transform="translate(-15.145 -7.768)" fill="#fff"/>
+    <rect id="Rectangle_6631" data-name="Rectangle 6631" width="0.5" height="1.875" transform="translate(6.286 6.107)" fill="#fff"/>
+  </g>
+</svg>

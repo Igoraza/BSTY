@@ -1,0 +1,9 @@
+<svg id="Icon" xmlns="http://www.w3.org/2000/svg" width="75" height="75" viewBox="0 0 75 75">
+  <circle id="Ellipse_43" data-name="Ellipse 43" cx="37.5" cy="37.5" r="37.5" fill="#23d2c3"/>
+  <g id="Group_56386" data-name="Group 56386">
+    <path id="Stroke_1" data-name="Stroke 1" d="M4.424,8.848Q0,8.848,0,4.424T4.424,0Q8.848,0,8.848,4.424T4.424,8.848Z" transform="translate(30.365 26.027)" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"/>
+    <path id="Stroke_3" data-name="Stroke 3" d="M0,7.373C0,3.244,1.475,0,10.323,0S20.645,3.244,20.645,7.373" transform="translate(24.404 40.576)" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"/>
+    <path id="Stroke_5" data-name="Stroke 5" d="M0,0C1.475,0,2.949,1.475,2.949,4.424S1.475,8.848,0,8.848" transform="translate(43.015 26.027)" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"/>
+    <path id="Stroke_7" data-name="Stroke 7" d="M0,0C2.362,1.329,2.949,3.411,2.949,5.9" transform="translate(49.468 42.108)" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"/>
+  </g>
+</svg>

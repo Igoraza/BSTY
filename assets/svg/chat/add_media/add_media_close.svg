@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="16.566" height="16.566" viewBox="0 0 16.566 16.566">
+  <defs>
+    <linearGradient id="linear-gradient" x1="0.5" x2="0.5" y2="1" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#ffbf35" stop-opacity="0.6"/>
+      <stop offset="1" stop-color="#ffa900"/>
+    </linearGradient>
+  </defs>
+  <path id="Icon_metro-cross" data-name="Icon metro-cross" d="M18.128,14.594h0L13.1,9.568l5.025-5.026h0a.519.519,0,0,0,0-.732L15.754,1.437a.519.519,0,0,0-.732,0h0L10,6.462,4.971,1.437h0a.519.519,0,0,0-.732,0L1.865,3.811a.519.519,0,0,0,0,.732h0L6.891,9.568,1.865,14.594h0a.519.519,0,0,0,0,.732L4.239,17.7a.519.519,0,0,0,.732,0h0L10,12.674,15.022,17.7h0a.519.519,0,0,0,.732,0l2.374-2.374a.519.519,0,0,0,0-.732Z" transform="translate(-1.714 -1.285)" fill="url(#linear-gradient)"/>
+</svg>

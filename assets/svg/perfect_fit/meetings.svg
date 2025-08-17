@@ -1,0 +1,10 @@
+<svg id="Icon" xmlns="http://www.w3.org/2000/svg" width="75" height="75" viewBox="0 0 75 75">
+  <circle id="Ellipse_43" data-name="Ellipse 43" cx="37.5" cy="37.5" r="37.5" fill="#ffbf35"/>
+  <g id="Cup" transform="translate(21.77 21.77)">
+    <path id="Stroke_1" data-name="Stroke 1" d="M7.865,15.73C1.966,15.73,0,13.763,0,7.865S1.966,0,7.865,0,15.73,1.966,15.73,7.865,13.763,15.73,7.865,15.73Z" transform="translate(5.243 11.797)" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"/>
+    <path id="Stroke_3" data-name="Stroke 3" d="M0,0C4.653.17,6.253,1.231,6.253,3.893c0,2.491-1.4,3.578-5.414,3.854" transform="translate(19.964 14.458)" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"/>
+    <path id="Stroke_5" data-name="Stroke 5" d="M0,0V3.932" transform="translate(13.108 3.932)" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"/>
+    <path id="Stroke_7" data-name="Stroke 7" d="M0,0V2.622" transform="translate(18.351 5.243)" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"/>
+    <path id="Stroke_9" data-name="Stroke 9" d="M0,0V1.311" transform="translate(7.865 6.554)" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"/>
+  </g>
+</svg>

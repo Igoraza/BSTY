@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="262.802" height="162" viewBox="0 0 262.802 162">
+  <defs>
+    <linearGradient id="linear-gradient" x1="0.421" x2="0.5" y2="1" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#9fdeff"/>
+      <stop offset="1" stop-color="#28bcf3"/>
+    </linearGradient>
+  </defs>
+  <g id="illustration" transform="translate(1.25 115.132)">
+    <path id="BG" d="M235.133,73.334a8.148,8.148,0,1,1,8.148,8.148A8.149,8.149,0,0,1,235.133,73.334ZM53.545,81.482a8.148,8.148,0,1,1,0-16.3H8.148a8.148,8.148,0,1,1,0-16.3H54.709a8.148,8.148,0,1,0,0-16.3h-29.1a8.148,8.148,0,0,1,0-16.3H72.17a8.148,8.148,0,1,1,0-16.3h66.349a8.148,8.148,0,0,1,0,16.3h74.5a8.148,8.148,0,1,1,0,16.3h25.609a8.148,8.148,0,1,1,0,16.3H216.509a8.148,8.148,0,1,0,0,16.3h6.983a8.148,8.148,0,1,1,0,16.3Z" transform="translate(0 -69.842)" fill="#b6b6b6" opacity="0.2"/>
+    <g id="bling" transform="translate(237.022 11.64)">
+      <path id="Line" d="M.5,0V6.984" transform="translate(11.14)" fill="none" stroke="#a4c3fe" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"/>
+      <path id="Line-2" data-name="Line" d="M.5,0V6.984" transform="translate(11.14 16.296)" fill="none" stroke="#a4c3fe" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"/>
+      <path id="Line-3" data-name="Line" d="M0,0V6.984" transform="translate(0 11.64) rotate(-90)" fill="none" stroke="#a4c3fe" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"/>
+      <path id="Line-4" data-name="Line" d="M0,0V6.984" transform="translate(16.296 11.64) rotate(-90)" fill="none" stroke="#a4c3fe" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"/>
+    </g>
+    <g id="bling-2" data-name="bling" transform="translate(0 -103.105)">
+      <path id="Line-5" data-name="Line" d="M.5,0V4.656" transform="translate(8.812)" fill="none" stroke="#a4c3fe" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"/>
+      <path id="Line-6" data-name="Line" d="M.5,0V4.656" transform="translate(8.812 13.968)" fill="none" stroke="#a4c3fe" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"/>
+      <path id="Line-7" data-name="Line" d="M0,0V4.656" transform="translate(0 9.312) rotate(-90)" fill="none" stroke="#a4c3fe" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"/>
+      <path id="Line-8" data-name="Line" d="M0,0V4.656" transform="translate(13.968 9.312) rotate(-90)" fill="none" stroke="#a4c3fe" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"/>
+    </g>
+    <g id="Check" transform="translate(-68.785 -289.132)">
+      <circle id="bg-2" data-name="bg" cx="81" cy="81" r="81" transform="translate(114 174)" fill="url(#linear-gradient)"/>
+      <path id="Union_2" data-name="Union 2" d="M-2529.9,38.727l-.135.1.135-.1-20.1-24.61,20.1,24.61L-2476,0l-53.9,38.727,1.04,1.273Z" transform="translate(2676.932 -159.874) rotate(-9)" fill="none" stroke="#fff" stroke-width="5"/>
+    </g>
+  </g>
+</svg>

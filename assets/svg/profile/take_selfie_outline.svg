@@ -1,0 +1,6 @@
+<svg id="Icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+  <rect id="Bound" width="24" height="24" fill="none"/>
+  <path id="Path" d="M.453,4.979A4.566,4.566,0,0,1,5,0H5A4.566,4.566,0,0,1,9.547,4.979L9.362,7.016A4.38,4.38,0,0,1,5,11H5A4.38,4.38,0,0,1,.638,7.016Z" transform="translate(7 3.5)" fill="none" stroke="#07b4ff" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"/>
+  <path id="Path-2" data-name="Path" d="M18,14H16l2-2v2ZM2,14H0V12l2,2ZM18,2l0,0L16,0h2V2ZM0,2V0H2L0,2Z" transform="translate(3 1.5)" fill="none" stroke="#08b4fe" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"/>
+  <path id="Path-3" data-name="Path" d="M0,4H0A2.855,2.855,0,0,1,1.88,1.317L5.5,0A8.2,8.2,0,0,0,9,1a8.2,8.2,0,0,0,3.5-1l3.62,1.317A2.855,2.855,0,0,1,18,4h0" transform="translate(3 18.5)" fill="none" stroke="#00b3ff" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"/>
+</svg>

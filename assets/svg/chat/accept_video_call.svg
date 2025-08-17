@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="116" height="116" viewBox="0 0 116 116">
+  <defs>
+    <linearGradient id="linear-gradient" x1="0.5" x2="0.5" y2="1" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#17cea1"/>
+      <stop offset="0.506" stop-color="#17cea1"/>
+      <stop offset="1" stop-color="#17cea1"/>
+    </linearGradient>
+    <linearGradient id="linear-gradient-3" x1="0.5" x2="0.5" y2="1" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#6ce0d6"/>
+      <stop offset="0.506" stop-color="#5bdad0"/>
+      <stop offset="1" stop-color="#4ed7cb"/>
+    </linearGradient>
+  </defs>
+  <g id="Call" transform="translate(-130 -556)">
+    <circle id="Ellipse_3174" data-name="Ellipse 3174" cx="39" cy="39" r="39" transform="translate(149 575)" fill="url(#linear-gradient)"/>
+    <circle id="Ellipse_3175" data-name="Ellipse 3175" cx="49" cy="49" r="49" transform="translate(139 565)" opacity="0.1" fill="url(#linear-gradient)"/>
+    <circle id="Ellipse_3176" data-name="Ellipse 3176" cx="58" cy="58" r="58" transform="translate(130 556)" opacity="0.1" fill="url(#linear-gradient-3)"/>
+    <path id="Vector" d="M28.9,4.35c-.611-.328-1.892-.67-3.635.551l-2.19,1.549C22.912,1.818,20.9,0,16.015,0H7.076C1.981,0,0,1.981,0,7.076V18.994c0,3.426,1.862,7.076,7.076,7.076h8.939c4.886,0,6.9-1.818,7.061-6.451l2.19,1.549a4.1,4.1,0,0,0,2.369.864,2.709,2.709,0,0,0,1.266-.313c.611-.313,1.639-1.162,1.639-3.292V7.642C30.54,5.512,29.512,4.663,28.9,4.35ZM13.78,12.112a2.8,2.8,0,1,1,2.8-2.8A2.807,2.807,0,0,1,13.78,12.112Z" transform="translate(172.73 600.964)" fill="#fff"/>
+  </g>
+</svg>

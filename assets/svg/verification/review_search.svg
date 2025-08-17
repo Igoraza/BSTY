@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="14.74" height="15.082" viewBox="0 0 14.74 15.082">
+  <defs>
+    <radialGradient id="radial-gradient" cx="-1.016" cy="-1.006" r="2.476" gradientUnits="objectBoundingBox">
+      <stop offset="0.693" stop-color="#006185"/>
+      <stop offset="0.921" stop-color="#35c1f1"/>
+    </radialGradient>
+    <linearGradient id="linear-gradient" x1="0.153" y1="0.153" x2="0.854" y2="0.854" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#a3ffff"/>
+      <stop offset="0.223" stop-color="#9dfbff"/>
+      <stop offset="0.53" stop-color="#8bf1ff"/>
+      <stop offset="0.885" stop-color="#6ee0ff"/>
+      <stop offset="1" stop-color="#63daff"/>
+    </linearGradient>
+  </defs>
+  <g id="icons8-search" transform="translate(-4 -3.706)">
+    <path id="Path_65285" data-name="Path 65285" d="M33.75,32.448l-1.3,1.3,2.9,2.9a.184.184,0,0,0,.261,0l1.042-1.042a.184.184,0,0,0,0-.261Z" transform="translate(-17.964 -17.917)" fill="#199be2"/>
+    <path id="Path_65286" data-name="Path 65286" d="M29.368,28.065l-1.3,1.3,1.615,1.615,1.3-1.3Z" transform="translate(-15.197 -15.15)" fill="url(#radial-gradient)"/>
+    <circle id="Ellipse_3272" data-name="Ellipse 3272" cx="6" cy="6" r="6" transform="translate(4 3.706)" fill="url(#linear-gradient)"/>
+  </g>
+</svg>

@@ -1,0 +1,11 @@
+<svg id="Video_call" data-name="Video call" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="19.157" height="19.157" viewBox="0 0 19.157 19.157">
+  <defs>
+    <linearGradient id="linear-gradient" x1="0.5" x2="0.5" y2="1" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#23d2c3" stop-opacity="0.6"/>
+      <stop offset="1" stop-color="#01bcad"/>
+    </linearGradient>
+  </defs>
+  <path id="Path" d="M19.157,1.6,14.368,3.991V1.6a1.6,1.6,0,0,0-1.6-1.6H1.6A1.6,1.6,0,0,0,0,1.6V9.578a1.6,1.6,0,0,0,1.6,1.6H12.771a1.6,1.6,0,0,0,1.6-1.6V7.184l4.789,2.395Z" transform="translate(0 7.982)" fill="url(#linear-gradient)"/>
+  <circle id="Oval" cx="3.193" cy="3.193" r="3.193" fill="url(#linear-gradient)"/>
+  <circle id="Oval-2" data-name="Oval" cx="2.395" cy="2.395" r="2.395" transform="translate(7.184 1.596)" fill="url(#linear-gradient)"/>
+</svg>

@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="22.624" height="22.625" viewBox="0 0 22.624 22.625">
+  <defs>
+    <linearGradient id="linear-gradient" x1="0.5" x2="0.5" y2="1" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#23d2c3" stop-opacity="0.6"/>
+      <stop offset="1" stop-color="#01bcad"/>
+    </linearGradient>
+  </defs>
+  <g id="Icons_Plus" data-name="Icons/Plus" transform="translate(-4.154 -4.154)">
+    <path id="Shape" d="M9.316,20.628v-7.32H2A2,2,0,1,1,2,9.316h7.32V2a2,2,0,1,1,3.992,0v7.32h7.32a2,2,0,1,1,0,3.992h-7.32v7.32a2,2,0,1,1-3.992,0Z" transform="translate(4.154 4.154)" fill="url(#linear-gradient)"/>
+  </g>
+</svg>

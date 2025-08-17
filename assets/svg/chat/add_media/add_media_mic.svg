@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="19.131" height="25.964" viewBox="0 0 19.131 25.964">
+  <defs>
+    <linearGradient id="linear-gradient" x1="0.5" x2="0.5" y2="1" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#6c4dda" stop-opacity="0.6"/>
+      <stop offset="1" stop-color="#522ed2"/>
+    </linearGradient>
+  </defs>
+  <path id="Icon_material-keyboard-voice" data-name="Icon material-keyboard-voice" d="M14.566,19.4a4.082,4.082,0,0,0,4.086-4.1l.014-8.2a4.1,4.1,0,1,0-8.2,0v8.2A4.094,4.094,0,0,0,14.566,19.4Zm7.243-4.1a7.091,7.091,0,0,1-7.243,6.969A7.091,7.091,0,0,1,7.323,15.3H5a9.532,9.532,0,0,0,8.2,9.183v4.482h2.733V24.482a9.521,9.521,0,0,0,8.2-9.183Z" transform="translate(-5 -3)" fill="url(#linear-gradient)"/>
+</svg>

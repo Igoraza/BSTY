@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="21" height="21" viewBox="0 0 21 21">
+  <defs>
+    <linearGradient id="linear-gradient" x1="0.5" x2="0.5" y2="1" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#6c4dda" stop-opacity="0.6"/>
+      <stop offset="1" stop-color="#522ed2"/>
+    </linearGradient>
+    <clipPath id="clip-path">
+      <path id="Shape" d="M3.991,4.378H.821A.821.821,0,0,1,0,3.557V.821A.821.821,0,0,1,.821,0H4.652a.821.821,0,0,1,.821.821V5.2a.274.274,0,0,1-.467.193Z" fill="#fff"/>
+    </clipPath>
+  </defs>
+  <g id="Post_comment" data-name="Post comment" transform="translate(-157.907 -227.907)">
+    <rect id="Path" width="21" height="21" rx="10.5" transform="translate(157.907 227.907)" fill="url(#linear-gradient)"/>
+    <g id="icon" transform="translate(165.479 235.753)">
+      <path id="Shape-2" data-name="Shape" d="M3.991,4.378H.821A.821.821,0,0,1,0,3.557V.821A.821.821,0,0,1,.821,0H4.652a.821.821,0,0,1,.821.821V5.2a.274.274,0,0,1-.467.193Z" transform="translate(0)" fill="#fff"/>
+      <g id="Mask_Group_140" data-name="Mask Group 140" transform="translate(0)" clip-path="url(#clip-path)">
+        <path id="Color" d="M0,0H7.114V7.114H0Z" transform="translate(-0.821 -1.094)" fill="#fff"/>
+      </g>
+    </g>
+  </g>
+</svg>
