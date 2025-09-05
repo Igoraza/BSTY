@@ -41,7 +41,7 @@ class MEPCard extends StatelessWidget {
       child: Column(
         children: [
           SizedBox(height: appHeight * 0.04),
-          Text('Metfie Earning Program',
+          Text('BSTY Earning Program',
               style: Theme.of(context)
                   .textTheme
                   .titleMedium!

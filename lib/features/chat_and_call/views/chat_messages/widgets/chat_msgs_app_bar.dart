@@ -1,5 +1,6 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'package:bsty/common_widgets/upgrade_plan.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -18,11 +19,8 @@ import 'chat_screen_options_menu.dart';
 class ChatAppBar extends StatelessWidget implements PreferredSizeWidget {
   final Chat chat;
   final String? chatId;
-  const ChatAppBar({
-    Key? key,
-    required this.chat,
-    this.chatId,
-  }) : super(key: key);
+  const ChatAppBar({Key? key, required this.chat, this.chatId})
+    : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -50,11 +48,12 @@ class ChatAppBar extends StatelessWidget implements PreferredSizeWidget {
       title: Text(name, overflow: TextOverflow.fade),
       actions: [
         CustomIconBtn(
-            onTap: () {
-              if (userPlan > 2 && !planExpired) {
-                if (audioBalance != 0) {
-                  Navigator.of(context)
-                      .pushNamed(OnGoingCallPage.routeName, arguments: {
+          onTap: () {
+            if (userPlan > 2 && !planExpired) {
+              if (audioBalance != 0) {
+                Navigator.of(context).pushNamed(
+                  OnGoingCallPage.routeName,
+                  arguments: {
                     'callId': 0,
                     'targetUserId': id,
                     'isIncoming': false,
@@ -62,31 +61,38 @@ class ChatAppBar extends StatelessWidget implements PreferredSizeWidget {
                     'user_image': image,
                     'user_name': name,
                     'isOutgoing': true,
-                  });
-                } else {
-                  showDialog(
-                      context: context,
-                      builder: (context) => BuyPlanDialog(
-                            // title: 'Minute Of Voice',
-                            desc: 'Buy Audio Minutes As Needed !',
-                            img: 'assets/svg/upgrade_dialog/minute.svg',
-                            btnText: 'Buy Now',
-                            paymentList: planDetails.payAudio,
-                          ));
-                }
+                  },
+                );
               } else {
                 showDialog(
-                    context: context,
-                    builder: (context) => UpgradePlanDialog());
+                  context: context,
+                  builder: (context) => BuyPlanDialog(
+                    // title: 'Minute Of Voice',
+                    desc: 'Buy Audio Minutes As Needed !',
+                    img: 'assets/svg/upgrade_dialog/minute.svg',
+                    btnText: 'Buy Now',
+                    paymentList: planDetails.payAudio,
+                  ),
+                );
               }
-            },
-            child: const Icon(Icons.call_rounded)),
+            } else {
+              // showDialog(
+              //   context: context,
+              //   builder: (context) => UpgradePlanDialog(),
+              // );
+
+              Navigator.pushNamed(context, UpgradePlanScreen.routeName);
+            }
+          },
+          child: const Icon(Icons.call_rounded),
+        ),
         CustomIconBtn(
-            onTap: () {
-              if (userPlan > 2 && !planExpired) {
-                if (videoBalance != 0) {
-                  Navigator.of(context)
-                      .pushNamed(OnGoingCallPage.routeName, arguments: {
+          onTap: () {
+            if (userPlan > 2 && !planExpired) {
+              if (videoBalance != 0) {
+                Navigator.of(context).pushNamed(
+                  OnGoingCallPage.routeName,
+                  arguments: {
                     'callId': 0,
                     'targetUserId': id,
                     'isIncoming': false,
@@ -94,27 +100,33 @@ class ChatAppBar extends StatelessWidget implements PreferredSizeWidget {
                     'user_image': image,
                     'user_name': name,
                     'isOutgoing': true,
-                  });
-                } else {
-                  showDialog(
-                      context: context,
-                      builder: (context) => BuyPlanDialog(
-                            // title: 'Minute Of Voice',
-                            desc: 'Buy Video Minutes As Needed !',
-                            img: 'assets/svg/upgrade_dialog/telephone.svg',
-                            btnText: 'Buy Now',
-                            paymentList: planDetails.payVideo,
-                          ));
-                }
+                  },
+                );
               } else {
                 showDialog(
-                    context: context,
-                    builder: (context) => UpgradePlanDialog());
-                return;
+                  context: context,
+                  builder: (context) => BuyPlanDialog(
+                    // title: 'Minute Of Voice',
+                    desc: 'Buy Video Minutes As Needed !',
+                    img: 'assets/svg/upgrade_dialog/telephone.svg',
+                    btnText: 'Buy Now',
+                    paymentList: planDetails.payVideo,
+                  ),
+                );
               }
-            },
-            padding: const EdgeInsets.all(10),
-            child: SvgPicture.asset('assets/svg/chat/video_cam.svg')),
+            } else {
+              // showDialog(
+              //   context: context,
+              //   builder: (context) => UpgradePlanDialog(),
+              // );
+
+              Navigator.pushNamed(context, UpgradePlanScreen.routeName);
+              return;
+            }
+          },
+          padding: const EdgeInsets.all(10),
+          child: SvgPicture.asset('assets/svg/chat/video_cam.svg'),
+        ),
         IconButton(
           onPressed: () async {
             if (isAudio != null || isVideo == null) {
@@ -125,13 +137,11 @@ class ChatAppBar extends StatelessWidget implements PreferredSizeWidget {
             }
             showDialog(
               context: context,
-              builder: (ctx) => ChatScreenOptionsMenu(
-                chat: chat,
-              ),
+              builder: (ctx) => ChatScreenOptionsMenu(chat: chat),
             );
           },
           icon: const Icon(Icons.more_vert),
-        )
+        ),
       ],
     );
   }

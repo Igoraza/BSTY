@@ -15,6 +15,8 @@ class StadiumButton extends StatelessWidget {
     this.margin,
     this.visualDensity,
     this.boxShadow,
+    this.height,
+    this.width,
   }) : super(key: key);
 
   final String? text;
@@ -27,36 +29,43 @@ class StadiumButton extends StatelessWidget {
   final EdgeInsetsGeometry? margin;
   final VisualDensity? visualDensity;
   final List<BoxShadow>? boxShadow;
+  final double? height, width;
 
   @override
   Widget build(BuildContext context) {
     final screenW = MediaQuery.of(context).size.width;
 
     return Container(
-        decoration: BoxDecoration(
-          color: bgColor,
-          gradient: gradient,
-          borderRadius: BorderRadius.circular(50),
-          boxShadow: boxShadow,
+      height: height,
+      width: width,
+      decoration: BoxDecoration(
+        color: bgColor,
+        gradient: gradient,
+        borderRadius: BorderRadius.circular(50),
+        boxShadow: boxShadow,
+      ),
+      child: TextButton(
+        onPressed: onPressed,
+        style: TextButton.styleFrom(
+          visualDensity: visualDensity ?? VisualDensity.adaptivePlatformDensity,
+          padding:
+              padding ??
+              EdgeInsets.symmetric(
+                horizontal: screenW * 0.2,
+                vertical: screenW * 0.03,
+              ),
+          splashFactory: NoSplash.splashFactory,
+          foregroundColor: textColor ?? AppColors.white,
+          textStyle: TextStyle(fontWeight: FontWeight.w700),
         ),
-        child: TextButton(
-            onPressed: onPressed,
-            style: TextButton.styleFrom(
-                visualDensity:
-                    visualDensity ?? VisualDensity.adaptivePlatformDensity,
-                padding: padding ??
-                    EdgeInsets.symmetric(
-                        horizontal: screenW * 0.2, vertical: screenW * 0.03),
-                splashFactory: NoSplash.splashFactory,
-                foregroundColor: textColor ?? AppColors.white),
-            child: text != null
-                ? Text(
-                    text!,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w600,
-                    ),
-                    textAlign: TextAlign.center,
-                  )
-                : child ?? Container()));
+        child: text != null
+            ? Text(
+                text!,
+                style: const TextStyle(fontWeight: FontWeight.w700),
+                textAlign: TextAlign.center,
+              )
+            : child ?? Container(),
+      ),
+    );
   }
 }

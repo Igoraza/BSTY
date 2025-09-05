@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:bsty/features/auth/pages/verification/verify_phone_page.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -173,38 +174,65 @@ class SignInPage extends StatelessWidget {
       ),
     );
 
-    // final signInWithEmailBtn = StadiumButton(
-    //     gradient: AppColors.buttonBlue,
-    //     onPressed: () {
-    //       Navigator.pushNamed(context, EmailSignInPage.routeName);
-    //     },
-    //     child: Row(
-    //       mainAxisAlignment: MainAxisAlignment.center,
-    //       children: [
-    //         const Icon(Icons.email),
-    //         const SizedBox(width: 10),
-    //         Text('Sign in',
-    //             style: Theme.of(context)
-    //                 .textTheme
-    //                 .titleMedium!
-    //                 .copyWith(color: AppColors.white)),
-    //       ],
-    //     ));
+    final signInWithEmailBtn = StadiumButton(
+      gradient: AppColors.buttonBlue,
+      onPressed: () {
+        // Navigator.pushNamed(context, EmailSignInPage.routeName);
+        Navigator.pushNamed(context, VerifyPhone.routeName);
+      },
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(Icons.email),
+          const SizedBox(width: 10),
+          Text(
+            'Sign in',
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium!.copyWith(color: AppColors.white),
+          ),
+        ],
+      ),
+    );
+
+    final signInWithPhoneNumberBtn = StadiumButton(
+      gradient: AppColors.buttonBlue,
+      onPressed: () {
+        Navigator.pushNamed(context, VerifyPhone.routeName);
+      },
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(Icons.phone),
+          const SizedBox(width: 10),
+          Text(
+            'Sign in',
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium!.copyWith(color: AppColors.white),
+          ),
+        ],
+      ),
+    );
 
     /// This is currently hidden because we are not using phone number login
     // final signInBtn = Consumer<AuthProvider>(
-    //     builder: (_, authProvider, __) => StadiumButton(
-    //         visualDensity: VisualDensity.standard,
-    //         gradient: AppColors.buttonBlue,
-    //         onPressed:
-    //             authProvider.authStatus == AuthStatus.checking ? null : signIn,
-    //         child: authProvider.authStatus == AuthStatus.checking
-    //             ? const BtnLoadingAnimation()
-    //             : Text('Continue',
-    //                 style: Theme.of(context)
-    //                     .textTheme
-    //                     .titleMedium!
-    //                     .copyWith(color: AppColors.white))));
+    //   builder: (_, authProvider, __) => StadiumButton(
+    //     visualDensity: VisualDensity.standard,
+    //     gradient: AppColors.buttonBlue,
+    //     onPressed: authProvider.authStatus == AuthStatus.checking
+    //         ? null
+    //         : signIn,
+    //     child: authProvider.authStatus == AuthStatus.checking
+    //         ? const BtnLoadingAnimation()
+    //         : Text(
+    //             'Continue',
+    //             style: Theme.of(
+    //               context,
+    //             ).textTheme.titleMedium!.copyWith(color: AppColors.white),
+    //           ),
+    //   ),
+    // );
 
     return BackgroundImage(
       child: Scaffold(
@@ -281,6 +309,7 @@ class SignInPage extends StatelessWidget {
                         : const SizedBox.shrink(),
                     SizedBox(height: appHeight * 0.01),
                     // signInWithEmailBtn,
+                    signInWithPhoneNumberBtn,
                     Platform.isIOS
                         ? InkWell(
                             onTap: () => Navigator.pushNamed(

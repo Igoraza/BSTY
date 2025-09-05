@@ -1,5 +1,8 @@
 import 'dart:developer';
 
+import 'package:bsty/features/auth/models/sign_up_model.dart';
+import 'package:bsty/features/auth/models/verify_otp_args.dart';
+import 'package:bsty/features/auth/pages/verification/verify_otp_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
@@ -49,20 +52,27 @@ class _VerifyPhoneState extends State<VerifyPhone> {
         return;
       }
 
-      // final reqId = DateTime.now().millisecondsSinceEpoch.toString();
-      // final phone = _phoneCode.text.substring(1) + _phoneNum.text;
-      // final userData =
-      //     SignUpModel(name: displayName, phone: phone, requestId: reqId);
-      // context.read<AuthProvider>().signUp(context, userData).then((value) {
-      //   if (value) {
-      //     Navigator.pushNamed(context, VerifyOtp.routeName,
-      //         arguments: VerifyOtpArgs(
-      //             isLoggingIn: false,
-      //             name: displayName,
-      //             phone: phone,
-      //             requestId: reqId));
-      //   }
-      // });
+      final reqId = DateTime.now().millisecondsSinceEpoch.toString();
+      final phone = _phoneCode.text.substring(1) + _phoneNum.text;
+      final userData = SignUpModel(
+        name: "displayName",
+        phone: phone,
+        requestId: reqId,
+      );
+      context.read<AuthProvider>().signUp(context, userData).then((value) {
+        if (value) {
+          Navigator.pushNamed(
+            context,
+            VerifyOtp.routeName,
+            arguments: VerifyOtpArgs(
+              isLoggingIn: false,
+              name: "displayName",
+              phone: phone,
+              requestId: reqId,
+            ),
+          );
+        }
+      });
       await AuthProvider().updatePhone(
         context,
         phone: _phoneCode.text + _phoneNum.text,

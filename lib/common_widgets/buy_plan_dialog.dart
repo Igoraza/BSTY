@@ -25,10 +25,10 @@ import '../services/in_app.dart/in_app_sccreen.dart';
 import '../utils/theme/colors.dart';
 import 'stadium_button.dart';
 
-String _kConsumableId = 'metfie_plus';
-// const String _kUpgradeId = 'metfie_plus';
-const String _kSilverSubscriptionId = 'metfie_plus';
-const String _kGoldSubscriptionId = 'metfie_plus';
+String _kConsumableId = 'bsty_plus';
+// const String _kUpgradeId = 'bsty_plus';
+const String _kSilverSubscriptionId = 'bsty_plus';
+const String _kGoldSubscriptionId = 'bsty_plus';
 // const List<String> _kProductIds = <String>[
 //   _kConsumableId,
 //   _kUpgradeId,

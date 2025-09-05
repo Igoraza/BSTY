@@ -28,11 +28,11 @@ import '../utils/constants/plan_price_details.dart';
 import '../utils/functions.dart';
 import '../utils/global_keys.dart';
 
-String _kConsumableId = 'metfie_plus';
+String _kConsumableId = 'bsty_plus';
 // ignore: unused_element
-const String _kUpgradeId = 'metfie_plus';
-const String _kSilverSubscriptionId = 'metfie_plus';
-const String _kGoldSubscriptionId = 'metfie_plus';
+const String _kUpgradeId = 'bsty_plus';
+const String _kSilverSubscriptionId = 'bsty_plus';
+const String _kGoldSubscriptionId = 'bsty_plus';
 
 class ChangePlanDialog extends StatefulWidget {
   final PageController? controller;
@@ -397,7 +397,7 @@ class _ChangePlanDialogState extends State<ChangePlanDialog> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
-                    'Upgrade to Metfie ${index == 0 ? "Plus" : "Premium"}',
+                    'Upgrade to BSTY ${index == 0 ? "Plus" : "Premium"}',
                     style: Theme.of(context)
                         .textTheme
                         .bodyLarge!

@@ -1,3 +1,4 @@
+import 'package:bsty/common_widgets/upgrade_plan.dart';
 import 'package:flutter/material.dart';
 import 'package:bsty/features/auth/services/auth_provider.dart';
 import 'package:provider/provider.dart';
@@ -22,67 +23,75 @@ class ProfileViewsGrid extends StatelessWidget {
 
     // if (userPlan > 2 && !planExpired) {
     return FutureBuilder(
-        future: provider.fetchProfileViews(context),
-        builder: (context, AsyncSnapshot snapshot) {
-          if (snapshot.connectionState != ConnectionState.done) {
-            return mainLoadingAnimationDark;
-          }
-          if (snapshot.hasError) {
-            String errorMsg = '';
+      future: provider.fetchProfileViews(context),
+      builder: (context, AsyncSnapshot snapshot) {
+        if (snapshot.connectionState != ConnectionState.done) {
+          return mainLoadingAnimationDark;
+        }
+        if (snapshot.hasError) {
+          String errorMsg = '';
 
-            // chieck if connection error
-            if (snapshot.error.toString().contains('SocketException')) {
-              errorMsg =
-                  'Error retrieving profiles.\nPlease check your internet connection';
-            } else {
-              errorMsg = 'Error retrieving profiles. Try again later';
-            }
-
-            return Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                const Icon(Icons.error_outline_rounded,
-                    size: 50, color: AppColors.black),
-                const SizedBox(height: 10, width: double.infinity),
-                Text(errorMsg,
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyLarge!
-                        .copyWith(fontWeight: FontWeight.bold),
-                    textAlign: TextAlign.center),
-              ],
-            );
+          // chieck if connection error
+          if (snapshot.error.toString().contains('SocketException')) {
+            errorMsg =
+                'Error retrieving profiles.\nPlease check your internet connection';
+          } else {
+            errorMsg = 'Error retrieving profiles. Try again later';
           }
-          if (snapshot.data == null || snapshot.data.isEmpty) {
-            return Center(
-              child: Text(
-                'No profiles found',
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyLarge!
-                    .copyWith(fontWeight: FontWeight.bold),
+
+          return Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const Icon(
+                Icons.error_outline_rounded,
+                size: 50,
+                color: AppColors.black,
+              ),
+              const SizedBox(height: 10, width: double.infinity),
+              Text(
+                errorMsg,
+                style: Theme.of(
+                  context,
+                ).textTheme.bodyLarge!.copyWith(fontWeight: FontWeight.bold),
                 textAlign: TextAlign.center,
               ),
-            );
-          }
+            ],
+          );
+        }
+        if (snapshot.data == null || snapshot.data.isEmpty) {
+          return Center(
+            child: Text(
+              'No profiles found',
+              style: Theme.of(
+                context,
+              ).textTheme.bodyLarge!.copyWith(fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
+            ),
+          );
+        }
 
-          return GridView.builder(
-              padding: EdgeInsets.all(screenW * 0.04)
-                  .copyWith(bottom: screenW * 0.06),
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: authPro.isTab ? 3 : 2,
-                crossAxisSpacing: screenW * 0.04,
-                mainAxisSpacing: screenW * 0.04,
-                childAspectRatio: 0.8,
-              ),
-              itemCount: snapshot.data.length,
-              itemBuilder: (_, i) {
-                final user = snapshot.data[i].user;
-                return ProfileViewCard(user);
-              });
-        });
+        return GridView.builder(
+          padding: EdgeInsets.all(
+            screenW * 0.04,
+          ).copyWith(bottom: screenW * 0.06),
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: authPro.isTab ? 3 : 2,
+            crossAxisSpacing: screenW * 0.04,
+            mainAxisSpacing: screenW * 0.04,
+            childAspectRatio: 0.8,
+          ),
+          itemCount: snapshot.data.length,
+          itemBuilder: (_, i) {
+            final user = snapshot.data[i].user;
+            return ProfileViewCard(user);
+          },
+        );
+      },
+    );
     // } else {
+
+    // Navigator.pushNamed(context, UpgradePlanScreen.routeName);
     //   return const UpgradePlanDialog();
     // }
   }

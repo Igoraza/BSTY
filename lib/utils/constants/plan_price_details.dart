@@ -2,120 +2,44 @@ import 'dart:io';
 
 class PlanPriceDetails {
   final List<Map<String, dynamic>> payVideo = [
-    {
-      'id': 'video_call_60',
-      'plan': '60',
-      'price': 1.19,
-    },
-    {
-      'id': 'video_call_120',
-      'plan': '120',
-      'price': 2.19,
-    },
-    {
-      'id': 'video_call_240',
-      'plan': '240',
-      'price': 3.79,
-    },
+    {'id': 'video_call_60', 'plan': '60', 'price': 99},
+    {'id': 'video_call_120', 'plan': '120', 'price': 182},
+    {'id': 'video_call_240', 'plan': '240', 'price': 315},
   ];
 
   final payAudio = [
     {
       'id': Platform.isIOS ? '60_audio_call' : 'audio_call_60',
       'plan': '60',
-      'price': Platform.isIOS ? 0.39 : 0.35,
+      'price': Platform.isIOS ? 33 : 30,
     },
-    {
-      'id': 'audio_call_120',
-      'plan': '120',
-      'price': Platform.isIOS ? 0.59 : 0.55,
-    },
-    {
-      'id': 'audio_call_240',
-      'plan': '240',
-      'price': 0.89,
-    },
+    {'id': 'audio_call_120', 'plan': '120', 'price': Platform.isIOS ? 49 : 46},
+    {'id': 'audio_call_240', 'plan': '240', 'price': 74},
   ];
 
   final payLikes = [
-    {
-      'id': 'like_1',
-      'plan': '1',
-      'price': 0.99,
-    },
-    {
-      'id': 'like_3',
-      'plan': '3',
-      'price': 1.69,
-    },
-    {
-      'id': 'like_6',
-      'plan': '6',
-      'price': 2.29,
-    },
+    {'id': 'like_1', 'plan': '1', 'price': 83},
+    {'id': 'like_3', 'plan': '3', 'price': 140},
+    {'id': 'like_6', 'plan': '6', 'price': 190},
   ];
 
   final payBoosts = [
-    {
-      'id': 'boost_1',
-      'plan': '1',
-      'price': 0.89,
-    },
-    {
-      'id': 'boost_3',
-      'plan': '3',
-      'price': 1.59,
-    },
-    {
-      'id': 'boost_6',
-      'plan': '6',
-      'price': 2.19,
-    },
+    {'id': 'boost_1', 'plan': '1', 'price': 74},
+    {'id': 'boost_3', 'plan': '3', 'price': 132},
+    {'id': 'boost_6', 'plan': '6', 'price': 182},
   ];
 
   final List payOptionsPlus = [
-    {
-      'id': 'metfie_plus_1',
-      'plan': '1',
-      'price': 2.99,
-    },
-    {
-      'id': 'metfie_plus_3',
-      'plan': '3',
-      'price': 6.99,
-    },
-    {
-      'id': 'metfie_plus_6',
-      'plan': '6',
-      'price': 10.99,
-    },
-    {
-      'id': 'metfie_plus_12',
-      'plan': '12',
-      'price': 19.99,
-    },
+    {'id': 'bsty_plus_1', 'plan': '1', 'price': 199},
+    {'id': 'bsty_plus_3', 'plan': '3', 'price': 599},
+    {'id': 'bsty_plus_6', 'plan': '6', 'price': 799},
+    {'id': 'bsty_plus_12', 'plan': '12', 'price': 999},
   ];
 
   final List payOptionsPre = [
-    {
-      'id': 'metfie_premium_1',
-      'plan': '1',
-      'price': 6.99,
-    },
-    {
-      'id': 'metfie_premium_3',
-      'plan': '3',
-      'price': 13.99,
-    },
-    {
-      'id': 'metfie_premium_6',
-      'plan': '6',
-      'price': 22.99,
-    },
-    {
-      'id': 'metfie_premium_12',
-      'plan': '12',
-      'price': 39.99,
-    },
+    {'id': 'bsty_premium_1', 'plan': '1', 'price': 599},
+    {'id': 'bsty_premium_3', 'plan': '3', 'price': 799},
+    {'id': 'bsty_premium_6', 'plan': '6', 'price': 999},
+    {'id': 'bsty_premium_12', 'plan': '12', 'price': 1299},
   ];
 }

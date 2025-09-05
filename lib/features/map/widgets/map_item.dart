@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:bsty/common_widgets/upgrade_plan.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -39,11 +40,17 @@ class MapItem extends StatelessWidget {
                 },
               );
             } else {
-              showDialog(
-                  context: context,
-                  builder: (context) => UpgradePlanDialog(
-                        title: 'Premium',
-                      ));
+              // showDialog(
+              //     context: context,
+              //     builder: (context) => UpgradePlanDialog(
+              //           title: 'Premium',
+              //         ));
+
+              Navigator.pushNamed(
+                context,
+                UpgradePlanScreen.routeName,
+                arguments: "Premium",
+              );
             }
           },
           child: CircleAvatar(
@@ -64,39 +71,42 @@ class MapItem extends StatelessWidget {
                     borderRadius: BorderRadius.circular(size.width * 0.05),
                   ),
                   child: ClipRRect(
-                      clipBehavior: Clip.hardEdge,
-                      borderRadius: BorderRadius.circular(size.width * 0.05),
-                      child: BackdropFilter(
-                          filter: userPlan == 4 && !planExpired
-                              ? ImageFilter.blur(sigmaX: 0, sigmaY: 0)
-                              : ImageFilter.blur(sigmaX: 3, sigmaY: 3),
-                          child: Container(
-                            // height: appHeight * 0.04,
-                            // width: appWidth * 0.02,
-                            decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.0),
-                            ),
-                          ))),
+                    clipBehavior: Clip.hardEdge,
+                    borderRadius: BorderRadius.circular(size.width * 0.05),
+                    child: BackdropFilter(
+                      filter: userPlan == 4 && !planExpired
+                          ? ImageFilter.blur(sigmaX: 0, sigmaY: 0)
+                          : ImageFilter.blur(sigmaX: 3, sigmaY: 3),
+                      child: Container(
+                        // height: appHeight * 0.04,
+                        // width: appWidth * 0.02,
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.0),
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
               ],
             ),
           ),
         ),
         // if (userPlan == 4 && !planExpired)
-        Text(userPlan == 4 && !planExpired ? user.name : '',
-            style: Theme.of(context)
-                .textTheme
-                .bodyLarge!
-                .copyWith(color: AppColors.white)),
+        Text(
+          userPlan == 4 && !planExpired ? user.name : '',
+          style: Theme.of(
+            context,
+          ).textTheme.bodyLarge!.copyWith(color: AppColors.white),
+        ),
         // if (userPlan == 4 && !planExpired)
         Text(
-            userPlan == 4 && !planExpired
-                ? '${user.distance.toString()} miles'
-                : '',
-            style: Theme.of(context)
-                .textTheme
-                .bodySmall!
-                .copyWith(color: AppColors.white))
+          userPlan == 4 && !planExpired
+              ? '${user.distance.toString()} miles'
+              : '',
+          style: Theme.of(
+            context,
+          ).textTheme.bodySmall!.copyWith(color: AppColors.white),
+        ),
       ],
     );
   }

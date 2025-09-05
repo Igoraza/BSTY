@@ -5,16 +5,17 @@ import 'global_keys.dart';
 
 void showSnackBar(String message, {Color? color}) {
   rootScaffoldMessengerKey.currentState!.clearSnackBars();
-  rootScaffoldMessengerKey.currentState!
-      .showSnackBar(SnackBar(content: Text(message), backgroundColor: color));
-}
-
-void showUpgradePlanDialog() {
-  showDialog(
-    context: navigatorKey.currentState!.overlay!.context,
-    builder: (context) =>  UpgradePlanDialog(),
+  rootScaffoldMessengerKey.currentState!.showSnackBar(
+    SnackBar(content: Text(message), backgroundColor: color),
   );
 }
+
+// void showUpgradePlanDialog() {
+//   showDialog(
+//     context: navigatorKey.currentState!.overlay!.context,
+//     builder: (context) => UpgradePlanDialog(),
+//   );
+// }
 
 String getPlanName(int plan) {
   switch (plan) {

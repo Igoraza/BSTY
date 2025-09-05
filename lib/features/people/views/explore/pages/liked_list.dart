@@ -1,4 +1,5 @@
 
+import 'package:bsty/common_widgets/upgrade_plan.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -88,7 +89,9 @@ class LikedList extends StatelessWidget {
           });
         });
     // } else {
+                                            // Navigator.pushNamed(context, UpgradePlanScreen.routeName);
     //   return const UpgradePlanDialog();
+
     // }
   }
 }

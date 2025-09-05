@@ -23,7 +23,7 @@ import 'package:in_app_purchase_storekit/store_kit_wrappers.dart';
 
 // const String _kConsumableId = 'boost_1';
 // const String _kUpgradeId = 'boost_3';
-// const String _kSilverSubscriptionId = 'metfie_plus_12';
+// const String _kSilverSubscriptionId = 'bsty_plus_12';
 // const String _kGoldSubscriptionId = 'like_1';
 // const List<String> _kProductIds = <String>[
 //   _kConsumableId,

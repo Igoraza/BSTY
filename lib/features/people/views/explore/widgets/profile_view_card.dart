@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'dart:ui';
 
+import 'package:bsty/common_widgets/upgrade_plan.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -35,22 +36,23 @@ class ProfileViewCard extends StatelessWidget {
       onTap: () => {
         if (userPlan > 2 && !planExpired)
           {
-            Navigator.pushNamed(
-              context,
-              PersonDetailedPage.routeName,
-              arguments: {
-                'id': user.id,
-                'name': user.name,
-                'image': user.displayImage,
-              },
-            )
-          }
+        Navigator.pushNamed(
+          context,
+          PersonDetailedPage.routeName,
+          arguments: {
+            'id': user.id,
+            'name': user.name,
+            'image': user.displayImage,
+          },
+        ),
+        }
       },
       child: Container(
         // padding: EdgeInsets.all(appWidth * 0.02),
         decoration: const BoxDecoration(
-            borderRadius: BorderRadius.all(Radius.circular(12)),
-            color: AppColors.white),
+          borderRadius: BorderRadius.all(Radius.circular(12)),
+          color: AppColors.white,
+        ),
         child: Stack(
           children: [
             Padding(
@@ -59,45 +61,51 @@ class ProfileViewCard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        SvgPicture.asset('assets/svg/online/active.svg'),
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      SvgPicture.asset('assets/svg/online/active.svg'),
 
-                        /// [ Person Image ]
-                        CircleAvatar(
-                            radius: authPro.isTab
-                                ? (appWidth / 4) - (appWidth * 0.158)
-                                : (appWidth / 4) - (appWidth * 0.12),
-                            foregroundImage:
-                                CachedNetworkImageProvider(user.displayImage)),
-                        SvgPicture.asset('assets/svg/online/heart.svg')
-                      ]),
+                      /// [ Person Image ]
+                      CircleAvatar(
+                        radius: authPro.isTab
+                            ? (appWidth / 4) - (appWidth * 0.158)
+                            : (appWidth / 4) - (appWidth * 0.12),
+                        foregroundImage: CachedNetworkImageProvider(
+                          user.displayImage,
+                        ),
+                      ),
+                      SvgPicture.asset('assets/svg/online/heart.svg'),
+                    ],
+                  ),
                   SizedBox(height: appHeight * 0.01),
 
                   /// [ Profile name ]
-                  Text(user.name,
-                      style: Theme.of(context).textTheme.bodyLarge!.merge(
-                            const TextStyle(fontWeight: FontWeight.bold),
-                          )),
+                  Text(
+                    user.name,
+                    style: Theme.of(context).textTheme.bodyLarge!.merge(
+                      const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ),
                   SizedBox(height: appHeight * 0.01),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 5.0),
-                          child:
-                              SvgPicture.asset('assets/svg/explore/info.svg')),
+                        padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                        child: SvgPicture.asset('assets/svg/explore/info.svg'),
+                      ),
                       BoxedText(
-                          text: '${user.age}',
-                          padding: EdgeInsets.symmetric(
-                            horizontal: appWidth * 0.04,
-                            vertical: 4,
-                          )),
+                        text: '${user.age}',
+                        padding: EdgeInsets.symmetric(
+                          horizontal: appWidth * 0.04,
+                          vertical: 4,
+                        ),
+                      ),
                       SvgPicture.asset('assets/svg/explore/comment.svg'),
                     ],
-                  )
+                  ),
                 ],
               ),
             ),
@@ -120,24 +128,32 @@ class ProfileViewCard extends StatelessWidget {
                       child: Container(
                         // height: appHeight * 0.04,
                         // width: appWidth * 0.02,
-                        decoration:
-                            BoxDecoration(color: Colors.white.withOpacity(0.0)),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.0),
+                        ),
                         child: Padding(
                           padding: EdgeInsets.only(
-                              left: appHeight * 0.02,
-                              right: appHeight * 0.02,
-                              bottom: appHeight * 0.02),
+                            left: appHeight * 0.02,
+                            right: appHeight * 0.02,
+                            bottom: appHeight * 0.02,
+                          ),
                           child: FittedBox(
                             alignment: Alignment.bottomCenter,
                             child: StadiumButton(
                               // margin: EdgeInsets.only(top: appHeight * 0.1),
                               padding: EdgeInsets.only(
-                                  left: appHeight * 0.02,
-                                  right: appHeight * 0.02),
+                                left: appHeight * 0.02,
+                                right: appHeight * 0.02,
+                              ),
                               onPressed: () {
-                                showDialog(
-                                  context: context,
-                                  builder: (context) => UpgradePlanDialog(),
+                                // showDialog(
+                                //   context: context,
+                                //   builder: (context) => UpgradePlanDialog(),
+                                // );
+
+                                Navigator.pushNamed(
+                                  context,
+                                  UpgradePlanScreen.routeName,
                                 );
                               },
                               text: 'See Who Viewed You !',

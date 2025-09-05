@@ -1,3 +1,4 @@
+import 'package:bsty/common_widgets/upgrade_plan.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -60,38 +61,40 @@ class Credits extends StatelessWidget {
         margin: EdgeInsets.all(mq.width * 0.07),
         padding: EdgeInsets.all(mq.width * 0.07),
         decoration: BoxDecoration(
-            color: AppColors.white,
-            borderRadius: BorderRadius.circular(20),
-            boxShadow: const [
-              BoxShadow(
-                color: Colors.grey,
-                blurRadius: 20.0,
-              ),
-            ]),
+          color: AppColors.white,
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: const [BoxShadow(color: Colors.grey, blurRadius: 20.0)],
+        ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             GridView.count(
-                crossAxisCount: authPro.isTab ? 3 : 2,
-                shrinkWrap: true,
-                childAspectRatio: authPro.isTab ? 1 / 1.48 : 1 / 1.3,
-                crossAxisSpacing:
-                    authPro.isTab ? mq.width * 0.05 : mq.width * 0.07,
-                mainAxisSpacing:
-                    authPro.isTab ? mq.width * 0.06 : mq.width * 0.07,
-                children: data
-                    .map((e) => Consumer<InAppProvider>(
-                            builder: (context, inAppPr, child) {
-                          return CreditCard(
-                            icon: e['icon'],
-                            title: e['title'],
-                            count: e['title'] == 'boosts'
-                                ? inAppPr.boost.toString()
-                                : e['count'],
-                          );
-                        }))
-                    .toList()),
+              crossAxisCount: authPro.isTab ? 3 : 2,
+              shrinkWrap: true,
+              childAspectRatio: authPro.isTab ? 1 / 1.48 : 1 / 1.3,
+              crossAxisSpacing: authPro.isTab
+                  ? mq.width * 0.05
+                  : mq.width * 0.07,
+              mainAxisSpacing: authPro.isTab
+                  ? mq.width * 0.06
+                  : mq.width * 0.07,
+              children: data
+                  .map(
+                    (e) => Consumer<InAppProvider>(
+                      builder: (context, inAppPr, child) {
+                        return CreditCard(
+                          icon: e['icon'],
+                          title: e['title'],
+                          count: e['title'] == 'boosts'
+                              ? inAppPr.boost.toString()
+                              : e['count'],
+                        );
+                      },
+                    ),
+                  )
+                  .toList(),
+            ),
             const SizedBox(height: 20),
             StadiumButton(
               text: 'Buy all in one plans',
@@ -101,9 +104,11 @@ class Credits extends StatelessWidget {
                 vertical: 10,
               ),
               onPressed: () {
-                showDialog(
-                    context: context,
-                    builder: (context) => UpgradePlanDialog());
+                // showDialog(
+                //     context: context,
+                //     builder: (context) => UpgradePlanDialog());
+
+                Navigator.pushNamed(context, UpgradePlanScreen.routeName);
               },
             ),
           ],
@@ -186,10 +191,7 @@ class CreditCard extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              SvgPicture.asset(
-                icon,
-                width: mq.width * 0.1,
-              ),
+              SvgPicture.asset(icon, width: mq.width * 0.1),
               const SizedBox(height: 7),
               Text(count, style: textTheme.titleMedium),
               const SizedBox(height: 7),
@@ -206,55 +208,61 @@ class CreditCard extends StatelessWidget {
             // if (userPlan > 2 && !planExpired) {
             if (title == 'super likes') {
               showDialog(
-                  context: context,
-                  builder: (context) => BuyPlanDialog(
-                        title: 'SuperLikes',
-                        desc: 'Buy SuperLikes As Needed !',
-                        img: 'assets/svg/upgrade_dialog/super_likes.svg',
-                        btnText: 'Buy Now',
-                        paymentList: planDetails.payLikes,
-                      ));
+                context: context,
+                builder: (context) => BuyPlanDialog(
+                  title: 'SuperLikes',
+                  desc: 'Buy SuperLikes As Needed !',
+                  img: 'assets/svg/upgrade_dialog/super_likes.svg',
+                  btnText: 'Buy Now',
+                  paymentList: planDetails.payLikes,
+                ),
+              );
             } else if (title == 'boosts') {
               showDialog(
-                  context: context,
-                  builder: (context) => BuyPlanDialog(
-                        title: 'Boosts',
-                        desc: 'Buy Profile Boosts As Needed !',
-                        img: 'assets/svg/upgrade_dialog/profile_boosts.svg',
-                        btnText: 'Buy Now',
-                        paymentList: planDetails.payBoosts,
-                      ));
+                context: context,
+                builder: (context) => BuyPlanDialog(
+                  title: 'Boosts',
+                  desc: 'Buy Profile Boosts As Needed !',
+                  img: 'assets/svg/upgrade_dialog/profile_boosts.svg',
+                  btnText: 'Buy Now',
+                  paymentList: planDetails.payBoosts,
+                ),
+              );
             } else if (title == 'minutes of voice') {
               if (userPlan > 2 && !planExpired) {
                 showDialog(
-                    context: context,
-                    builder: (context) => BuyPlanDialog(
-                          // title: 'Minute Of Voice',
-                          desc: 'Buy Audio Minutes As Needed !',
-                          img: 'assets/svg/upgrade_dialog/minute.svg',
-                          btnText: 'Buy Now',
-                          paymentList: planDetails.payAudio,
-                        ));
+                  context: context,
+                  builder: (context) => BuyPlanDialog(
+                    // title: 'Minute Of Voice',
+                    desc: 'Buy Audio Minutes As Needed !',
+                    img: 'assets/svg/upgrade_dialog/minute.svg',
+                    btnText: 'Buy Now',
+                    paymentList: planDetails.payAudio,
+                  ),
+                );
               } else {
-                showDialog(
-                    context: context,
-                    builder: (context) => UpgradePlanDialog());
+                // showDialog(
+                //   context: context,
+                //   builder: (context) => UpgradePlanDialog(),
               }
             } else if (title == 'minutes of video') {
               if (userPlan > 2 && !planExpired) {
                 showDialog(
-                    context: context,
-                    builder: (context) => BuyPlanDialog(
-                          // title: 'Minute Of Voice',
-                          desc: 'Buy Video Minutes As Needed !',
-                          img: 'assets/svg/upgrade_dialog/telephone.svg',
-                          btnText: 'Buy Now',
-                          paymentList: planDetails.payVideo,
-                        ));
+                  context: context,
+                  builder: (context) => BuyPlanDialog(
+                    // title: 'Minute Of Voice',
+                    desc: 'Buy Video Minutes As Needed !',
+                    img: 'assets/svg/upgrade_dialog/telephone.svg',
+                    btnText: 'Buy Now',
+                    paymentList: planDetails.payVideo,
+                  ),
+                );
               } else {
-                showDialog(
-                    context: context,
-                    builder: (context) => UpgradePlanDialog());
+                // showDialog(
+                //   context: context,
+                //   builder: (context) => UpgradePlanDialog(),
+                // );
+                Navigator.pushNamed(context, UpgradePlanScreen.routeName);
               }
             }
             // showDialog(
@@ -271,7 +279,7 @@ class CreditCard extends StatelessWidget {
           padding: const EdgeInsets.all(0),
           size: 24,
           child: const Icon(Icons.add, color: AppColors.white, size: 16),
-        )
+        ),
       ],
     );
   }

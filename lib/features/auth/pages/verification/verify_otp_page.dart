@@ -32,27 +32,35 @@ class VerifyOtp extends StatelessWidget {
 
     /// [ Functions ]
     void verifyOtp(BuildContext context, String otp) {
-      final authProvider = context.read<AuthProvider>();
-      try {
-        (args.isEmail
-                ? authProvider.verifyEmailOtp(context)
-                : authProvider.verifyOtp(context, otp: otp, args: args))
-            .then((value) {
-          if (value) {
-            showSnackBar('OTP verified successfully.');
-            args.isLoggingIn
-                ? Navigator.of(context).pushNamedAndRemoveUntil(
-                    MainPage.routeName, (route) => false)
-                : args.isEmail
-                    ? Navigator.of(context)
-                        .pushReplacementNamed(SelectDob.routeName)
-                    : Navigator.pushReplacementNamed(
-                        context, AccountCreated.routeName);
-          }
-        });
-      } catch (e) {
-        showSnackBar(e.toString());
-      }
+      showSnackBar(
+        'This is dummy function. login with google to access app functionalities',
+      );
+      // final authProvider = context.read<AuthProvider>();
+      // try {
+      //   (args.isEmail
+      //           ? authProvider.verifyEmailOtp(context)
+      //           : authProvider.verifyOtp(context, otp: otp, args: args))
+      //       .then((value) {
+      //         if (value) {
+      //           showSnackBar('OTP verified successfully.');
+      //           args.isLoggingIn
+      //               ? Navigator.of(context).pushNamedAndRemoveUntil(
+      //                   MainPage.routeName,
+      //                   (route) => false,
+      //                 )
+      //               : args.isEmail
+      //               ? Navigator.of(
+      //                   context,
+      //                 ).pushReplacementNamed(SelectDob.routeName)
+      //               : Navigator.pushReplacementNamed(
+      //                   context,
+      //                   AccountCreated.routeName,
+      //                 );
+      //         }
+      //       });
+      // } catch (e) {
+      //   showSnackBar(e.toString());
+      // }
     }
 
     /// [ Widgets ]
@@ -66,17 +74,16 @@ class VerifyOtp extends StatelessWidget {
         shape: PinCodeFieldShape.circle,
         fieldHeight: 60,
         fieldWidth: 60,
-        activeColor: AppColors.lighterGrey,
-        activeFillColor: AppColors.lighterGrey,
-        selectedColor: AppColors.lighterGrey,
-        selectedFillColor: AppColors.lighterGrey,
-        inactiveColor: AppColors.lighterGrey,
-        inactiveFillColor: AppColors.lighterGrey,
+        activeColor: AppColors.pink,
+        activeFillColor: AppColors.pink,
+        selectedColor: AppColors.pink,
+        selectedFillColor: AppColors.pink,
+        inactiveColor: AppColors.pink,
+        inactiveFillColor: AppColors.white,
       ),
-      textStyle: Theme.of(context)
-          .textTheme
-          .titleLarge!
-          .copyWith(color: AppColors.pink),
+      textStyle: Theme.of(
+        context,
+      ).textTheme.titleLarge!.copyWith(color: AppColors.white),
       animationDuration: const Duration(milliseconds: 300),
       enableActiveFill: true,
       onCompleted: (otp) => verifyOtp(context, otp),
@@ -90,8 +97,9 @@ class VerifyOtp extends StatelessWidget {
       appContext: context,
     );
 
-    final continueBtn = Consumer<AuthProvider>(builder: (_, authProvider, __) {
-      return StadiumButton(
+    final continueBtn = Consumer<AuthProvider>(
+      builder: (_, authProvider, __) {
+        return StadiumButton(
           gradient: AppColors.buttonBlue,
           visualDensity: VisualDensity.standard,
           onPressed: authProvider.authStatus == AuthStatus.checking
@@ -99,55 +107,71 @@ class VerifyOtp extends StatelessWidget {
               : () => verifyOtp(context, otp),
           child: authProvider.authStatus == AuthStatus.checking
               ? const BtnLoadingAnimation()
-              : Text('Verify Now',
-                  style: Theme.of(context)
-                      .textTheme
-                      .titleMedium!
-                      .copyWith(color: AppColors.white)));
-    });
+              : Text(
+                  'Verify Now',
+                  style: Theme.of(
+                    context,
+                  ).textTheme.titleMedium!.copyWith(color: AppColors.white),
+                ),
+        );
+      },
+    );
 
     return BackgroundImage(
-        child: Scaffold(
-            appBar: AppBar(title: const Text('OTP Verification')),
-            body: Padding(
-                padding: EdgeInsets.all(appWidth * 0.05)
-                    .copyWith(bottom: appHeight * 0.05),
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Expanded(
-                          child: ListView(children: [
-                        SizedBox(height: appHeight * 0.06),
-                        SvgPicture.asset(
-                            'assets/images/auth/${args.isEmail ? 'ac_recovery_otp.svg' : 'otp_verify.svg'}'),
-                        SizedBox(height: appHeight * 0.03),
-                        Container(
-                            padding: EdgeInsets.all(appHeight * 0.02),
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(20)),
-                            child: Column(children: [
-                              Text(
-                                'An OTP has been sent to',
-                                style: Theme.of(context).textTheme.bodyLarge,
-                              ),
-                              Text(
-                                '+${args.isEmail ? args.email! : args.phone!}',
-                                style: Theme.of(context).textTheme.bodyLarge,
-                              ),
-                              SizedBox(height: appHeight * 0.025),
-                              pinCodeField,
-                              SizedBox(height: appHeight * 0.025),
-                              Text(
-                                'I didn\'t receive code.',
-                                style: Theme.of(context).textTheme.bodyLarge,
-                              ),
-                              const ResendOtpAndTimeLeft()
-                            ]))
-                      ])),
-                      continueBtn
-                    ]))));
+      child: Scaffold(
+        appBar: AppBar(title: const Text('OTP Verification')),
+        body: Padding(
+          padding: EdgeInsets.all(
+            appWidth * 0.05,
+          ).copyWith(bottom: appHeight * 0.05),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Expanded(
+                child: ListView(
+                  children: [
+                    SizedBox(height: appHeight * 0.06),
+                    SvgPicture.asset(
+                      'assets/images/auth/${args.isEmail ? 'ac_recovery_otp.svg' : 'otp_verify.svg'}',
+                    ),
+                    SizedBox(height: appHeight * 0.03),
+                    Container(
+                      padding: EdgeInsets.all(appHeight * 0.02),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Column(
+                        children: [
+                          Text(
+                            'An OTP has been sent to',
+                            style: Theme.of(context).textTheme.bodyLarge,
+                          ),
+                          Text(
+                            '+${args.isEmail ? args.email! : args.phone!}',
+                            style: Theme.of(context).textTheme.bodyLarge,
+                          ),
+                          SizedBox(height: appHeight * 0.025),
+                          pinCodeField,
+                          SizedBox(height: appHeight * 0.025),
+                          Text(
+                            'I didn\'t receive code.',
+                            style: Theme.of(context).textTheme.bodyLarge,
+                          ),
+                          const ResendOtpAndTimeLeft(),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              continueBtn,
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }
 
@@ -191,17 +215,21 @@ class _ResendOtpAndTimeLeftState extends State<ResendOtpAndTimeLeft> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(children: [
-      TextButton(
+    return Column(
+      children: [
+        TextButton(
           onPressed: _isResendEnabled ? () => _startTimer() : null,
-          child: const Text('Resend Code')),
-      _isResendEnabled
-          ? const SizedBox.shrink()
-          : Text('$_timeLeft sec left',
-              style: Theme.of(context)
-                  .textTheme
-                  .titleSmall!
-                  .copyWith(color: AppColors.disabled))
-    ]);
+          child: const Text('Resend Code'),
+        ),
+        _isResendEnabled
+            ? const SizedBox.shrink()
+            : Text(
+                '$_timeLeft sec left',
+                style: Theme.of(
+                  context,
+                ).textTheme.titleSmall!.copyWith(color: AppColors.disabled),
+              ),
+      ],
+    );
   }
 }

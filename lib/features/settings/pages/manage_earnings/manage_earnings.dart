@@ -3,6 +3,7 @@
 import 'dart:developer';
 import 'dart:ui';
 
+import 'package:bsty/common_widgets/upgrade_plan.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:bsty/common_widgets/background_image.dart';
@@ -60,17 +61,18 @@ class _ManageEarningsPageState extends State<ManageEarningsPage> {
     return BackgroundImage(
       child: Scaffold(
         key: _scaffoldKey,
-        appBar: AppBar(title: const Text('MEP'), actions: [
-          SvgPicture.asset('assets/svg/mep/question.svg'),
-          SizedBox(width: appWidth * 0.05),
-        ]),
+        appBar: AppBar(
+          title: const Text('MEP'),
+          actions: [
+            SvgPicture.asset('assets/svg/mep/question.svg'),
+            SizedBox(width: appWidth * 0.05),
+          ],
+        ),
         body: FutureBuilder<MepModel?>(
           future: mepPro.getMep(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(
-                child: mainLoadingAnimationDark,
-              );
+              return const Center(child: mainLoadingAnimationDark);
             } else if (snapshot.hasError) {
               String errorMsg = '';
 
@@ -95,9 +97,7 @@ class _ManageEarningsPageState extends State<ManageEarningsPage> {
                   ),
                   Stack(
                     children: [
-                      ManageEarningsDetails(
-                        mepModel: data,
-                      ),
+                      ManageEarningsDetails(mepModel: data),
                       Align(
                         alignment: Alignment.topCenter,
                         child: RedeemCoinsButton(
@@ -120,6 +120,8 @@ class _ManageEarningsPageState extends State<ManageEarningsPage> {
                             //     // btnTxtClr: AppColors.white,
                             //     btnGradient: AppColors.orangeYelloH,
                             //     onPressed: () {
+
+                            // Navigator.pushNamed(context, UpgradePlanScreen.routeName);
                             //       showDialog(
                             //           context: context,
                             //           builder: (context) => UpgradePlanDialog());
@@ -145,158 +147,172 @@ class _ManageEarningsPageState extends State<ManageEarningsPage> {
 
   void showCoinNotAvailableDialog() {
     showDialog(
-        context: context,
-        builder: (context) => Dialog(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const SizedBox(height: 10),
-                    Text(
-                      "You don't have any coins to redeem",
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.titleMedium,
-                    ),
-                    const SizedBox(height: 20),
-                    StadiumButton(
-                      text: 'Ok',
-                      bgColor: AppColors.black,
-                      onPressed: () => Navigator.of(context).pop(),
-                    ),
-                  ],
-                ),
+      context: context,
+      builder: (context) => Dialog(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const SizedBox(height: 10),
+              Text(
+                "You don't have any coins to redeem",
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.titleMedium,
               ),
-            ));
+              const SizedBox(height: 20),
+              StadiumButton(
+                text: 'Ok',
+                bgColor: AppColors.black,
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   void showFirstBottomSheet(BuildContext context) {
     showModalBottomSheet(
-        context: context,
-        builder: (context) {
-          double appHeight = MediaQuery.of(context).size.height;
-          double appWidth = MediaQuery.of(context).size.width;
+      context: context,
+      builder: (context) {
+        double appHeight = MediaQuery.of(context).size.height;
+        double appWidth = MediaQuery.of(context).size.width;
 
-          double conversionRate = 11.0;
-          final provider = Provider.of<RedeemTransactionProvider>(context);
-          // final coins = redeemCoinsController.text.isEmpty
-          //     ? 0
-          //     : int.parse(redeemCoinsController.text);
+        double conversionRate = 11.0;
+        final provider = Provider.of<RedeemTransactionProvider>(context);
+        // final coins = redeemCoinsController.text.isEmpty
+        //     ? 0
+        //     : int.parse(redeemCoinsController.text);
 
-          /// [ TODO: implement the convertion inside the textfield as suffix ]
-          // setState(() {
-          //   redeemCoinsController.value = redeemCoinsController.value;
-          // });
+        /// [ TODO: implement the convertion inside the textfield as suffix ]
+        // setState(() {
+        //   redeemCoinsController.value = redeemCoinsController.value;
+        // });
 
-          return BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-            child: SingleChildScrollView(
-              child: Container(
-                  width: appWidth,
-                  decoration: const BoxDecoration(
-                      color: AppColors.white,
-                      borderRadius: BorderRadius.all(Radius.circular(30))),
-                  child: Column(mainAxisSize: MainAxisSize.min, children: [
-                    SizedBox(height: appHeight * 0.05),
-                    const BottomSheetTitleSubtitle(
-                      title: 'Redeem From Wallet',
-                      subtitle: 'Coins will be redeemed from Wallet as Cash.',
+        return BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          child: SingleChildScrollView(
+            child: Container(
+              width: appWidth,
+              decoration: const BoxDecoration(
+                color: AppColors.white,
+                borderRadius: BorderRadius.all(Radius.circular(30)),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SizedBox(height: appHeight * 0.05),
+                  const BottomSheetTitleSubtitle(
+                    title: 'Redeem From Wallet',
+                    subtitle: 'Coins will be redeemed from Wallet as Cash.',
+                  ),
+                  SizedBox(height: appHeight * 0.02),
+                  Container(
+                    margin: EdgeInsets.symmetric(
+                      horizontal: appWidth * 0.1,
+                      vertical: appHeight * 0.01,
                     ),
-                    SizedBox(height: appHeight * 0.02),
-                    Container(
-                      margin: EdgeInsets.symmetric(
-                          horizontal: appWidth * 0.1,
-                          vertical: appHeight * 0.01),
-                      child: Form(
-                        key: _formKey,
-                        child: TextFormField(
-                          onChanged: (value) {
-                            log(value);
-                            final coins = value.isEmpty ? 0 : int.parse(value);
-                            provider.convertedAmount = coins / conversionRate;
-                            // log(provider.convertedAmount.toString());
-                          },
-                          controller: redeemCoinsController,
-                          keyboardType: TextInputType.number,
-                          style: Theme.of(context)
-                              .textTheme
-                              .titleLarge!
-                              .copyWith(color: AppColors.blue),
-                          decoration: InputDecoration(
-                            prefixIcon: Container(
-                                margin: const EdgeInsets.all(10),
-                                child: SvgPicture.asset(
-                                    'assets/svg/mep/small_coin.svg')),
-                            suffix: Consumer<RedeemTransactionProvider>(
-                                builder: (context, pro, child) {
-                              // log('consumer');
-                              return Text(
-                                  '= ${pro.convertedAmount.round()} Malawian Kwacha',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodySmall!
-                                      .copyWith(color: AppColors.disabled));
-                            }),
-                            labelText: 'Redeem Coins',
-                            labelStyle: Theme.of(context)
-                                .textTheme
-                                .bodyLarge!
-                                .copyWith(color: AppColors.black),
-                            border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                                borderSide: const BorderSide(
-                                    color: AppColors.disabled, width: 1)),
-                            focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                                borderSide: const BorderSide(
-                                    color: AppColors.disabled, width: 1)),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: const BorderSide(
-                                color: AppColors.disabled,
-                                width: 1,
-                              ),
+                    child: Form(
+                      key: _formKey,
+                      child: TextFormField(
+                        onChanged: (value) {
+                          log(value);
+                          final coins = value.isEmpty ? 0 : int.parse(value);
+                          provider.convertedAmount = coins / conversionRate;
+                          // log(provider.convertedAmount.toString());
+                        },
+                        controller: redeemCoinsController,
+                        keyboardType: TextInputType.number,
+                        style: Theme.of(
+                          context,
+                        ).textTheme.titleLarge!.copyWith(color: AppColors.blue),
+                        decoration: InputDecoration(
+                          prefixIcon: Container(
+                            margin: const EdgeInsets.all(10),
+                            child: SvgPicture.asset(
+                              'assets/svg/mep/small_coin.svg',
                             ),
                           ),
-                          validator: (value) {
-                            if (value!.isEmpty || int.parse(value) < 3000) {
-                              return "You need minimum of 3000 coins";
-                            } else if (int.parse(value) > withDrawAmount) {
-                              return "Enter valid coins";
-                            }
-                            return null;
-                          },
+                          suffix: Consumer<RedeemTransactionProvider>(
+                            builder: (context, pro, child) {
+                              // log('consumer');
+                              return Text(
+                                '= ${pro.convertedAmount.round()} Malawian Kwacha',
+                                style: Theme.of(context).textTheme.bodySmall!
+                                    .copyWith(color: AppColors.disabled),
+                              );
+                            },
+                          ),
+                          labelText: 'Redeem Coins',
+                          labelStyle: Theme.of(context).textTheme.bodyLarge!
+                              .copyWith(color: AppColors.black),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            borderSide: const BorderSide(
+                              color: AppColors.disabled,
+                              width: 1,
+                            ),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            borderSide: const BorderSide(
+                              color: AppColors.disabled,
+                              width: 1,
+                            ),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            borderSide: const BorderSide(
+                              color: AppColors.disabled,
+                              width: 1,
+                            ),
+                          ),
                         ),
+                        validator: (value) {
+                          if (value!.isEmpty || int.parse(value) < 3000) {
+                            return "You need minimum of 3000 coins";
+                          } else if (int.parse(value) > withDrawAmount) {
+                            return "Enter valid coins";
+                          }
+                          return null;
+                        },
                       ),
                     ),
-                    Container(
-                        margin:
-                            EdgeInsets.symmetric(horizontal: appWidth * 0.14),
-                        child: Text(
-                            'Disclaimer : You need a minimum of 3000 coins. Applicable tax will be deducted from the final amount.',
-                            textAlign: TextAlign.center,
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodySmall!
-                                .copyWith(color: AppColors.disabled))),
-                    SizedBox(height: appHeight * 0.1),
-                    BottomSheetButton(
-                        onTap: () {
-                          if (_formKey.currentState!.validate()) {
-                            Navigator.pop(context);
-                            showSecondBottomSheet(context);
-                            return;
-                          }
-                          debugPrint('Payout Method');
+                  ),
+                  Container(
+                    margin: EdgeInsets.symmetric(horizontal: appWidth * 0.14),
+                    child: Text(
+                      'Disclaimer : You need a minimum of 3000 coins. Applicable tax will be deducted from the final amount.',
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                        color: AppColors.disabled,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: appHeight * 0.1),
+                  BottomSheetButton(
+                    onTap: () {
+                      if (_formKey.currentState!.validate()) {
+                        Navigator.pop(context);
+                        showSecondBottomSheet(context);
+                        return;
+                      }
+                      debugPrint('Payout Method');
 
-                          // showSecondBottomSheet(context);
-                        },
-                        buttonName: 'Redeem'),
-                    SizedBox(height: appHeight * 0.05),
-                  ])),
+                      // showSecondBottomSheet(context);
+                    },
+                    buttonName: 'Redeem',
+                  ),
+                  SizedBox(height: appHeight * 0.05),
+                ],
+              ),
             ),
-          );
-        });
+          ),
+        );
+      },
+    );
   }
 
   void showSecondBottomSheet(BuildContext context) {
@@ -312,36 +328,40 @@ class _ManageEarningsPageState extends State<ManageEarningsPage> {
             child: Container(
               width: appWidth,
               decoration: const BoxDecoration(
-                  color: AppColors.white,
-                  borderRadius: BorderRadius.all(Radius.circular(30))),
+                color: AppColors.white,
+                borderRadius: BorderRadius.all(Radius.circular(30)),
+              ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   SizedBox(height: appHeight * 0.02),
                   Container(
-                      margin: const EdgeInsets.all(10),
-                      child: SvgPicture.asset('assets/svg/mep/payment.svg')),
+                    margin: const EdgeInsets.all(10),
+                    child: SvgPicture.asset('assets/svg/mep/payment.svg'),
+                  ),
                   const BottomSheetTitleSubtitle(
-                      title: 'Select Payment Method',
-                      subtitle: 'Choose payment method on your demand'),
+                    title: 'Select Payment Method',
+                    subtitle: 'Choose payment method on your demand',
+                  ),
 
                   /// [ TODO: Need to implement the radio button with options ]
                   const PayoutOptions(),
                   SizedBox(height: appHeight * 0.008),
                   BottomSheetButton(
-                      onTap: () {
-                        debugPrint('Payout Details ${provider.payOptionId}');
-                        // Navigator.pop(context);
-                        if (provider.payOptionId == 1) {
-                          showAirtelMoneyBottomSheet(context);
-                        } else if (provider.payOptionId == 2) {
-                          showMpambaBottomSheet(context);
-                        } else if (provider.payOptionId == 3) {
-                          showBankAccountBottomSheet(context);
-                        }
-                        // Navigator.pop(context);
-                      },
-                      buttonName: 'Payout'),
+                    onTap: () {
+                      debugPrint('Payout Details ${provider.payOptionId}');
+                      // Navigator.pop(context);
+                      if (provider.payOptionId == 1) {
+                        showAirtelMoneyBottomSheet(context);
+                      } else if (provider.payOptionId == 2) {
+                        showMpambaBottomSheet(context);
+                      } else if (provider.payOptionId == 3) {
+                        showBankAccountBottomSheet(context);
+                      }
+                      // Navigator.pop(context);
+                    },
+                    buttonName: 'Payout',
+                  ),
                   SizedBox(height: appHeight * 0.5),
                 ],
               ),
@@ -354,230 +374,258 @@ class _ManageEarningsPageState extends State<ManageEarningsPage> {
 
   void showAirtelMoneyBottomSheet(BuildContext context) {
     showModalBottomSheet(
-        context: context,
-        builder: (context) {
-          double appHeight = MediaQuery.of(context).size.height;
-          double appWidth = MediaQuery.of(context).size.width;
+      context: context,
+      builder: (context) {
+        double appHeight = MediaQuery.of(context).size.height;
+        double appWidth = MediaQuery.of(context).size.width;
 
-          final payOutPr = Provider.of<PayoutRequestProvider>(context);
+        final payOutPr = Provider.of<PayoutRequestProvider>(context);
 
-          return BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-            child: Container(
-              width: appWidth,
-              decoration: const BoxDecoration(
-                  color: AppColors.white,
-                  borderRadius: BorderRadius.all(Radius.circular(30))),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  SizedBox(height: appHeight * 0.02),
-                  const BottomSheetTitleSubtitle(
-                      title: 'Payout',
-                      subtitle:
-                          'Please enter your mobile number\nregistered with Airtel Money'),
-                  SizedBox(height: appHeight * 0.01),
-                  Container(
-                    margin: EdgeInsets.symmetric(
-                        horizontal: appWidth * 0.1, vertical: appHeight * 0.01),
-                    child: Form(
-                      key: _formKey,
-                      child: TextFormField(
-                        controller: phoneNumberController,
-                        keyboardType: TextInputType.number,
-                        style: Theme.of(context)
-                            .textTheme
-                            .titleLarge!
-                            .copyWith(color: AppColors.blue),
-                        decoration: InputDecoration(
-                          labelText: 'Enter Mobile Number',
-                          labelStyle: Theme.of(context)
-                              .textTheme
-                              .bodyLarge!
-                              .copyWith(color: AppColors.black),
-                          border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: const BorderSide(
-                                  color: AppColors.disabled, width: 1)),
-                          focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: const BorderSide(
-                                  color: AppColors.disabled, width: 1)),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                            borderSide: const BorderSide(
-                                color: AppColors.disabled, width: 1),
+        return BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          child: Container(
+            width: appWidth,
+            decoration: const BoxDecoration(
+              color: AppColors.white,
+              borderRadius: BorderRadius.all(Radius.circular(30)),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                SizedBox(height: appHeight * 0.02),
+                const BottomSheetTitleSubtitle(
+                  title: 'Payout',
+                  subtitle:
+                      'Please enter your mobile number\nregistered with Airtel Money',
+                ),
+                SizedBox(height: appHeight * 0.01),
+                Container(
+                  margin: EdgeInsets.symmetric(
+                    horizontal: appWidth * 0.1,
+                    vertical: appHeight * 0.01,
+                  ),
+                  child: Form(
+                    key: _formKey,
+                    child: TextFormField(
+                      controller: phoneNumberController,
+                      keyboardType: TextInputType.number,
+                      style: Theme.of(
+                        context,
+                      ).textTheme.titleLarge!.copyWith(color: AppColors.blue),
+                      decoration: InputDecoration(
+                        labelText: 'Enter Mobile Number',
+                        labelStyle: Theme.of(
+                          context,
+                        ).textTheme.bodyLarge!.copyWith(color: AppColors.black),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: const BorderSide(
+                            color: AppColors.disabled,
+                            width: 1,
                           ),
                         ),
-                        validator: (value) {
-                          if (phoneNumberController.text.isEmpty) {
-                            return "Enter a phone number !";
-                          }
-                          return null;
-                        },
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: const BorderSide(
+                            color: AppColors.disabled,
+                            width: 1,
+                          ),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: const BorderSide(
+                            color: AppColors.disabled,
+                            width: 1,
+                          ),
+                        ),
                       ),
+                      validator: (value) {
+                        if (phoneNumberController.text.isEmpty) {
+                          return "Enter a phone number !";
+                        }
+                        return null;
+                      },
                     ),
                   ),
-                  SizedBox(height: appHeight * 0.1),
-                  BottomSheetButton(
-                    onTap: () async {
-                      debugPrint('Submitting payout method via Airtel Money');
-                      if (_formKey.currentState!.validate()) {
-                        final result = await payOutPr.payoutRequest(
-                          amount: redeemCoinsController.text,
-                          name: "NA",
-                          accNumber: "NA",
-                          bnkName: "NA",
-                          brnName: "NA",
-                          phnNumber: phoneNumberController.text,
-                          paymentMethod: 1,
-                        );
-                        if (result) {
-                          Navigator.pop(context);
-                          Navigator.pop(context);
-                          showDialog(
-                            context: context,
-                            builder: (context) => MepCustomDialog(
-                              image: SvgPicture.asset(
-                                  "assets/svg/dialog/tick_mep.svg"),
-                              title: "Successful",
-                              subTitle: "Your Payout Request Submitted!",
-                              btnText: "Go to Wallet",
-                              // scBtnText: "View Details",
-                              btnGradient: AppColors.orangeYelloH,
-                              scBtnGradient: AppColors.buttonBlueVertical,
-                              showCloseBtn: false,
-                              onPressed: () => navigatorKey.currentState!.pop(),
+                ),
+                SizedBox(height: appHeight * 0.1),
+                BottomSheetButton(
+                  onTap: () async {
+                    debugPrint('Submitting payout method via Airtel Money');
+                    if (_formKey.currentState!.validate()) {
+                      final result = await payOutPr.payoutRequest(
+                        amount: redeemCoinsController.text,
+                        name: "NA",
+                        accNumber: "NA",
+                        bnkName: "NA",
+                        brnName: "NA",
+                        phnNumber: phoneNumberController.text,
+                        paymentMethod: 1,
+                      );
+                      if (result) {
+                        Navigator.pop(context);
+                        Navigator.pop(context);
+                        showDialog(
+                          context: context,
+                          builder: (context) => MepCustomDialog(
+                            image: SvgPicture.asset(
+                              "assets/svg/dialog/tick_mep.svg",
                             ),
-                          );
-                        } else {
-                          Navigator.pop(context);
-                          Navigator.pop(context);
-                          showSnackBar('Something went wrong !');
-                        }
+                            title: "Successful",
+                            subTitle: "Your Payout Request Submitted!",
+                            btnText: "Go to Wallet",
+                            // scBtnText: "View Details",
+                            btnGradient: AppColors.orangeYelloH,
+                            scBtnGradient: AppColors.buttonBlueVertical,
+                            showCloseBtn: false,
+                            onPressed: () => navigatorKey.currentState!.pop(),
+                          ),
+                        );
+                      } else {
+                        Navigator.pop(context);
+                        Navigator.pop(context);
+                        showSnackBar('Something went wrong !');
                       }
-                    },
-                    buttonName: 'Submit',
-                  ),
-                  SizedBox(height: appHeight * 0.05),
-                ],
-              ),
+                    }
+                  },
+                  buttonName: 'Submit',
+                ),
+                SizedBox(height: appHeight * 0.05),
+              ],
             ),
-          );
-        });
+          ),
+        );
+      },
+    );
   }
 
   void showMpambaBottomSheet(BuildContext context) {
     showModalBottomSheet(
-        context: context,
-        builder: (context) {
-          double appHeight = MediaQuery.of(context).size.height;
-          double appWidth = MediaQuery.of(context).size.width;
+      context: context,
+      builder: (context) {
+        double appHeight = MediaQuery.of(context).size.height;
+        double appWidth = MediaQuery.of(context).size.width;
 
-          // final phoneNumberController = TextEditingController();
-          final payOutPr = Provider.of<PayoutRequestProvider>(context);
+        // final phoneNumberController = TextEditingController();
+        final payOutPr = Provider.of<PayoutRequestProvider>(context);
 
-          return BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-            child: Container(
-                width: appWidth,
-                decoration: const BoxDecoration(
-                    color: AppColors.white,
-                    borderRadius: BorderRadius.all(Radius.circular(30))),
-                child: Column(mainAxisSize: MainAxisSize.min, children: [
-                  SizedBox(height: appHeight * 0.02),
-                  const BottomSheetTitleSubtitle(
-                      title: 'Payout',
-                      subtitle:
-                          'Please enter your mobile number registered with Mpamba'),
-                  SizedBox(height: appHeight * 0.01),
-                  Container(
-                      margin: EdgeInsets.symmetric(
-                          horizontal: appWidth * 0.1,
-                          vertical: appHeight * 0.01),
-                      child: Form(
-                        key: _formKey,
-                        child: TextFormField(
-                          controller: phoneNumberController,
-                          keyboardType: TextInputType.number,
-                          style: Theme.of(context)
-                              .textTheme
-                              .titleLarge!
-                              .copyWith(color: AppColors.blue),
-                          decoration: InputDecoration(
-                            labelText: 'Enter Mobile Number',
-                            labelStyle: Theme.of(context)
-                                .textTheme
-                                .bodyLarge!
-                                .copyWith(color: AppColors.black),
-                            border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                                borderSide: const BorderSide(
-                                    color: AppColors.disabled, width: 1)),
-                            focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                                borderSide: const BorderSide(
-                                    color: AppColors.disabled, width: 1)),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: const BorderSide(
-                                  color: AppColors.disabled, width: 1),
-                            ),
+        return BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          child: Container(
+            width: appWidth,
+            decoration: const BoxDecoration(
+              color: AppColors.white,
+              borderRadius: BorderRadius.all(Radius.circular(30)),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                SizedBox(height: appHeight * 0.02),
+                const BottomSheetTitleSubtitle(
+                  title: 'Payout',
+                  subtitle:
+                      'Please enter your mobile number registered with Mpamba',
+                ),
+                SizedBox(height: appHeight * 0.01),
+                Container(
+                  margin: EdgeInsets.symmetric(
+                    horizontal: appWidth * 0.1,
+                    vertical: appHeight * 0.01,
+                  ),
+                  child: Form(
+                    key: _formKey,
+                    child: TextFormField(
+                      controller: phoneNumberController,
+                      keyboardType: TextInputType.number,
+                      style: Theme.of(
+                        context,
+                      ).textTheme.titleLarge!.copyWith(color: AppColors.blue),
+                      decoration: InputDecoration(
+                        labelText: 'Enter Mobile Number',
+                        labelStyle: Theme.of(
+                          context,
+                        ).textTheme.bodyLarge!.copyWith(color: AppColors.black),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: const BorderSide(
+                            color: AppColors.disabled,
+                            width: 1,
                           ),
-                          validator: (value) {
-                            if (phoneNumberController.text.isEmpty) {
-                              return "Enter a phone number !";
-                            }
-                            return null;
-                          },
                         ),
-                      )),
-                  SizedBox(height: appHeight * 0.1),
-                  BottomSheetButton(
-                      onTap: () async {
-                        debugPrint('Submitting payout method via Mpamba');
-
-                        if (_formKey.currentState!.validate()) {
-                          final result = await payOutPr.payoutRequest(
-                            amount: redeemCoinsController.text,
-                            name: "NA",
-                            accNumber: "NA",
-                            bnkName: "NA",
-                            brnName: "NA",
-                            phnNumber: phoneNumberController.text,
-                            paymentMethod: 2,
-                          );
-                          if (result) {
-                            Navigator.pop(context);
-                            Navigator.pop(context);
-                            showDialog(
-                              context: context,
-                              builder: (context) => MepCustomDialog(
-                                image: SvgPicture.asset(
-                                    "assets/svg/dialog/tick_mep.svg"),
-                                title: "Successful",
-                                subTitle: "Your Payout Request Submitted!",
-                                btnText: "Go to Wallet",
-                                // scBtnText: "View Details",
-                                btnGradient: AppColors.orangeYelloH,
-                                scBtnGradient: AppColors.buttonBlueVertical,
-                                showCloseBtn: false,
-                                onPressed: () =>
-                                    navigatorKey.currentState!.pop(),
-                              ),
-                            );
-                          } else {
-                            Navigator.pop(context);
-                            Navigator.pop(context);
-                            showSnackBar('Something went wrong !');
-                          }
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: const BorderSide(
+                            color: AppColors.disabled,
+                            width: 1,
+                          ),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: const BorderSide(
+                            color: AppColors.disabled,
+                            width: 1,
+                          ),
+                        ),
+                      ),
+                      validator: (value) {
+                        if (phoneNumberController.text.isEmpty) {
+                          return "Enter a phone number !";
                         }
+                        return null;
                       },
-                      buttonName: 'Submit'),
-                  SizedBox(height: appHeight * 0.05),
-                ])),
-          );
-        });
+                    ),
+                  ),
+                ),
+                SizedBox(height: appHeight * 0.1),
+                BottomSheetButton(
+                  onTap: () async {
+                    debugPrint('Submitting payout method via Mpamba');
+
+                    if (_formKey.currentState!.validate()) {
+                      final result = await payOutPr.payoutRequest(
+                        amount: redeemCoinsController.text,
+                        name: "NA",
+                        accNumber: "NA",
+                        bnkName: "NA",
+                        brnName: "NA",
+                        phnNumber: phoneNumberController.text,
+                        paymentMethod: 2,
+                      );
+                      if (result) {
+                        Navigator.pop(context);
+                        Navigator.pop(context);
+                        showDialog(
+                          context: context,
+                          builder: (context) => MepCustomDialog(
+                            image: SvgPicture.asset(
+                              "assets/svg/dialog/tick_mep.svg",
+                            ),
+                            title: "Successful",
+                            subTitle: "Your Payout Request Submitted!",
+                            btnText: "Go to Wallet",
+                            // scBtnText: "View Details",
+                            btnGradient: AppColors.orangeYelloH,
+                            scBtnGradient: AppColors.buttonBlueVertical,
+                            showCloseBtn: false,
+                            onPressed: () => navigatorKey.currentState!.pop(),
+                          ),
+                        );
+                      } else {
+                        Navigator.pop(context);
+                        Navigator.pop(context);
+                        showSnackBar('Something went wrong !');
+                      }
+                    }
+                  },
+                  buttonName: 'Submit',
+                ),
+                SizedBox(height: appHeight * 0.05),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 
   void showBankAccountBottomSheet(BuildContext context) {
@@ -595,8 +643,9 @@ class _ManageEarningsPageState extends State<ManageEarningsPage> {
             width: appWidth,
             // height: 200,
             decoration: const BoxDecoration(
-                color: AppColors.white,
-                borderRadius: BorderRadius.all(Radius.circular(30))),
+              color: AppColors.white,
+              borderRadius: BorderRadius.all(Radius.circular(30)),
+            ),
             child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 20.0),
               child: Form(
@@ -607,7 +656,8 @@ class _ManageEarningsPageState extends State<ManageEarningsPage> {
                   children: [
                     SizedBox(height: appHeight * 0.03),
                     const BottomSheetTitleSubtitle(
-                        title: 'Add Account Details'),
+                      title: 'Add Account Details',
+                    ),
                     AddAccountTextField(
                       horizontal: appWidth * 0,
                       controller: accountNumberController,
@@ -670,46 +720,49 @@ class _ManageEarningsPageState extends State<ManageEarningsPage> {
                     ),
                     SizedBox(height: appHeight * 0.1),
                     BottomSheetButton(
-                        onTap: () async {
-                          if (_formKey.currentState!.validate()) {
-                            final result = await payOutPr.payoutRequest(
-                              amount: redeemCoinsController.text,
-                              name: accountHolderName.text,
-                              accNumber: accountNumberController.text,
-                              bnkName: bankNameController.text,
-                              brnName: branchNameController.text,
-                              phnNumber: "NA",
-                              paymentMethod: 3,
-                            );
-                            if (result) {
-                              Navigator.pop(context);
-                              Navigator.pop(context);
-                              showDialog(
-                                context: context,
-                                builder: (context) => MepCustomDialog(
-                                  image: SvgPicture.asset(
-                                      "assets/svg/dialog/tick_mep.svg"),
-                                  title: "Successful",
-                                  subTitle: "Your Payout Request Submitted!",
-                                  btnText: "Go to Wallet",
-                                  // scBtnText: "View Details",
-                                  btnGradient: AppColors.orangeYelloH,
-                                  scBtnGradient: AppColors.buttonBlueVertical,
-                                  showCloseBtn: false,
-                                  onPressed: () =>
-                                      navigatorKey.currentState!.pop(),
+                      onTap: () async {
+                        if (_formKey.currentState!.validate()) {
+                          final result = await payOutPr.payoutRequest(
+                            amount: redeemCoinsController.text,
+                            name: accountHolderName.text,
+                            accNumber: accountNumberController.text,
+                            bnkName: bankNameController.text,
+                            brnName: branchNameController.text,
+                            phnNumber: "NA",
+                            paymentMethod: 3,
+                          );
+                          if (result) {
+                            Navigator.pop(context);
+                            Navigator.pop(context);
+                            showDialog(
+                              context: context,
+                              builder: (context) => MepCustomDialog(
+                                image: SvgPicture.asset(
+                                  "assets/svg/dialog/tick_mep.svg",
                                 ),
-                              );
-                            } else {
-                              Navigator.pop(context);
-                              Navigator.pop(context);
-                              showSnackBar('Something went wrong !');
-                            }
+                                title: "Successful",
+                                subTitle: "Your Payout Request Submitted!",
+                                btnText: "Go to Wallet",
+                                // scBtnText: "View Details",
+                                btnGradient: AppColors.orangeYelloH,
+                                scBtnGradient: AppColors.buttonBlueVertical,
+                                showCloseBtn: false,
+                                onPressed: () =>
+                                    navigatorKey.currentState!.pop(),
+                              ),
+                            );
+                          } else {
+                            Navigator.pop(context);
+                            Navigator.pop(context);
+                            showSnackBar('Something went wrong !');
                           }
-                          debugPrint(
-                              'Submitting payout method via Bank Transfer');
-                        },
-                        buttonName: 'Submit'),
+                        }
+                        debugPrint(
+                          'Submitting payout method via Bank Transfer',
+                        );
+                      },
+                      buttonName: 'Submit',
+                    ),
                     SizedBox(height: appHeight * 0.05),
                   ],
                 ),

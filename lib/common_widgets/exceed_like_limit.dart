@@ -28,14 +28,12 @@ import 'stadium_button.dart';
 
 String _kConsumableId = 'boost_1';
 // ignore: unused_element
-const String _kUpgradeId = 'metfie_plus';
-const String _kSilverSubscriptionId = 'metfie_plus';
-const String _kGoldSubscriptionId = 'metfie_plus';
+const String _kUpgradeId = 'bsty_plus';
+const String _kSilverSubscriptionId = 'bsty_plus';
+const String _kGoldSubscriptionId = 'bsty_plus';
 
 class ExceedLikeDialog extends StatefulWidget {
-  const ExceedLikeDialog({
-    Key? key,
-  }) : super(key: key);
+  const ExceedLikeDialog({Key? key}) : super(key: key);
 
   @override
   State<ExceedLikeDialog> createState() => ExceedLikeDialogState();
@@ -75,28 +73,38 @@ class ExceedLikeDialogState extends State<ExceedLikeDialog> {
   void initState() {
     final Stream<List<PurchaseDetails>> purchaseUpdated =
         _inAppPurchase.purchaseStream;
-    _subscription =
-        purchaseUpdated.listen((List<PurchaseDetails> purchaseDetailsList) {
-      _listenToPurchaseUpdated(purchaseDetailsList);
-    }, onDone: () {
-      _subscription.cancel();
-    }, onError: (Object error) {
-      // handle error here.
-    });
+    _subscription = purchaseUpdated.listen(
+      (List<PurchaseDetails> purchaseDetailsList) {
+        _listenToPurchaseUpdated(purchaseDetailsList);
+      },
+      onDone: () {
+        _subscription.cancel();
+      },
+      onError: (Object error) {
+        // handle error here.
+      },
+    );
     // initStoreInfo();
     super.initState();
   }
 
   Future<void> _listenToPurchaseUpdated(
-      List<PurchaseDetails> purchaseDetailsList) async {
+    List<PurchaseDetails> purchaseDetailsList,
+  ) async {
     final inAppProvider = context.read<InAppProvider>();
     for (final PurchaseDetails purchaseDetails in purchaseDetailsList) {
       log('-----------------------------------------');
-      log('localVerificationData  ${purchaseDetails.verificationData.localVerificationData}');
+      log(
+        'localVerificationData  ${purchaseDetails.verificationData.localVerificationData}',
+      );
       log('-----------------------------------------');
-      log('serverVerificationData  ${purchaseDetails.verificationData.serverVerificationData}');
+      log(
+        'serverVerificationData  ${purchaseDetails.verificationData.serverVerificationData}',
+      );
       log('-----------------------------------------');
-      log('purchase id ${purchaseDetails.purchaseID} productID ${purchaseDetails.productID}');
+      log(
+        'purchase id ${purchaseDetails.purchaseID} productID ${purchaseDetails.productID}',
+      );
       log('-----------------------------------------');
       log(purchaseDetails.status.toString());
       log(purchaseDetails.verificationData.toString());
@@ -124,19 +132,25 @@ class ExceedLikeDialogState extends State<ExceedLikeDialog> {
             // Access properties of AppStorePurchaseDetails
             final String? transactionId = appStorePurchaseDetails.purchaseID;
             final String originalTransactionId = appStorePurchaseDetails
-                .skPaymentTransaction.transactionIdentifier
+                .skPaymentTransaction
+                .transactionIdentifier
                 .toString();
             final String productIdentifier = appStorePurchaseDetails.productID;
             final String verificationData = appStorePurchaseDetails
-                .verificationData.serverVerificationData
+                .verificationData
+                .serverVerificationData
                 .toString();
             final String quantity = appStorePurchaseDetails
-                .skPaymentTransaction.payment.quantity
+                .skPaymentTransaction
+                .payment
+                .quantity
                 .toString();
-            final String transactionDate =
-                appStorePurchaseDetails.transactionDate.toString();
+            final String transactionDate = appStorePurchaseDetails
+                .transactionDate
+                .toString();
             debugPrint(
-                '-----transactionId $transactionId \n ----originalTransactionId $originalTransactionId \n---productIdentifier $productIdentifier \n-----verificationData $verificationData  \n--------quantity$quantity\n ---transactionDate$transactionDate');
+              '-----transactionId $transactionId \n ----originalTransactionId $originalTransactionId \n---productIdentifier $productIdentifier \n-----verificationData $verificationData  \n--------quantity$quantity\n ---transactionDate$transactionDate',
+            );
             // ...
 
             // Handle the app store purchase details and perform necessary actions
@@ -151,7 +165,8 @@ class ExceedLikeDialogState extends State<ExceedLikeDialog> {
             });
           } else {
             dynamic quantity = jsonDecode(
-                purchaseDetails.verificationData.localVerificationData);
+              purchaseDetails.verificationData.localVerificationData,
+            );
             data = FormData.fromMap({
               'product_id': purchaseDetails.productID,
               'purchase_time': purchaseDetails.purchaseID,
@@ -178,9 +193,9 @@ class ExceedLikeDialogState extends State<ExceedLikeDialog> {
         }
         if (Platform.isAndroid) {
           if (!_kAutoConsume && purchaseDetails.productID == _kConsumableId) {
-            final InAppPurchaseAndroidPlatformAddition androidAddition =
-                _inAppPurchase.getPlatformAddition<
-                    InAppPurchaseAndroidPlatformAddition>();
+            final InAppPurchaseAndroidPlatformAddition
+            androidAddition = _inAppPurchase
+                .getPlatformAddition<InAppPurchaseAndroidPlatformAddition>();
             await androidAddition.consumePurchase(purchaseDetails);
           }
         }
@@ -252,8 +267,8 @@ class ExceedLikeDialogState extends State<ExceedLikeDialog> {
       await iosPlatformAddition.setDelegate(ExamplePaymentQueueDelegate());
     }
 
-    final ProductDetailsResponse productDetailResponse =
-        await _inAppPurchase.queryProductDetails(identifiers);
+    final ProductDetailsResponse productDetailResponse = await _inAppPurchase
+        .queryProductDetails(identifiers);
     log('in app product details ${productDetailResponse.productDetails}');
     if (productDetailResponse.error != null) {
       setState(() {
@@ -345,10 +360,10 @@ class ExceedLikeDialogState extends State<ExceedLikeDialog> {
           children: [
             Text(
               'Exceeded the liking limit!',
-              style: Theme.of(context)
-                  .textTheme
-                  .bodyLarge!
-                  .copyWith(color: AppColors.white, fontSize: 20),
+              style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                color: AppColors.white,
+                fontSize: 20,
+              ),
             ),
             SizedBox(height: mq.height * 0.01),
             Column(
@@ -361,9 +376,9 @@ class ExceedLikeDialogState extends State<ExceedLikeDialog> {
                 SizedBox(height: mq.height * 0.02),
                 Text(
                   "You've hit the liking limit.\nWait 12 hrs\nor upgrade for unlimited access.",
-                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                        color: AppColors.white,
-                      ),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodyMedium!.copyWith(color: AppColors.white),
                   textAlign: TextAlign.center,
                 ),
               ],
@@ -374,108 +389,101 @@ class ExceedLikeDialogState extends State<ExceedLikeDialog> {
               height: authPro.isTab ? 200 : 140,
               width: authPro.isTab ? mq.width * .8 : mq.width * 2,
               child: ValueListenableBuilder(
-                  valueListenable: _selectedPlan,
-                  builder: (context, value, child) {
-                    return ListView.builder(
-                      itemCount: planPriceDet.payOptionsPlus.length,
-                      scrollDirection: Axis.horizontal,
-                      itemBuilder: (BuildContext context, int index) {
-                        // String price = _products[index].rawPrice.toString();
-                        // log(_products[index].id.toString());
-                        return GestureDetector(
-                          onTap: () {
-                            // if (_products.isNotEmpty) {
-                            //   _products.sort(
-                            //     (a, b) => a.rawPrice.compareTo(b.rawPrice),
-                            //   );
-                            _selectedPlan.value = index;
-                            //   selectedProduct = _products[index];
-                            // } else {
-                            //   navigatorKey.currentState!.pop();
-                            //   showSnackBar('Something went wrong!');
-                            // }
-                          },
-                          child: Container(
-                            height: mq.height * 0.23,
-                            width:
-                                authPro.isTab ? mq.width * .2 : mq.width * .24,
-                            padding: EdgeInsets.symmetric(
-                                vertical: index == 1 ? 0 : 10),
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                color: _selectedPlan.value == index
-                                    ? AppColors.deepOrange
-                                    : AppColors.black,
-                                width: _selectedPlan.value == index ? 3 : 1,
-                              ),
-                              color: AppColors.white,
+                valueListenable: _selectedPlan,
+                builder: (context, value, child) {
+                  return ListView.builder(
+                    itemCount: planPriceDet.payOptionsPlus.length,
+                    scrollDirection: Axis.horizontal,
+                    itemBuilder: (BuildContext context, int index) {
+                      // String price = _products[index].rawPrice.toString();
+                      // log(_products[index].id.toString());
+                      return GestureDetector(
+                        onTap: () {
+                          // if (_products.isNotEmpty) {
+                          //   _products.sort(
+                          //     (a, b) => a.rawPrice.compareTo(b.rawPrice),
+                          //   );
+                          _selectedPlan.value = index;
+                          //   selectedProduct = _products[index];
+                          // } else {
+                          //   navigatorKey.currentState!.pop();
+                          //   showSnackBar('Something went wrong!');
+                          // }
+                        },
+                        child: Container(
+                          height: mq.height * 0.23,
+                          width: authPro.isTab ? mq.width * .2 : mq.width * .24,
+                          padding: EdgeInsets.symmetric(
+                            vertical: index == 1 ? 0 : 10,
+                          ),
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: _selectedPlan.value == index
+                                  ? AppColors.deepOrange
+                                  : AppColors.black,
+                              width: _selectedPlan.value == index ? 3 : 1,
                             ),
-                            child: Column(
-                              children: [
-                                if (index == 1)
-                                  Align(
-                                    alignment: Alignment.topCenter,
-                                    child: Container(
-                                      height: mq.height * 0.02,
-                                      width: double.infinity,
-                                      decoration: const BoxDecoration(
-                                        color: AppColors.deepOrange,
-                                      ),
-                                      child: Center(
-                                        child: Text(
-                                          'Most popular',
-                                          textAlign: TextAlign.center,
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodySmall!
-                                              .copyWith(
-                                                fontWeight: FontWeight.bold,
-                                                color: AppColors.white,
-                                                fontSize: 10,
-                                              ),
-                                        ),
+                            color: AppColors.white,
+                          ),
+                          child: Column(
+                            children: [
+                              if (index == 1)
+                                Align(
+                                  alignment: Alignment.topCenter,
+                                  child: Container(
+                                    height: mq.height * 0.02,
+                                    width: double.infinity,
+                                    decoration: const BoxDecoration(
+                                      color: AppColors.deepOrange,
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        'Most popular',
+                                        textAlign: TextAlign.center,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodySmall!
+                                            .copyWith(
+                                              fontWeight: FontWeight.bold,
+                                              color: AppColors.white,
+                                              fontSize: 10,
+                                            ),
                                       ),
                                     ),
                                   ),
-                                if (authPro.isTab)
-                                  SizedBox(
-                                    height: mq.height * 0.02,
-                                  ),
-                                Text(
-                                  planPriceDet.payOptionsPlus[index]['plan']
-                                      .toString(),
-                                  textAlign: TextAlign.center,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .displayLarge!
-                                      .copyWith(
-                                        color: AppColors.black,
-                                      ),
                                 ),
-                                Text(
-                                  'Months',
-                                  textAlign: TextAlign.center,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodySmall!
-                                      .copyWith(fontWeight: FontWeight.bold),
+                              if (authPro.isTab)
+                                SizedBox(height: mq.height * 0.02),
+                              Text(
+                                planPriceDet.payOptionsPlus[index]['plan']
+                                    .toString(),
+                                textAlign: TextAlign.center,
+                                style: Theme.of(context).textTheme.displayLarge!
+                                    .copyWith(color: AppColors.black),
+                              ),
+                              Text(
+                                'Months',
+                                textAlign: TextAlign.center,
+                                style: Theme.of(context).textTheme.bodySmall!
+                                    .copyWith(fontWeight: FontWeight.bold),
+                              ),
+                              Text(
+                                'USD ${planPriceDet.payOptionsPlus[index]['price']}',
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(
+                                  color: AppColors.grey,
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.bold,
                                 ),
-                                Text(
-                                  'USD ${planPriceDet.payOptionsPlus[index]['price']}',
-                                  textAlign: TextAlign.center,
-                                  style: const TextStyle(
-                                    color: AppColors.grey,
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
-                        );
-                      },
-                    );
-                  }),
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
             ),
             SizedBox(height: mq.height * 0.05),
             StadiumButton(
@@ -499,15 +507,17 @@ class ExceedLikeDialogState extends State<ExceedLikeDialog> {
                   return;
                 }
 
-                await initStoreInfo(
-                    {planPriceDet.payOptionsPlus[_selectedPlan.value]['id']});
+                await initStoreInfo({
+                  planPriceDet.payOptionsPlus[_selectedPlan.value]['id'],
+                });
                 if (_notFoundIds.isNotEmpty &&
                     _notFoundIds[0] ==
-                        planPriceDet.payOptionsPlus[_selectedPlan.value]
-                            ['id']) {
+                        planPriceDet.payOptionsPlus[_selectedPlan
+                            .value]['id']) {
                   navigatorKey.currentState!.pop();
                   showSnackBar(
-                      'We\'re sorry, but the requested in-app purchase is not available.');
+                    'We\'re sorry, but the requested in-app purchase is not available.',
+                  );
                   isLoading = false;
                   return;
                 }
@@ -522,14 +532,17 @@ class ExceedLikeDialogState extends State<ExceedLikeDialog> {
 
                 final Map<String, PurchaseDetails> purchases =
                     Map<String, PurchaseDetails>.fromEntries(
-                        _purchases.map((PurchaseDetails purchase) {
-                  if (purchase.pendingCompletePurchase) {
-                    _inAppPurchase.completePurchase(purchase);
-                  }
+                      _purchases.map((PurchaseDetails purchase) {
+                        if (purchase.pendingCompletePurchase) {
+                          _inAppPurchase.completePurchase(purchase);
+                        }
 
-                  return MapEntry<String, PurchaseDetails>(
-                      purchase.productID, purchase);
-                }));
+                        return MapEntry<String, PurchaseDetails>(
+                          purchase.productID,
+                          purchase,
+                        );
+                      }),
+                    );
 
                 log('purchases ${purchases.toString()}');
 
@@ -544,14 +557,15 @@ class ExceedLikeDialogState extends State<ExceedLikeDialog> {
                       _getOldSubscription(_products.first, purchases);
                   log(purchases.toString());
                   purchaseParam = GooglePlayPurchaseParam(
-                      productDetails: _products.first,
-                      changeSubscriptionParam: (oldSubscription != null)
-                          ? ChangeSubscriptionParam(
-                              oldPurchaseDetails: oldSubscription,
-                              // prorationMode:
-                              //     ProrationMode.immediateWithTimeProration,
-                            )
-                          : null);
+                    productDetails: _products.first,
+                    changeSubscriptionParam: (oldSubscription != null)
+                        ? ChangeSubscriptionParam(
+                            oldPurchaseDetails: oldSubscription,
+                            // prorationMode:
+                            //     ProrationMode.immediateWithTimeProration,
+                          )
+                        : null,
+                  );
                   log(purchaseParam.applicationUserName.toString());
                 } else {
                   purchaseParam = PurchaseParam(
@@ -580,7 +594,7 @@ class ExceedLikeDialogState extends State<ExceedLikeDialog> {
                   //     ),
                   //   )
                   : const Text('Subscribe Now'),
-            )
+            ),
           ],
         ),
       ),
@@ -588,7 +602,9 @@ class ExceedLikeDialogState extends State<ExceedLikeDialog> {
   }
 
   GooglePlayPurchaseDetails? _getOldSubscription(
-      ProductDetails productDetails, Map<String, PurchaseDetails> purchases) {
+    ProductDetails productDetails,
+    Map<String, PurchaseDetails> purchases,
+  ) {
     // This is just to demonstrate a subscription upgrade or downgrade.
     // This method assumes that you have only 2 subscriptions under a group, 'subscription_silver' & 'subscription_gold'.
     // The 'subscription_silver' subscription can be upgraded to 'subscription_gold' and
@@ -611,27 +627,28 @@ class ExceedLikeDialogState extends State<ExceedLikeDialog> {
 
   void showPaymentNotAvailableDialog() {
     showDialog(
-        context: context,
-        builder: (context) => Dialog(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      "Payment option is not currently available. We'll be adding it soon",
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.titleMedium,
-                    ),
-                    const SizedBox(height: 20),
-                    StadiumButton(
-                      text: 'Ok',
-                      bgColor: AppColors.black,
-                      onPressed: () => Navigator.of(context).pop(),
-                    )
-                  ],
-                ),
+      context: context,
+      builder: (context) => Dialog(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                "Payment option is not currently available. We'll be adding it soon",
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.titleMedium,
               ),
-            ));
+              const SizedBox(height: 20),
+              StadiumButton(
+                text: 'Ok',
+                bgColor: AppColors.black,
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }

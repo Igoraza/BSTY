@@ -34,7 +34,29 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   /// [ Bottom Navigation Bar Buttons ]
-  final bottomNavButtons = ['home', 'subtitles', '', 'chat', 'settings'];
+  // final bottomNavButtons = [
+  //   'home',
+  //   'subtitles',
+  //   'boundary',
+  //   'chat',
+  //   'settings',
+  // ];
+
+  final bottomNavButtons = [
+    'home',
+    'explore',
+    'location',
+    'message',
+    'account',
+  ];
+
+  final filledBottomNavButtons = [
+    'home_filled',
+    'explore_filled',
+    'location_filled',
+    'message_filled',
+    'account_filled',
+  ];
 
   final ValueNotifier<int> valueNotifier = ValueNotifier(0);
 
@@ -217,95 +239,162 @@ class _MainPageState extends State<MainPage> {
     // log('user index main ${widget.navIndex.toString()}');
     return BackgroundImage(
       child: Scaffold(
+        extendBody: true,
         body: ValueListenableBuilder<int>(
           valueListenable: valueNotifier,
           builder: (context, value, _) {
-            return Stack(
-              children: [
-                Container(
-                  margin: EdgeInsets.only(bottom: size.width * 0.18),
-                  child: screens[valueNotifier.value],
+            return screens[valueNotifier.value];
+
+            // Stack(
+            //   children: [
+            //     Container(
+            //       margin: EdgeInsets.only(bottom: size.width * 0.18),
+            //       child: screens[valueNotifier.value],
+            //     ),
+            //     Positioned(
+            //       bottom: 0,
+            //       left: 0,
+            //       child: SizedBox(
+            //         width: size.width,
+            //         height: authPro.isTab
+            //             ? size.width * 0.2
+            //             : size.width * 0.25,
+            //         child: Stack(
+            //           children: [
+            //             CustomPaint(
+            //               size: Size(size.width, size.width * 0.25),
+            //               painter: BottomNavCustomPainter(),
+            //             ),
+            //             Container(
+            //               width: size.width,
+            //               height: size.height * 0.2,
+            //               padding: EdgeInsets.only(
+            //                 top: size.height * 0.01,
+            //                 bottom: size.height * 0.03,
+            //               ),
+            //               child: Row(
+            //                 mainAxisAlignment: MainAxisAlignment.spaceAround,
+            //                 crossAxisAlignment: CrossAxisAlignment.end,
+            //                 children: List.generate(
+            //                   bottomNavButtons.length,
+            //                   (index) => InkWell(
+            //                     /// [Change the screen ] when the bottom navigation bar button is tappe
+            //                     onTap: () => valueNotifier.value = index,
+            //                     child: index == 2
+            //                         ? Container(
+            //                             padding: EdgeInsets.all(
+            //                               size.width * 0.025,
+            //                             ),
+            //                             margin: const EdgeInsets.only(
+            //                               bottom: 20,
+            //                             ),
+            //                             decoration: BoxDecoration(
+            //                               shape: BoxShape.circle,
+            //                               color: AppColors.deepOrange,
+            //                               gradient: value == 2
+            //                                   ? null
+            //                                   : AppColors.buttonBlue,
+            //                             ),
+            //                             child: SvgPicture.asset(
+            //                               'assets/svg/bottom_nav/boundary.svg',
+            //                             ),
+            //                           )
+            //                         : index == 0
+            //                         ? SvgPicture.asset(
+            //                             // 'assets/icons/${bottomNavButtons[index]['icon']}',
+            //                             'assets/svg/bottom_nav/${bottomNavButtons[index]}.svg',
+            //                             color: value == index
+            //                                 ? null
+            //                                 : AppColors.lightGrey,
+            //                           )
+            //                         : Padding(
+            //                             padding: const EdgeInsets.fromLTRB(
+            //                               10,
+            //                               10,
+            //                               10,
+            //                               0,
+            //                             ),
+            //                             child: SvgPicture.asset(
+            //                               // 'assets/icons/${bottomNavButtons[index]['icon']}',
+            //                               'assets/svg/bottom_nav/${bottomNavButtons[index]}.svg',
+            //                               color: value == index
+            //                                   ? AppColors.deepOrange
+            //                                   : AppColors.lightGrey,
+            //                             ),
+            //                           ),
+            //                   ),
+            //                 ),
+            //               ),
+            //             ),
+            //           ],
+            //         ),
+            //       ),
+            //     ),
+            //   ],
+            // );
+          },
+        ),
+        bottomNavigationBar: ValueListenableBuilder<int>(
+          valueListenable: valueNotifier,
+          builder: (context, value, _) {
+            return Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
+              child: Container(
+                width: size.width,
+                height: size.height * 0.08,
+                // padding: EdgeInsets.only(
+                //   top: size.height * 0.01,
+                //   bottom: size.height * 0.03,
+                // ),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(50),
                 ),
-                Positioned(
-                  bottom: 0,
-                  left: 0,
-                  child: SizedBox(
-                    width: size.width,
-                    height: authPro.isTab
-                        ? size.width * 0.2
-                        : size.width * 0.25,
-                    child: Stack(
-                      children: [
-                        CustomPaint(
-                          size: Size(size.width, size.width * 0.25),
-                          painter: BottomNavCustomPainter(),
-                        ),
-                        Container(
-                          width: size.width,
-                          height: size.height * 0.2,
-                          padding: EdgeInsets.only(
-                            top: size.height * 0.01,
-                            bottom: size.height * 0.03,
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: List.generate(
-                              bottomNavButtons.length,
-                              (index) => InkWell(
-                                /// [Change the screen ] when the bottom navigation bar button is tappe
-                                onTap: () => valueNotifier.value = index,
-                                child: index == 2
-                                    ? Container(
-                                        padding: EdgeInsets.all(
-                                          size.width * 0.025,
-                                        ),
-                                        margin: const EdgeInsets.only(
-                                          bottom: 20,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          color: AppColors.deepOrange,
-                                          gradient: value == 2
-                                              ? null
-                                              : AppColors.buttonBlue,
-                                        ),
-                                        child: SvgPicture.asset(
-                                          'assets/svg/bottom_nav/boundary.svg',
-                                        ),
-                                      )
-                                    : index == 0
-                                    ? SvgPicture.asset(
-                                        // 'assets/icons/${bottomNavButtons[index]['icon']}',
-                                        'assets/svg/bottom_nav/${bottomNavButtons[index]}.svg',
-                                        color: value == index
-                                            ? null
-                                            : AppColors.lightGrey,
-                                      )
-                                    : Padding(
-                                        padding: const EdgeInsets.fromLTRB(
-                                          10,
-                                          10,
-                                          10,
-                                          0,
-                                        ),
-                                        child: SvgPicture.asset(
-                                          // 'assets/icons/${bottomNavButtons[index]['icon']}',
-                                          'assets/svg/bottom_nav/${bottomNavButtons[index]}.svg',
-                                          color: value == index
-                                              ? AppColors.deepOrange
-                                              : AppColors.lightGrey,
-                                        ),
-                                      ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: List.generate(
+                    bottomNavButtons.length,
+                    (index) => InkWell(
+                      /// [Change the screen ] when the bottom navigation bar button is tappe
+                      onTap: () => valueNotifier.value = index,
+                      child:
+                          // index == 2
+                          //     ? Container(
+                          //         padding: EdgeInsets.all(size.width * 0.025),
+                          //         margin: const EdgeInsets.only(bottom: 20),
+                          //         decoration: BoxDecoration(
+                          //           shape: BoxShape.circle,
+                          //           color: AppColors.deepOrange,
+                          //           gradient: value == 2
+                          //               ? null
+                          //               : AppColors.buttonBlue,
+                          //         ),
+                          //         child: SvgPicture.asset(
+                          //           'assets/svg/bottom_nav/boundary.svg',
+                          //         ),
+                          //       )
+                          //     :
+                          CircleAvatar(
+                            radius: size.height * 0.03,
+                            backgroundColor: value == index
+                                ? Colors.pink
+                                : AppColors.white,
+                            child: Center(
+                              child: SvgPicture.asset(
+                                // 'assets/icons/${bottomNavButtons[index]['icon']}',
+                                'assets/svg/bottom_nav/${value == index ? filledBottomNavButtons[index] : bottomNavButtons[index]}.svg',
+                                height: size.height * 0.035,
+                                width: size.height * 0.035,
+                                color: value == index
+                                    ? AppColors.white
+                                    : AppColors.black,
                               ),
                             ),
                           ),
-                        ),
-                      ],
                     ),
                   ),
                 ),
-              ],
+              ),
             );
           },
         ),

@@ -253,8 +253,7 @@ class NotificationControl {
 
   void sendPushMessage() async {
     try {
-      String FIRE_BASE_SERVER_KEY =
-          "AAAAa65JCgA:APA91bGar68tvvKYJr-Cu44-yJnmLfiMK5QCEI3hXiJdGOzRuH-OefTSjxJQqL4Cofi47U9yWCR2k2qEwWjsfgU0lrtZLRSOzeWF6XhkQSe_NqRo7fLmxZe7KQX5D72QQkB8dycTUhRt";
+      String FIRE_BASE_SERVER_KEY =dotenv.env['FIRE_BASE_SERVER_KEY']!;
       await http.post(
         Uri.parse('https://fcm.googleapis.com/fcm/send'),
         headers: <String, String>{

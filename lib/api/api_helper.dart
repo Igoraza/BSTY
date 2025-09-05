@@ -12,32 +12,41 @@ class Api {
   Api() {
     api.interceptors
       ..clear
-      ..add(InterceptorsWrapper(onRequest: (options, handler) async {
-        var userTokens = await authProvider.retrieveUserTokens();
-        // log("user token $userTokens");
-        String accessToken = userTokens['access']!;
-        options.headers['Authorization'] = 'Bearer $accessToken';
-        return handler.next(options);
-      }, onError: (DioError error, handler) async {
-        if (error.response?.statusCode == 401) {
-          if (await authProvider.refreshToken()) {
-            final opts = error.requestOptions;
+      ..add(
+        InterceptorsWrapper(
+          onRequest: (options, handler) async {
+            var userTokens = await authProvider.retrieveUserTokens();
+            // log("user token $userTokens");
+            String accessToken = userTokens['access']!;
+            options.headers['Authorization'] = 'Bearer $accessToken';
+            return handler.next(options);
+          },
+          onError: (DioError error, handler) async {
+            if (error.response?.statusCode == 401) {
+              if (await authProvider.refreshToken()) {
+                final opts = error.requestOptions;
 
-            if (opts.method == 'POST') {
-              opts.data = FormData.fromMap(opts.extra['data']);
+                if (opts.method == 'POST') {
+                  opts.data = FormData.fromMap(opts.extra['data']);
+                }
+
+                return handler.resolve(await _retry(opts));
+              } else {
+                debugPrint(
+                  '+++++++++++++refresh token is invalid, logging out',
+                );
+                // authProvider.logout();
+              }
+            } else if (error.response?.statusMessage?.contains(
+                  'SocketException',
+                ) ==
+                true) {
+              debugPrint('+++++++++++++no internet connection');
             }
-
-            return handler.resolve(await _retry(opts));
-          } else {
-            debugPrint('+++++++++++++refresh token is invalid, logging out');
-            // authProvider.logout();
-          }
-        } else if (error.response?.statusMessage?.contains('SocketException') ==
-            true) {
-          debugPrint('+++++++++++++no internet connection');
-        }
-        return handler.next(error);
-      }));
+            return handler.next(error);
+          },
+        ),
+      );
   }
 
   Future<Response<dynamic>> _retry(RequestOptions requestOptions) async {
@@ -46,9 +55,11 @@ class Api {
       headers: requestOptions.headers,
     );
     debugPrint('+++++++++++++retrying request');
-    return api.request<dynamic>(requestOptions.path,
-        data: requestOptions.data,
-        queryParameters: requestOptions.queryParameters,
-        options: options);
+    return api.request<dynamic>(
+      requestOptions.path,
+      data: requestOptions.data,
+      queryParameters: requestOptions.queryParameters,
+      options: options,
+    );
   }
 }

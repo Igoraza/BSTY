@@ -7,9 +7,7 @@ import '../../../../../utils/theme/colors.dart';
 import '../../../widgets/social_icons.dart';
 
 class InviteFriends extends StatelessWidget {
-  InviteFriends({
-    Key? key,
-  }) : super(key: key);
+  InviteFriends({Key? key}) : super(key: key);
 
   final String referralCode = Hive.box('user').get('referral_code');
 
@@ -20,12 +18,13 @@ class InviteFriends extends StatelessWidget {
 
     return Column(
       children: [
-        Text('Invite Friends',
-            style: Theme.of(context)
-                .textTheme
-                .titleMedium!
-                .copyWith(color: AppColors.black),
-            textAlign: TextAlign.center),
+        Text(
+          'Invite Friends',
+          style: Theme.of(
+            context,
+          ).textTheme.titleMedium!.copyWith(color: AppColors.black),
+          textAlign: TextAlign.center,
+        ),
         Container(
           width: double.infinity,
           padding: EdgeInsets.only(top: appHeight * 0.01),
@@ -38,7 +37,7 @@ class InviteFriends extends StatelessWidget {
               //   onTap: () async {
               //     String? response = await FlutterShareMe().shareToWhatsApp(
               //       msg:
-              //           'Try Metfie app \nhttps://play.google.com/store/apps/details?id=com.bsty.app ,\n Use my Referral code: $referral_code',
+              //           'Try Metfie app \nhttps://play.google.com/store/apps/details?id=com.wedconnect.bsty ,\n Use my Referral code: $referral_code',
               //     );
               //   },
               //   name: 'whatsapp',
@@ -48,7 +47,7 @@ class InviteFriends extends StatelessWidget {
               //     // String? response =
               //     //     await FlutterShareMe().shareToMessenger(
               //     //   msg:
-              //     //       'Try Metfie app \nhttps://play.google.com/store/apps/details?id=com.bsty.app ,\n Use my Referral code: $referral_code',
+              //     //       'Try Metfie app \nhttps://play.google.com/store/apps/details?id=com.wedconnect.bsty ,\n Use my Referral code: $referral_code',
               //     // );
               //   },
               //   name: 'facebook',
@@ -67,7 +66,7 @@ class InviteFriends extends StatelessWidget {
               SocialIcons(
                 onTap: () async {
                   String body =
-                      "Try Metfie app \nhttps://metfie.page.link/getapp ,\nUse my Referral code: $referralCode";
+                      "Try BSTY app \nhttps://bsty.page.link/getapp ,\nUse my Referral code: $referralCode";
                   Uri sms = Uri.parse('sms:?&body=$body');
                   if (await launchUrl(sms)) {
                     //app opened
@@ -79,9 +78,10 @@ class InviteFriends extends StatelessWidget {
               ),
               SocialIcons(
                 onTap: () async {
-                  String subject = Uri.encodeComponent("Metfie");
+                  String subject = Uri.encodeComponent("BSTY");
                   String body = Uri.encodeComponent(
-                      "Try Metfie app \nhttps://metfie.page.link/getapp ,\nUse my Referral code: $referralCode");
+                    "Try BSTY app \nhttps://metfie.page.link/getapp ,\nUse my Referral code: $referralCode",
+                  );
                   Uri mail = Uri.parse("mailto:?subject=$subject&body=$body");
                   if (await launchUrl(mail)) {
                     //email app opened
@@ -92,19 +92,20 @@ class InviteFriends extends StatelessWidget {
                 name: 'mail',
               ),
               SocialIcons(
-                  onTap: () {
-                    String msg =
-                        'Try Metfie app \nhttps://metfie.page.link/getapp ,\nUse my Referral code: $referralCode';
-                    debugPrint('Share Code');
-                    final box = context.findRenderObject() as RenderBox;
-                    Share.share(
-                      msg,
-                      subject: 'Refer',
-                      sharePositionOrigin:
-                          box.localToGlobal(Offset.zero) & box.size,
-                    );
-                  },
-                  name: 'share')
+                onTap: () {
+                  String msg =
+                      'Try BSTY app \nhttps://metfie.page.link/getapp ,\nUse my Referral code: $referralCode';
+                  debugPrint('Share Code');
+                  final box = context.findRenderObject() as RenderBox;
+                  Share.share(
+                    msg,
+                    subject: 'Refer',
+                    sharePositionOrigin:
+                        box.localToGlobal(Offset.zero) & box.size,
+                  );
+                },
+                name: 'share',
+              ),
             ],
           ),
         ),

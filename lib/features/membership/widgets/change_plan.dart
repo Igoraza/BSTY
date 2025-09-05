@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:bsty/common_widgets/upgrade_plan.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/cli_commands.dart';
@@ -44,7 +45,7 @@ class ChangePlan extends StatelessWidget {
       "nine",
       "ten",
       "eleven",
-      "twelve"
+      "twelve",
     ];
 
     String expiryDate = '';
@@ -103,7 +104,7 @@ class ChangePlan extends StatelessWidget {
                 SvgPicture.asset(
                   'assets/svg/avatar/avatar_bg.svg',
                   height: mq.width * 0.35,
-                )
+                ),
               ],
             ),
             SizedBox(height: mq.height * 0.01),
@@ -129,12 +130,13 @@ class ChangePlan extends StatelessWidget {
               onPressed: () {
                 // showPaymentNotAvailableDialog();
                 showDialog(
-                    context: context,
-                    builder: (context) => ChangePlanDialog(
-                          controller: userPlan < 4 || planExpired
-                              ? PageController(initialPage: 0)
-                              : PageController(initialPage: 1),
-                        ));
+                  context: context,
+                  builder: (context) => ChangePlanDialog(
+                    controller: userPlan < 4 || planExpired
+                        ? PageController(initialPage: 0)
+                        : PageController(initialPage: 1),
+                  ),
+                );
               },
             ),
             if (userPlan < 4 || planExpired) SizedBox(height: mq.height * 0.03),
@@ -153,15 +155,11 @@ class ChangePlan extends StatelessWidget {
                   ),
                   Text(
                     'Or',
-                    style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                          color: AppColors.black,
-                        ),
+                    style: Theme.of(
+                      context,
+                    ).textTheme.titleMedium!.copyWith(color: AppColors.black),
                   ),
-                  const Expanded(
-                    child: Divider(
-                      color: AppColors.grey,
-                    ),
-                  ),
+                  const Expanded(child: Divider(color: AppColors.grey)),
                 ],
               ),
             if (userPlan < 4 || planExpired) SizedBox(height: mq.height * 0.03),
@@ -169,17 +167,25 @@ class ChangePlan extends StatelessWidget {
               StadiumButton(
                 padding: authPro.isTab
                     ? EdgeInsets.symmetric(
-                        horizontal: mq.width * 0.15, vertical: mq.width * 0.03)
+                        horizontal: mq.width * 0.15,
+                        vertical: mq.width * 0.03,
+                      )
                     : EdgeInsets.symmetric(horizontal: mq.width * 0.1),
                 text: 'Get BSTY Premium',
                 gradient: AppColors.orangeYelloH,
                 onPressed: () {
                   // showPaymentNotAvailableDialog();
-                  showDialog(
-                      context: context,
-                      builder: (context) => UpgradePlanDialog(
-                            title: 'Premium',
-                          ));
+                  // showDialog(
+                  //     context: context,
+                  //     builder: (context) => UpgradePlanDialog(
+                  //           title: 'Premium',
+                  //         ));
+
+                  Navigator.pushNamed(
+                    context,
+                    UpgradePlanScreen.routeName,
+                    arguments: "Premium",
+                  );
                 },
               ),
           ],

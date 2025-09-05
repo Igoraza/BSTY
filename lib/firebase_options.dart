@@ -41,8 +41,8 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyAPO4MNh8mH9wNlhp_aIQHbAAlbSNL3e7s',
-    appId: '1:606198864287:android:59289b5d695ae7183a45aa',
+    apiKey: 'AIzaSyDcRowqE4u1uXcT_cFSYtk5pHQhOzF9BPg',
+    appId: '1:606198864287:android:6e30a76f041ead583a45aa',
     messagingSenderId: '606198864287',
     projectId: 'bsty-68d37',
     storageBucket: 'bsty-68d37.firebasestorage.app',
@@ -50,12 +50,13 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyDt7IXKXC0PY3Zx56jILaRKCdGRseTOlj8',
-    appId: '1:606198864287:ios:c929237711be015a3a45aa',
+    appId: '1:606198864287:ios:6d4637303f2cea373a45aa',
     messagingSenderId: '606198864287',
     projectId: 'bsty-68d37',
     storageBucket: 'bsty-68d37.firebasestorage.app',
-    iosClientId: '606198864287-b7as2ostd795qth51kic35qenq2qs318.apps.googleusercontent.com',
-    iosBundleId: 'com.example.bsty',
+    androidClientId: '606198864287-17t8jkuuk68rcv6qkm6582sr4s2284e1.apps.googleusercontent.com',
+    iosClientId: '606198864287-s4skcpk3qu4pgrgvuthado9splnftp0u.apps.googleusercontent.com',
+    iosBundleId: 'com.wedconnect.bsty',
   );
 
   static const FirebaseOptions web = FirebaseOptions(
@@ -69,12 +70,13 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions macos = FirebaseOptions(
     apiKey: 'AIzaSyDt7IXKXC0PY3Zx56jILaRKCdGRseTOlj8',
-    appId: '1:606198864287:ios:c929237711be015a3a45aa',
+    appId: '1:606198864287:ios:6d4637303f2cea373a45aa',
     messagingSenderId: '606198864287',
     projectId: 'bsty-68d37',
     storageBucket: 'bsty-68d37.firebasestorage.app',
-    iosClientId: '606198864287-b7as2ostd795qth51kic35qenq2qs318.apps.googleusercontent.com',
-    iosBundleId: 'com.example.bsty',
+    androidClientId: '606198864287-17t8jkuuk68rcv6qkm6582sr4s2284e1.apps.googleusercontent.com',
+    iosClientId: '606198864287-s4skcpk3qu4pgrgvuthado9splnftp0u.apps.googleusercontent.com',
+    iosBundleId: 'com.wedconnect.bsty',
   );
 
   static const FirebaseOptions windows = FirebaseOptions(

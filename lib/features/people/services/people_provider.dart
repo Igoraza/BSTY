@@ -345,7 +345,7 @@ class PeopleProvider with ChangeNotifier {
             btnText: 'Buy Now',
             paymentList: planDetails.payBoosts,
 
-            //  kProductIds: ['metfie_plus'],
+            //  kProductIds: ['bsty_plus'],
           ),
         );
         // showSnackBar('Boost is not available');

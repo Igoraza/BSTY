@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:developer';
 
+import 'package:bsty/common_widgets/upgrade_plan.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -201,6 +202,7 @@ class _HomePageState extends State<HomePage> {
         'icon': 'assets/svg/ui_icons/reset.svg',
         'onTap': () {
           // throw Exception();
+          log("User plan :  $userPlan");
           if (userPlan > 2 && !planExpired) {
             if (lastCard == null) {
               showSnackBar('Rewind not available now');
@@ -211,10 +213,12 @@ class _HomePageState extends State<HomePage> {
               builder: (_) => RewindedCard(lastCard: lastCard),
             );
           } else {
-            showDialog(
-              context: context,
-              builder: (context) => UpgradePlanDialog(),
-            );
+            // showDialog(
+            //   context: context,
+            //   builder: (context) => UpgradePlanDialog(),
+            // );
+
+            Navigator.pushNamed(context, UpgradePlanScreen.routeName);
             return;
           }
         },
@@ -227,6 +231,8 @@ class _HomePageState extends State<HomePage> {
         'icon': 'assets/svg/ui_icons/fav.svg',
         'onTap': () {
           final superLikesBalance = Hive.box('user').get('super_like_balance');
+          log("User plan :  $userPlan");
+          log("Super likes :  $superLikesBalance");
           if (userPlan > 2 && !planExpired) {
             if (superLikesBalance == 0) {
               showDialog(
@@ -243,10 +249,12 @@ class _HomePageState extends State<HomePage> {
               cardController.triggerSwipeUp();
             }
           } else {
-            showDialog(
-              context: context,
-              builder: (context) => UpgradePlanDialog(),
-            );
+            // showDialog(
+            //   context: context,
+            //   builder: (context) => UpgradePlanDialog(),
+            // );
+
+            Navigator.pushNamed(context, UpgradePlanScreen.routeName);
             return;
           }
         },
@@ -255,7 +263,8 @@ class _HomePageState extends State<HomePage> {
         'icon': 'assets/svg/ui_icons/star.svg',
         'onTap': () {
           final swipesBalance = Hive.box('user').get('swipes_balance');
-
+          log("User plan :  $userPlan");
+          log("Swipes remaining :  $swipesBalance");
           if (!planExpired) {
             log('1');
             cardController.triggerSwipeRight();
@@ -273,116 +282,134 @@ class _HomePageState extends State<HomePage> {
       {
         'icon': 'assets/svg/ui_icons/trend.svg',
         'onTap': () {
+          // Todo : uncomment this after testing
+          log("User plan :  $userPlan");
           if (userPlan > 2 && !planExpired) {
             peopleProvider.userBoost(context);
             // peopleProvider.sendUserAction(context, userId, '3');
           } else {
-            showDialog(
-              context: context,
-              builder: (context) => UpgradePlanDialog(),
-            );
+            // showDialog(
+            //   context: context,
+            //   builder: (context) => UpgradePlanDialog(),
+            // );
+
+            Navigator.pushNamed(context, UpgradePlanScreen.routeName);
             return;
           }
         },
       },
     ];
 
-    final homeCards = FutureBuilder(
-      future: peopleFuture,
-      builder: (context, AsyncSnapshot snapshot) {
-        // if (!isGranted) {
-        //   return const Center(
-        //     child: NoPermisssionWidget(),
-        //   );
-        // }
-        log("++++++++++++Number of people : ${snapshot.data}");
-        if (snapshot.connectionState != ConnectionState.done) {
-          return mainLoadingAnimationDark;
-        }
-        if (snapshot.hasError) {
-          String errorMsg = '';
+    final homeCards = Padding(
+      padding: const EdgeInsets.only(bottom: 10),
+      child: FutureBuilder(
+        future: peopleFuture,
+        builder: (context, AsyncSnapshot snapshot) {
+          // if (!isGranted) {
+          //   return const Center(
+          //     child: NoPermisssionWidget(),
+          //   );
+          // }
+          log("++++++++++++Number of people : ${snapshot.data}");
+          if (snapshot.connectionState != ConnectionState.done) {
+            return Padding(
+              padding: EdgeInsets.only(bottom: size.height * 0.08),
+              child: mainLoadingAnimationDark,
+            );
+          }
+          if (snapshot.hasError) {
+            String errorMsg = '';
 
-          /// chieck if [ connection error ]
-          if (snapshot.error.toString().contains('SocketException')) {
-            errorMsg =
-                'Error retrieving profiles.\nPlease check your internet connection';
-          } else {
-            errorMsg = 'Error retrieving profiles. Try again later';
+            /// chieck if [ connection error ]
+            if (snapshot.error.toString().contains('SocketException')) {
+              errorMsg =
+                  'Error retrieving profiles.\nPlease check your internet connection';
+            } else {
+              errorMsg = 'Error retrieving profiles. Try again later';
+            }
+
+            return SnapshotErrorWidget(errorMsg);
+          }
+          if (snapshot.data == null || snapshot.data.isEmpty) {
+            return const Center(
+              child: Padding(
+                padding: EdgeInsets.only(bottom: 10),
+                child: SwipeLimitCard(),
+              ),
+            );
+            // Center(
+            //     child: Text('No profiles found,\nTry changing your filters',
+            //         style: Theme.of(context)
+            //             .textTheme
+            //             .bodyLarge!
+            //             .copyWith(fontWeight: FontWeight.bold),
+            //         textAlign: TextAlign.center));
           }
 
-          return SnapshotErrorWidget(errorMsg);
-        }
-        if (snapshot.data == null || snapshot.data.isEmpty) {
-          return const Center(child: SwipeLimitCard());
-          // Center(
-          //     child: Text('No profiles found,\nTry changing your filters',
-          //         style: Theme.of(context)
-          //             .textTheme
-          //             .bodyLarge!
-          //             .copyWith(fontWeight: FontWeight.bold),
-          //         textAlign: TextAlign.center));
-        }
+          final List people = snapshot.data;
 
-        final List people = snapshot.data;
+          log("++++++++++++Number of people : ${people.length}");
 
-        log("++++++++++++Number of people : ${people.length}");
+          final cards = people.map((person) => ProfileCard(person)).toList();
+          final cardsWithLimit = [...cards, const SwipeLimitCard()];
+          // bool allowed = Hive.box('user').get('allowed') ?? false;
+          // log(cardsWithLimit.length.toString());
+          return Consumer<PeopleProvider>(
+            builder: (context, d, _) {
+              if (!guideFinished) {
+                createTutorial();
+                Future.delayed(const Duration(seconds: 3), showTutorial);
+              }
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 10),
+                child: Column(
+                  key: _containerKey,
+                  children: [
+                    SwipeableCardsSection(
+                      cardController: cardController,
+                      context: context,
+                      onCardSwiped: (dir, index, widget) {
+                        currentCardName = people[index].name;
+                        currentCardImage = people[index].displayImage;
+                        lastCard = cards[index];
 
-        final cards = people.map((person) => ProfileCard(person)).toList();
-        final cardsWithLimit = [...cards, const SwipeLimitCard()];
-        // bool allowed = Hive.box('user').get('allowed') ?? false;
-        // log(cardsWithLimit.length.toString());
-        return Consumer<PeopleProvider>(
-          builder: (context, d, _) {
-            if (!guideFinished) {
-              createTutorial();
-              Future.delayed(const Duration(seconds: 3), showTutorial);
-            }
-            return Column(
-              key: _containerKey,
-              children: [
-                SwipeableCardsSection(
-                  cardController: cardController,
-                  context: context,
-                  onCardSwiped: (dir, index, widget) {
-                    currentCardName = people[index].name;
-                    currentCardImage = people[index].displayImage;
-                    lastCard = cards[index];
+                        sendUserAction(dir, people[index].id);
 
-                    sendUserAction(dir, people[index].id);
+                        if (index < cardsWithLimit.length - 3) {
+                          cardController.addItem(cardsWithLimit[index + 3]);
+                        }
+                        if (index == cardsWithLimit.length - 2) {
+                          peopleProvider.isAtLimit.value = true;
+                          cardController.enableSwipe(false);
+                        }
+                        d.direction = dir;
+                        d.currentId = lastCard!.person.id;
+                        Future.delayed(const Duration(milliseconds: 400), () {
+                          d.direction = null;
+                        });
 
-                    if (index < cardsWithLimit.length - 3) {
-                      cardController.addItem(cardsWithLimit[index + 3]);
-                    }
-                    if (index == cardsWithLimit.length - 2) {
-                      peopleProvider.isAtLimit.value = true;
-                      cardController.enableSwipe(false);
-                    }
-                    d.direction = dir;
-                    d.currentId = lastCard!.person.id;
-                    Future.delayed(const Duration(milliseconds: 400), () {
-                      d.direction = null;
-                    });
+                        // cardsWithLimit.insert(index - 1, lastCard!);
+                      },
+                      items: cardsWithLimit.sublist(
+                        0,
+                        cardsWithLimit.length < 3 ? 2 : 3,
+                      ),
+                      // changed to 0,2 range error
+                      //  items: cardsWithLimit.sublist(0, 3),
+                      enableSwipeUp: false,
+                      enableSwipeDown: false,
+                    ),
+                    SizedBox(height: size.height * 0.01),
 
-                    // cardsWithLimit.insert(index - 1, lastCard!);
-                  },
-                  items: cardsWithLimit.sublist(
-                    0,
-                    cardsWithLimit.length < 3 ? 2 : 3,
-                  ),
-                  // changed to 0,2 range error
-                  //  items: cardsWithLimit.sublist(0, 3),
-                  enableSwipeUp: false,
-                  enableSwipeDown: false,
+                    /// ValueListenableBuilder is used to hide the buttons
+                    /// when the user has swiped through all the profiles
+                  ],
                 ),
-                SizedBox(height: size.height * 0.01),
-
-                /// ValueListenableBuilder is used to hide the buttons
-                /// when the user has swiped through all the profiles
-              ],
-            );
-          },
-        );
-      },
+              );
+            },
+          );
+        },
+      ),
     );
 
     return Scaffold(
@@ -447,7 +474,7 @@ class _HomePageState extends State<HomePage> {
             ),
             if (isGranted)
               Positioned(
-                bottom: authPro.isTab ? size.height * 0.03 : size.height * 0.07,
+                bottom: authPro.isTab ? size.height * 0.04 : size.height * 0.08,
                 // top: size.height * 0,
                 child: ValueListenableBuilder(
                   valueListenable: peopleProvider.isAtLimit,

@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:bsty/common_widgets/upgrade_plan.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -36,12 +37,13 @@ class Renewal extends StatelessWidget {
       expiryDate = DateFormat.yMMMMd().add_jm().format(inputDate);
       // outputFormat.format(inputDate);
       //  DateFormat formatter = DateFormat('yyyy-MM-dd HH:mm:ss');
-// formatter.timeZone = 'Europe/Paris';
+      // formatter.timeZone = 'Europe/Paris';
       log(expiryDate.toString());
       // log(inputDate.toString());
       if (inputDate.isBefore(DateTime.now())) {
         debugPrint(
-            '----------------------------------------------------$expiryDate');
+          '----------------------------------------------------$expiryDate',
+        );
         expiryDate = 'Expired !';
       }
 
@@ -85,7 +87,7 @@ class Renewal extends StatelessWidget {
                 SvgPicture.asset(
                   'assets/svg/avatar/avatar_bg.svg',
                   height: mq.width * 0.35,
-                )
+                ),
               ],
             ),
             SizedBox(height: mq.height * 0.01),
@@ -110,13 +112,19 @@ class Renewal extends StatelessWidget {
               gradient: AppColors.orangeYelloH,
               onPressed: () {
                 // showPaymentNotAvailableDialog();
-                showDialog(
-                    context: context,
-                    builder: (context) => UpgradePlanDialog(
-                          title: 'Premium',
-                        ));
+                // showDialog(
+                //     context: context,
+                //     builder: (context) => UpgradePlanDialog(
+                //           title: 'Premium',
+                //         ));
+
+                Navigator.pushNamed(
+                  context,
+                  UpgradePlanScreen.routeName,
+                  arguments: "Premium",
+                );
               },
-            )
+            ),
           ],
         ),
       ),

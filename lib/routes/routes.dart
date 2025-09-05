@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:bsty/common_widgets/upgrade_plan.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:bsty/features/profile/pages/under_review_page.dart';
@@ -65,7 +66,7 @@ class MyRoutes {
 
       /// [ Login Screen ]
       case SignInPage.routeName:
-        return MaterialPageRoute(builder: (context) => const SignInPage());
+        return MaterialPageRoute(builder: (context) => SignInPage());
 
       /// [ Signin Screen ]
       case EmailSignInPage.routeName:
@@ -74,7 +75,8 @@ class MyRoutes {
       /// [ Verify OTP Screen ]
       case VerifyOtp.routeName:
         return MaterialPageRoute(
-            builder: (context) => VerifyOtp(args as VerifyOtpArgs));
+          builder: (context) => VerifyOtp(args as VerifyOtpArgs),
+        );
 
       /// [ Verify Phone Screen ]
       case VerifyPhone.routeName:
@@ -103,7 +105,8 @@ class MyRoutes {
       /// [ Select Orientation Screen ]
       case SelectOrientation.routeName:
         return MaterialPageRoute(
-            builder: (context) => const SelectOrientation());
+          builder: (context) => const SelectOrientation(),
+        );
 
       /// [ Select Interest Screen ]
       case SelectInterest.routeName:
@@ -120,19 +123,19 @@ class MyRoutes {
       /// [ Main Screen ]
       case MainPage.routeName:
         return MaterialPageRoute(
-            builder: (context) => MainPage(
-                  matchIndex: args as int?,
-                ));
+          builder: (context) => MainPage(matchIndex: args as int?),
+        );
 
       /// [ Detailed Screen ]
       case PersonDetailedPage.routeName:
         final data = args as Map<String, dynamic>;
         return MaterialPageRoute(
-            builder: (context) => PersonDetailedPage(
-                  userId: data['id'] as int,
-                  userName: data['name'] as String,
-                  userImage: data['image'] as String,
-                ));
+          builder: (context) => PersonDetailedPage(
+            userId: data['id'] as int,
+            userName: data['name'] as String,
+            userImage: data['image'] as String,
+          ),
+        );
 
       /// [ Explore Screen ]
       case ExplorePage.routeName:
@@ -150,63 +153,67 @@ class MyRoutes {
       case IncomingCall.routeName:
         final data = args as Map<String, dynamic>;
         return MaterialPageRoute(
-            builder: (context) => IncomingCall(
-                  callId: data['callId'] as int,
-                  isVideo: data['isVideo'] as bool,
-                  targetUserName: data['user_name'] as String,
-                  targetUserImage: data['user_image'] as String?,
-                ));
+          builder: (context) => IncomingCall(
+            callId: data['callId'] as int,
+            isVideo: data['isVideo'] as bool,
+            targetUserName: data['user_name'] as String,
+            targetUserImage: data['user_image'] as String?,
+          ),
+        );
 
       /// [ Audio Call Screen]
       case OnGoingCallPage.routeName:
         final data = args as Map<String, dynamic>;
         return MaterialPageRoute(
-            builder: (context) => OnGoingCallPage(
-                  callId: data['callId'] as int,
-                  targetUser: data['targetUser'] as CallUser?,
-                  targetUserId: data['targetUserId'] as int?,
-                  isIncoming: data['isIncoming'] as bool,
-                  isVideo: data['isVideo'] as bool,
-                  targetUserImg: data['user_image'] as String?,
-                  targetUserName: data['user_name'] as String?,
-                  isOutgoing: data['isOutgoing'] as bool?,
-                ));
+          builder: (context) => OnGoingCallPage(
+            callId: data['callId'] as int,
+            targetUser: data['targetUser'] as CallUser?,
+            targetUserId: data['targetUserId'] as int?,
+            isIncoming: data['isIncoming'] as bool,
+            isVideo: data['isVideo'] as bool,
+            targetUserImg: data['user_image'] as String?,
+            targetUserName: data['user_name'] as String?,
+            isOutgoing: data['isOutgoing'] as bool?,
+          ),
+        );
 
       /// [ Verify Identity]
       case VerifyIdentityPage.routeName:
         return MaterialPageRoute(
-            builder: (context) => const VerifyIdentityPage());
+          builder: (context) => const VerifyIdentityPage(),
+        );
 
       /// [ Selfie Screen ]
       case TakeSelfiePage.routeName:
         return MaterialPageRoute(
-            builder: (context) => TakeSelfiePage(
-                  cameras: args as List<CameraDescription>?,
-                ));
+          builder: (context) =>
+              TakeSelfiePage(cameras: args as List<CameraDescription>?),
+        );
 
       /// [ Check Selfie Quality Screen ]
       case CheckSelfieQualityPage.routeName:
         return MaterialPageRoute(
-            builder: (context) => CheckSelfieQualityPage(
-                  selfie: args as File,
-                ));
+          builder: (context) => CheckSelfieQualityPage(selfie: args as File),
+        );
 
       /// [ Notification Screen ]
       case NotificationPage.routeName:
         return MaterialPageRoute(
-            builder: (context) => const NotificationPage());
+          builder: (context) => const NotificationPage(),
+        );
 
       /// [ Settings Inner Screen ]
       case SettingsInnerPage.routeName:
         return MaterialPageRoute(
-            builder: (context) => const SettingsInnerPage());
+          builder: (context) => const SettingsInnerPage(),
+        );
 
       /// [ All Plans Carousel Page ]
       case AllPlansDetails.routeName:
         return MaterialPageRoute(
-            builder: (context) => AllPlansDetails(
-                  controller: args as PageController,
-                ));
+          builder: (context) =>
+              AllPlansDetails(controller: args as PageController),
+        );
 
       /// [ Refer and Earn Page ]
       case ReferEarnPage.routeName:
@@ -215,18 +222,21 @@ class MyRoutes {
       /// [ Manage Earnings Page ]
       case ManageEarningsPage.routeName:
         return MaterialPageRoute(
-            builder: (context) => const ManageEarningsPage());
+          builder: (context) => const ManageEarningsPage(),
+        );
 
       case EditProfile.routeName:
         return MaterialPageRoute(builder: (context) => const EditProfile());
 
       case WebViewPage.routeName:
         return MaterialPageRoute(
-            builder: (context) => WebViewPage(args as String));
+          builder: (context) => WebViewPage(args as String),
+        );
 
       case CreditsAndRenewal.routeName:
         return MaterialPageRoute(
-            builder: (context) => const CreditsAndRenewal());
+          builder: (context) => const CreditsAndRenewal(),
+        );
 
       case ForceUpdatePage.routeName:
         return MaterialPageRoute(builder: (context) => const ForceUpdatePage());
@@ -240,14 +250,21 @@ class MyRoutes {
 
       case TransactionHistory.routeName:
         return MaterialPageRoute(
-            builder: (context) => const TransactionHistory());
+          builder: (context) => const TransactionHistory(),
+        );
 
       case RedemptionRequest.routeName:
         return MaterialPageRoute(
-            builder: (context) => const RedemptionRequest());
+          builder: (context) => const RedemptionRequest(),
+        );
 
       case YourReferrals.routeName:
         return MaterialPageRoute(builder: (context) => const YourReferrals());
+
+      case UpgradePlanScreen.routeName:
+        return MaterialPageRoute(
+          builder: (context) => UpgradePlanScreen(title: args as String?),
+        );
 
       /// [ If no route is found ] then return a [ MaterialPageRoute ] with a [ Intro Screen ] as the [ builder ].
       default:

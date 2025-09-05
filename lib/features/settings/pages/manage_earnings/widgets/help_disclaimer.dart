@@ -25,14 +25,14 @@ class HelpDisclaimer extends StatelessWidget {
           SizedBox(height: appHeight * 0.02),
           const MEPQuestionAnswersBox(
             question:
-                'How does Metfie protect my privacy and keep my information secure?',
+                'How does BSTY protect my privacy and keep my information secure?',
             answer:
                 'We know security and privacy are important to you – and they are important to us, too. We make it a priority to provide strong security and give you confidence that your information is safe and accessible when you need it.',
           ),
           SizedBox(height: appHeight * 0.02),
           const MEPQuestionAnswersBox(
             question:
-                'How can I remove information about myself from Metfie\'s search results?',
+                'How can I remove information about myself from BSTY\'s search results?',
           ),
           SizedBox(height: appHeight * 0.05),
         ]));

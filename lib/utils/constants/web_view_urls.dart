@@ -1,5 +1,5 @@
 class WebViewUrls {
-  static const privacyPolicy = 'https://metfie.com/privacy/';
-  static const termsOfService = 'https://metfie.com/terms/';
-  static const safetyModules = 'https://metfie.com/safety-centre/';
+  static const privacyPolicy = 'https://www.bsty.in/privacypolicy.html';
+  static const termsOfService = 'https://www.bsty.in/terms&conditions.html';
+  static const safetyModules = 'https://www.bsty.in/safetycentre.html';
 }

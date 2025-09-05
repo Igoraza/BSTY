@@ -1,9 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="22.718" height="22.718" viewBox="0 0 22.718 22.718">
-  <defs>
-    <radialGradient id="radial-gradient" cx="0.5" cy="0.5" r="0.5" gradientUnits="objectBoundingBox">
-      <stop offset="0" stop-color="#c4c5ce"/>
-      <stop offset="1" stop-color="#626367"/>
-    </radialGradient>
-  </defs>
-  <path id="comment-dots" d="M11.359,0a11.359,11.359,0,0,0,0,22.718H22.718V11.359A11.372,11.372,0,0,0,11.359,0ZM6.626,12.779a1.42,1.42,0,1,1,1.42-1.42A1.42,1.42,0,0,1,6.626,12.779Zm4.733,0a1.42,1.42,0,1,1,1.42-1.42A1.42,1.42,0,0,1,11.359,12.779Zm4.733,0a1.42,1.42,0,1,1,1.42-1.42A1.42,1.42,0,0,1,16.092,12.779Z" fill="url(#radial-gradient)"/>
-</svg>

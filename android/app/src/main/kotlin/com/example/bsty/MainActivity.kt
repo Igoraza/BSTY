@@ -1,4 +1,4 @@
-package com.example.bsty
+package com.wedconnect.bsty
 
 import io.flutter.embedding.android.FlutterActivity
 

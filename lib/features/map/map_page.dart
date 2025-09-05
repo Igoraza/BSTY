@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:align_positioned/align_positioned.dart';
+import 'package:bsty/common_widgets/upgrade_plan.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -161,9 +162,15 @@ class _MapPageState extends State<MapPage> {
             if (userPlan == 4 && !planExpired) {
               showFilterBottomSheet(context, size);
             } else {
-              showDialog(
-                context: context,
-                builder: (context) => UpgradePlanDialog(title: 'Premium'),
+              // showDialog(
+              //   context: context,
+              //   builder: (context) => UpgradePlanDialog(title: 'Premium'),
+              // );
+
+              Navigator.pushNamed(
+                context,
+                UpgradePlanScreen.routeName,
+                arguments: "Premium",
               );
             }
           },
@@ -190,7 +197,10 @@ class _MapPageState extends State<MapPage> {
         //   );
         // }
         if (snapshot.connectionState != ConnectionState.done) {
-          return mainLoadingAnimationDark;
+          return Padding(
+            padding: EdgeInsets.only(bottom: size.height * 0.08),
+            child: mainLoadingAnimationDark,
+          );
         }
         if (snapshot.hasError) {
           String errorMsg = '';
@@ -212,20 +222,23 @@ class _MapPageState extends State<MapPage> {
         }
         if (snapshot.data == null || snapshot.data.isEmpty) {
           return Center(
-            child: Container(
-              height: size.height * 0.1,
-              width: size.width * 0.6,
-              decoration: BoxDecoration(
-                color: AppColors.white.withOpacity(.8),
-                borderRadius: BorderRadius.circular(15),
-              ),
-              child: Center(
-                child: Text(
-                  'No profiles found,\nTry changing your filters',
-                  style: Theme.of(
-                    context,
-                  ).textTheme.bodyLarge!.copyWith(fontWeight: FontWeight.bold),
-                  textAlign: TextAlign.center,
+            child: Padding(
+              padding: EdgeInsets.only(bottom: size.height * 0.08),
+              child: Container(
+                height: size.height * 0.1,
+                width: size.width * 0.6,
+                decoration: BoxDecoration(
+                  color: AppColors.white.withOpacity(.8),
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                child: Center(
+                  child: Text(
+                    'No profiles found,\nTry changing your filters',
+                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
                 ),
               ),
             ),
@@ -351,20 +364,26 @@ class _MapPageState extends State<MapPage> {
                     alignment: Alignment.center,
                     clipBehavior: Clip.none,
                     children: [
-                      SvgPicture.asset(
-                        'assets/images/map/ripples.svg',
-                        fit: BoxFit.cover,
+                      Padding(
+                        padding: EdgeInsets.only(bottom: size.height * 0.08),
+                        child: SvgPicture.asset(
+                          'assets/images/map/ripples.svg',
+                          fit: BoxFit.cover,
+                        ),
                       ),
 
                       /// [User Image]
-                      CircleAvatar(
-                        radius: size.width * 0.06,
-                        backgroundColor: AppColors.borderBlue,
+                      Padding(
+                        padding: EdgeInsets.only(bottom: size.height * 0.08),
                         child: CircleAvatar(
-                          radius: size.width * 0.054,
-                          foregroundImage: userImage != null
-                              ? CachedNetworkImageProvider(userImage)
-                              : null,
+                          radius: size.width * 0.06,
+                          backgroundColor: AppColors.borderBlue,
+                          child: CircleAvatar(
+                            radius: size.width * 0.054,
+                            foregroundImage: userImage != null
+                                ? CachedNetworkImageProvider(userImage)
+                                : null,
+                          ),
                         ),
                       ),
 
@@ -377,7 +396,7 @@ class _MapPageState extends State<MapPage> {
                 /// [ Distance Slider ]
                 Positioned(
                   left: 0,
-                  bottom: size.height * 0.02,
+                  bottom: size.height * 0.09,
                   child: DistanceSlider(radius: radius, refresh: _refresh),
                 ),
               ],

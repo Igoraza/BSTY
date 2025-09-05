@@ -21,28 +21,35 @@ class InnerPageOptions extends StatelessWidget {
 
     return GestureDetector(
       onTap: onTap,
-      child: Row(children: [
-        Padding(
+      child: Row(
+        children: [
+          Padding(
             padding: EdgeInsets.symmetric(
-                horizontal: appWidth * 0.03, vertical: appHeight * 0.02),
-            child: Text(
-              title,
-              style: Theme.of(context).textTheme.titleMedium,
-            )),
-        const Spacer(),
-        Padding(
+              horizontal: appWidth * 0.03,
+              vertical: appHeight * 0.02,
+            ),
+            child: Text(title, style: Theme.of(context).textTheme.titleMedium),
+          ),
+          const Spacer(),
+          Padding(
             padding: EdgeInsets.symmetric(
-                horizontal: appWidth * 0.02, vertical: appHeight * 0.02),
-            child: Row(children: [
-              /// [ Todo: need to change the options to listed options ]
-              Text(
-                subtitle,
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-              Icon(Icons.arrow_forward_ios_rounded,
-                  color: AppColors.disabled, size: appWidth * 0.04)
-            ])),
-      ]),
+              horizontal: appWidth * 0.02,
+              vertical: appHeight * 0.02,
+            ),
+            child: Row(
+              children: [
+                /// [ Todo: need to change the options to listed options ]
+                Text(subtitle, style: Theme.of(context).textTheme.bodyMedium),
+                Icon(
+                  Icons.arrow_forward_ios_rounded,
+                  color: AppColors.disabled,
+                  size: appWidth * 0.04,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

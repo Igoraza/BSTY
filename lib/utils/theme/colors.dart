@@ -32,18 +32,18 @@ class AppColors {
   static const Color reedemStatusGreen = Color(0xFF13AA58);
 
   // [ Gradients ]
-  static const LinearGradient buttonBlue = LinearGradient(colors: [
-    Color(0xff9FDEFF),
-    Color(0xff28BCF3),
-    Color(0xff28BCF3),
-  ]);
+  static const LinearGradient buttonBlue = LinearGradient(
+    colors: [Color(0xff9FDEFF), Color(0xff28BCF3), Color(0xff28BCF3)],
+  );
 
-  static const LinearGradient redeemCoinsBlue = LinearGradient(colors: [
-    Color(0xff2ACFF9),
-    Color(0xff00A5D0),
-    Color(0xff00A5D0),
-    Color(0xff0082A3),
-  ]);
+  static const LinearGradient redeemCoinsBlue = LinearGradient(
+    colors: [
+      Color(0xff2ACFF9),
+      Color(0xff00A5D0),
+      Color(0xff00A5D0),
+      Color(0xff0082A3),
+    ],
+  );
 
   static const LinearGradient buttonBlueVertical = LinearGradient(
     begin: Alignment.topCenter,
@@ -51,36 +51,35 @@ class AppColors {
     colors: [Color(0xff9FDEFF), Color(0xff28BCF3), Color(0xff28BCF3)],
   );
 
-  static const LinearGradient orangeYelloH = LinearGradient(colors: [
-    Color(0xffF75400),
-    Color(0xffFEAB36),
-  ]);
+  static const LinearGradient orangeYelloH = LinearGradient(
+    colors: [Color(0xffF75400), Color(0xffFEAB36)],
+  );
 
   static const pinkPurpleH = LinearGradient(
+    colors: [Color(0xffEB579F), Color(0xff7A50A0)],
+  );
+
+  static final pinkPurpleHw = LinearGradient(
     colors: [
-      Color(0xffEB579F),
-      Color(0xff7A50A0),
+      Color.fromARGB(178, 235, 87, 159),
+
+      Color.fromARGB(160, 123, 80, 160),
     ],
   );
 
   static const yellowOrangeH = LinearGradient(
-    colors: [
-      Color(0xffFFCC00),
-      Color(0xffFF8000),
-    ],
+    colors: [Color(0xffFFCC00), Color(0xffFF8000)],
   );
 
   static const redOrangeV = LinearGradient(
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
-    colors: [
-      Color(0xffF95E1B),
-      Color(0xffFF8F00),
-    ],
+    colors: [Color(0xffF95E1B), Color(0xffFF8F00)],
   );
 
-  static const orangeRedH =
-      LinearGradient(colors: [Color(0xFFFF8B8B), Color(0xffFF0505)]);
+  static const orangeRedH = LinearGradient(
+    colors: [Color(0xFFFF8B8B), Color(0xffFF0505)],
+  );
 
   static const pinkVertical = LinearGradient(
     begin: Alignment.topCenter,
@@ -100,8 +99,9 @@ class AppColors {
     colors: [Color(0xFF907ae2), Color(0xff532fd2)],
   );
 
-  static const purpleH =
-      LinearGradient(colors: [Color(0xFF907ae2), Color(0xff532fd2)]);
+  static const purpleH = LinearGradient(
+    colors: [Color(0xFF907ae2), Color(0xff532fd2)],
+  );
 
   static const steelV = LinearGradient(
     begin: Alignment.topCenter,
@@ -110,26 +110,24 @@ class AppColors {
   );
 
   static const mepBlack = LinearGradient(
-      begin: Alignment.topLeft,
-      end: Alignment.bottomCenter,
-      transform: GradientRotation(-0.5),
-      colors: [
-        Color(0xFF101928),
-        Color(0xFF101928),
-        Color(0xFF101928),
-        Color(0xFF384A6E),
-        Color(0xFF384A6E),
-        Color(0xFF101928),
-        Color(0xFF101928),
-      ]);
+    begin: Alignment.topLeft,
+    end: Alignment.bottomCenter,
+    transform: GradientRotation(-0.5),
+    colors: [
+      Color(0xFF101928),
+      Color(0xFF101928),
+      Color(0xFF101928),
+      Color(0xFF384A6E),
+      Color(0xFF384A6E),
+      Color(0xFF101928),
+      Color(0xFF101928),
+    ],
+  );
 
   static const grayBlackH = LinearGradient(
     begin: Alignment.centerLeft,
     end: Alignment.centerRight,
-    colors: [
-      Color(0xFF676767),
-      Color(0xFF0f0f10),
-    ],
+    colors: [Color(0xFF676767), Color(0xFF0f0f10)],
   );
   static const grayDisabled = LinearGradient(
     begin: Alignment.centerLeft,

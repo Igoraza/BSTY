@@ -2,6 +2,7 @@
 
 import 'dart:developer';
 
+import 'package:bsty/common_widgets/upgrade_plan.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -118,10 +119,13 @@ class _SettingsInnerPageState extends State<SettingsInnerPage> {
                       // InnerPageOptions(
                       //     onTap: () {
                       //       if (planExpired) {
+
+                                            // Navigator.pushNamed(context, UpgradePlanScreen.routeName);
                       //         showDialog(
                       //           context: context,
                       //           builder: (context) => UpgradePlanDialog(),
                       //         );
+                      
                       //       }
                       //     },
                       //     title: 'Location',
@@ -323,13 +327,7 @@ class _SettingsInnerPageState extends State<SettingsInnerPage> {
                                         onChanged: (bool value) {
                                           log((userPlan).toString());
                                           if (userPlan <= 3 || planExpired) {
-                                            showDialog(
-                                              context: context,
-                                              builder: (context) =>
-                                                  UpgradePlanDialog(
-                                                title: "Premium",
-                                              ),
-                                            );
+                                            Navigator.pushNamed(context, UpgradePlanScreen.routeName,arguments:"Premium" );
                                             return;
                                           }
                                           initiPro.incognito = value;
