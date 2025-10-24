@@ -148,20 +148,21 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                     ),
                     child: GestureDetector(
                       onTap: () {
-                        if (userPlan == 4 && !planExpired) {
-                          selectLocationDialog();
-                        } else {
-                          // showDialog(
-                          //   context: context,
-                          //   builder: (context) => UpgradePlanDialog(),
-                          // );
+                        // TODO: Uncomment this
+                        // if (userPlan == 4 && !planExpired) {
+                        selectLocationDialog();
+                        // } else {
+                        //   // showDialog(
+                        //   //   context: context,
+                        //   //   builder: (context) => UpgradePlanDialog(),
+                        //   // );
 
-                          Navigator.pushNamed(
-                            context,
-                            UpgradePlanScreen.routeName,
-                          );
-                          return;
-                        }
+                        //   Navigator.pushNamed(
+                        //     context,
+                        //     UpgradePlanScreen.routeName,
+                        //   );
+                        //   return;
+                        // }
                         log(locationNotifier.value);
                       },
                       child: ValueListenableBuilder(

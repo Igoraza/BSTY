@@ -1,6 +1,9 @@
 import 'dart:io';
 
+import 'package:bsty/features/auth/models/verify_otp_args.dart';
+import 'package:bsty/features/auth/pages/verification/verify_otp_page.dart';
 import 'package:bsty/features/auth/pages/verification/verify_phone_page.dart';
+import 'package:bsty/features/auth/widgets/phone_number_field.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -21,10 +24,10 @@ import 'sign_in_email_page.dart';
 class SignInPage extends StatelessWidget {
   static const String routeName = '/login';
 
-  const SignInPage({Key? key}) : super(key: key);
+  SignInPage({Key? key}) : super(key: key);
 
-  // final _phoneNum = TextEditingController();
-  // final _phoneCode = TextEditingController(text: '+91');
+  final _phoneNum = TextEditingController();
+  final _phoneCode = TextEditingController(text: '+91');
 
   @override
   Widget build(BuildContext context) {
@@ -33,18 +36,24 @@ class SignInPage extends StatelessWidget {
 
     /// [ Functions ]
 
-    // Future<void> signIn() async {
-    //   final authProvider = context.read<AuthProvider>();
-    //   final reqId = DateTime.now().millisecondsSinceEpoch.toString();
-    //   final phone = _phoneCode.text.substring(1) + _phoneNum.text;
-    //   await authProvider.login(context, phone, reqId).then((value) {
-    //     if (value) {
-    //       Navigator.pushNamed(context, VerifyOtp.routeName,
-    //           arguments: VerifyOtpArgs(
-    //               isLoggingIn: true, phone: phone, requestId: reqId));
-    //     }
-    //   });
-    // }
+    Future<void> signIn() async {
+      final authProvider = context.read<AuthProvider>();
+      final reqId = DateTime.now().millisecondsSinceEpoch.toString();
+      final phone = _phoneCode.text.substring(1) + _phoneNum.text;
+      await authProvider.login(context, phone, reqId).then((value) {
+        if (value) {
+          Navigator.pushNamed(
+            context,
+            VerifyOtp.routeName,
+            arguments: VerifyOtpArgs(
+              isLoggingIn: true,
+              phone: phone,
+              requestId: reqId,
+            ),
+          );
+        }
+      });
+    }
 
     /// [ Widgets ]
 
@@ -177,8 +186,8 @@ class SignInPage extends StatelessWidget {
     final signInWithEmailBtn = StadiumButton(
       gradient: AppColors.buttonBlue,
       onPressed: () {
-        // Navigator.pushNamed(context, EmailSignInPage.routeName);
-        Navigator.pushNamed(context, VerifyPhone.routeName);
+        Navigator.pushNamed(context, EmailSignInPage.routeName);
+        // Navigator.pushNamed(context, VerifyPhone.routeName);
       },
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -216,23 +225,23 @@ class SignInPage extends StatelessWidget {
     );
 
     /// This is currently hidden because we are not using phone number login
-    // final signInBtn = Consumer<AuthProvider>(
-    //   builder: (_, authProvider, __) => StadiumButton(
-    //     visualDensity: VisualDensity.standard,
-    //     gradient: AppColors.buttonBlue,
-    //     onPressed: authProvider.authStatus == AuthStatus.checking
-    //         ? null
-    //         : signIn,
-    //     child: authProvider.authStatus == AuthStatus.checking
-    //         ? const BtnLoadingAnimation()
-    //         : Text(
-    //             'Continue',
-    //             style: Theme.of(
-    //               context,
-    //             ).textTheme.titleMedium!.copyWith(color: AppColors.white),
-    //           ),
-    //   ),
-    // );
+    final signInBtn = Consumer<AuthProvider>(
+      builder: (_, authProvider, __) => StadiumButton(
+        visualDensity: VisualDensity.standard,
+        gradient: AppColors.buttonBlue,
+        onPressed: authProvider.authStatus == AuthStatus.checking
+            ? null
+            : signIn,
+        child: authProvider.authStatus == AuthStatus.checking
+            ? const BtnLoadingAnimation()
+            : Text(
+                'Continue',
+                style: Theme.of(
+                  context,
+                ).textTheme.titleMedium!.copyWith(color: AppColors.white),
+              ),
+      ),
+    );
 
     return BackgroundImage(
       child: Scaffold(
@@ -249,7 +258,7 @@ class SignInPage extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Image.asset('assets/images/auth/login.png'),
-                    SizedBox(height: appHeight * 0.1),
+                    // SizedBox(height: appHeight * 0.05),
                     signInWithGoogleBtn,
                     if (Platform.isIOS) SizedBox(height: appHeight * 0.01),
                     if (Platform.isIOS)
@@ -308,7 +317,8 @@ class SignInPage extends StatelessWidget {
                           )
                         : const SizedBox.shrink(),
                     SizedBox(height: appHeight * 0.01),
-                    // signInWithEmailBtn,
+                    signInWithEmailBtn,
+                    SizedBox(height: appHeight * 0.02),
                     signInWithPhoneNumberBtn,
                     Platform.isIOS
                         ? InkWell(

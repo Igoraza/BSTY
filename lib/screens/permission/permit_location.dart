@@ -50,9 +50,9 @@ class _PermitLocationState extends State<PermitLocation>
   //         allowBackBtn: false,
   //         title: "Unable to connect",
   //         subTitle:
-  //             'To use Metfie, you need to enable your location sharing so we can show you who\'s around.',
+  //             'To use BSTY, you need to enable your location sharing so we can show you who\'s around.',
   //         desc:
-  //             "Go to Settings > Metfie > Location > Enable Location While Using the App",
+  //             "Go to Settings > BSTY > Location > Enable Location While Using the App",
   //         btnText: "Open settings",
   //         btnGradient: AppColors.orangeRedH,
   //         onPressed: () async {
@@ -135,9 +135,9 @@ class _PermitLocationState extends State<PermitLocation>
       //     allowBackBtn: false,
       //     title: "Unable to connect",
       //     desc:
-      //         'To use Metfie, you need to enable your location sharing so we can show you who\'s around.',
+      //         'To use BSTY, you need to enable your location sharing so we can show you who\'s around.',
       //     subTitle:
-      //         "Go to Settings>Metfie>Location>Enable Location While Using the App",
+      //         "Go to Settings>BSTY>Location>Enable Location While Using the App",
       //     btnText: "Open settings",
       //     btnGradient: AppColors.orangeRedH,
       //   ),

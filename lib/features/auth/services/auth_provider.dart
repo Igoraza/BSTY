@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
@@ -119,12 +120,13 @@ class AuthProvider with ChangeNotifier {
   // get user access and refresh tokens from local storage
   Future<Map<String, String>> retrieveUserTokens() async {
     try {
+      log("-------------Retrieving user tokens--------");
       final encryptedBox = await openTokenBox();
       if (encryptedBox == null) return {};
 
       final access = encryptedBox.get('access');
       final refresh = encryptedBox.get('refresh');
-
+      log("Access token : $access");
       if (access == null || refresh == null) return {};
       return {'access': access, 'refresh': refresh};
     } catch (e) {
@@ -175,54 +177,110 @@ class AuthProvider with ChangeNotifier {
   }
 
   Future<void> emailLogin(String email, String password) async {
+    log("Trying Log in with email and pass");
+    authStatus = AuthStatus.checking;
+    notifyListeners();
+
     try {
-      authStatus = AuthStatus.checking;
       final userBox = Hive.box('user');
       final latitude = userBox.get('user_latitude');
       final longitude = userBox.get('user_longitude');
-      notifyListeners();
-      var formData = FormData.fromMap({"email": email, "password": password});
+
+      log(
+        "User location from Hive - latitude: $latitude, longitude: $longitude",
+      );
+
+      // 1️⃣ Firebase login
+      log("Before Firebase login");
       UserCredential user = await FirebaseAuth.instance
-          .signInWithEmailAndPassword(email: email, password: password);
-      log(user.toString());
-      final response = await dio.post(Endpoints.emailLoginUrl, data: formData);
+          .signInWithEmailAndPassword(email: email, password: password)
+          .timeout(
+            const Duration(seconds: 10),
+            onTimeout: () {
+              throw TimeoutException("Firebase login timed out");
+            },
+          );
+      log("After Firebase login: ${user.user?.uid}");
+
+      // 2️⃣ Prepare form data
+      var formData = FormData.fromMap({"email": email, "password": password});
+
+      // 3️⃣ Dio POST request
+      log("Before Dio POST request to ${Endpoints.emailLoginUrl}");
+      final response = await dio
+          .post(
+            Endpoints.emailLoginUrl,
+            data: formData,
+            options: Options(
+              sendTimeout: Duration(seconds: 50),
+              receiveTimeout: Duration(seconds: 50),
+            ),
+          )
+          .timeout(
+            const Duration(seconds: 10),
+            onTimeout: () {
+              throw TimeoutException("Dio POST request timed out");
+            },
+          );
+      log("After Dio POST request, response: ${response.data}");
+
+      // 4️⃣ Check API response
       if (response.data['status'] == 'success') {
+        log("Login successful, saving user data to Hive");
         userBox.put('id', response.data['user']['id']);
         userBox.put('name', response.data['user']['name']);
         userBox.put('push_id', response.data['user']['push_id']);
         userBox.put('display_image', response.data['user']['display_image']);
         userBox.put('plan', response.data['user']['plan'] ?? 1);
+
         await saveUserToken(response.data['access'], response.data['refresh']);
         saveLoggedInStatus(true);
-        if (response.data['new_user']) {
+
+        if (response.data['new_user'] == true) {
+          log("New user detected, navigating to VerifyPhone");
           navigatorKey.currentState!.pushNamedAndRemoveUntil(
             VerifyPhone.routeName,
             (route) => false,
           );
+        } else if (latitude == null && longitude == null) {
+          log("No location saved, navigating to PermitLocation");
+          navigatorKey.currentState!.pushNamedAndRemoveUntil(
+            PermitLocation.routeName,
+            (route) => false,
+          );
         } else {
-          if (latitude == null && longitude == null) {
-            navigatorKey.currentState!.pushNamedAndRemoveUntil(
-              PermitLocation.routeName,
-              (route) => false,
-            );
-          } else {
-            navigatorKey.currentState!.pushNamedAndRemoveUntil(
-              MainPage.routeName,
-              (route) => false,
-            );
-          }
+          log("Existing user with location, navigating to MainPage");
+          navigatorKey.currentState!.pushNamedAndRemoveUntil(
+            MainPage.routeName,
+            (route) => false,
+          );
         }
+
         authStatus = AuthStatus.done;
         notifyListeners();
       } else if (response.data['message'] != null) {
+        log("Login failed: Invalid email or password");
         showSnackBar('Invalid email or password');
       } else {
+        log("Login failed: Unknown error");
         showSnackBar('Something went wrong, please try again later');
       }
+    } on FirebaseAuthException catch (e) {
+      log("FirebaseAuthException: ${e.code} - ${e.message}");
+      showSnackBar("Firebase login error: ${e.message}");
+    } on DioError catch (e) {
+      log("DioError: ${e.type} - ${e.message}");
+      showSnackBar("Network error: ${e.message}");
+    } on TimeoutException catch (e) {
+      log("TimeoutException: ${e.message}");
+      showSnackBar("Request timed out, please try again");
+    } catch (e, st) {
+      log("Unexpected error: $e");
+      debugPrintStack(stackTrace: st);
+      showSnackBar("An unexpected error occurred");
+    } finally {
       authStatus = AuthStatus.done;
       notifyListeners();
-    } catch (e) {
-      debugPrint("emailLogin error $e");
     }
   }
 
@@ -231,6 +289,7 @@ class AuthProvider with ChangeNotifier {
     bool isApple,
     String? givenName,
   ) async {
+    log("=============Sending credentials to server==========");
     bool returnVal = false;
     var formData = FormData.fromMap({
       "name": isApple
@@ -241,9 +300,12 @@ class AuthProvider with ChangeNotifier {
     });
     try {
       log("firebase user ${firebaseUser.user}");
-      log("form data ${formData.fields}");
+      log("****** form data ${formData.fields}");
       final response = await dio.post(
-        !isApple ? Endpoints.googleLoginUrl : Endpoints.appleLoginUrl,
+        !isApple
+            // ? "https://api.bsty.in/api/v1/google/login/"
+            ? Endpoints.googleLoginUrl
+            : Endpoints.appleLoginUrl,
         data: formData,
       );
       log('===========> Google Login Data: ${response.statusCode}');
@@ -264,8 +326,15 @@ class AuthProvider with ChangeNotifier {
       } else {
         throw (response.data);
       }
-    } catch (e) {
+    } on DioException catch (e) {
       debugPrint('Error: Send google credentiols to server: $e');
+      debugPrint('Error: Send google credentiols to server: ${e.response}');
+      debugPrint(
+        'Error: Send google credentiols to server: ${e.response?.statusMessage}',
+      );
+      debugPrint(
+        'Error: Send google credentiols to server: ${e.response?.data}',
+      );
     }
     return returnVal;
   }

@@ -76,6 +76,8 @@ class _ChatPageState extends State<ChatPage> {
     context.read<CallsProvider>().currentTargetPushId = widget.chat.pushId;
     chatProvider.listentargetlastseen();
 
+    log("***************************** chat :::: ${widget.chat}");
+
     setMessageSteram();
     log('------------ ${widget.chat.targetId}');
     debugPrint('=====================> Push ID: ${widget.chat.pushId}');
@@ -85,7 +87,8 @@ class _ChatPageState extends State<ChatPage> {
     final chatProvider = context.read<ChatProvider>();
     if (widget.chat.chatId != null) {
       debugPrint(
-          '=====================> Chat id is not null: ${widget.chat.chatId}');
+        '=====================> Chat id is not null: ${widget.chat.chatId}',
+      );
       chatId = widget.chat.chatId;
       messagesSteram = chatProvider.messagesStream(widget.chat.chatId!);
       chatProvider.clearUnread(widget.chat.chatId!);
@@ -107,18 +110,22 @@ class _ChatPageState extends State<ChatPage> {
 
   newChatId() async {
     final chatProvider = context.read<ChatProvider>();
-    // chatId ??= await chatProvider.createNewChat();
-    // chatId ??= await chatProvider.getCurrentChatId();
+    chatId ??= await chatProvider.createNewChat();
+    chatId ??= await chatProvider.getCurrentChatId();
 
+    log("===========>Initiating new chat==================");
     chatId = await chatProvider.initiateChat(
-        widget.chat.targetId, widget.chat.matchId!);
+      widget.chat.targetId,
+      widget.chat.matchId!,
+    );
     chatProvider.inChatID = chatId;
-    // log('chat id _sendMessage() ${chatId! + _controller.text}');
+    log('chat id _sendMessage() ${chatId! + _controller.text}');
     setState(() {});
     messagesSteram = chatProvider.messagesStream(chatId!);
   }
 
   Future<void> _sendMessage() async {
+    log("===========>Trying send==================");
     final chatProvider = context.read<ChatProvider>();
     log(chatProvider.isBlocked.toString());
     log(widget.chat.isSent.toString());
@@ -128,17 +135,18 @@ class _ChatPageState extends State<ChatPage> {
       FocusManager.instance.primaryFocus?.unfocus();
       // showSnackBar("Blocked! You are unable to message this person.");
       showDialog(
-          context: context,
-          builder: (context) => CustomDialog(
-                allowBackBtn: false,
-                showCloseBtn: true,
-                title: "Blocked",
-                image: SvgPicture.asset(
-                  "assets/svg/dialog/minus_in_red_circle.svg",
-                  width: 150,
-                ),
-                desc: "You are unable to message this person.",
-              ));
+        context: context,
+        builder: (context) => CustomDialog(
+          allowBackBtn: false,
+          showCloseBtn: true,
+          title: "Blocked",
+          image: SvgPicture.asset(
+            "assets/svg/dialog/minus_in_red_circle.svg",
+            width: 150,
+          ),
+          desc: "You are unable to message this person.",
+        ),
+      );
       // await Future.delayed(Duration(milliseconds: 2000));
       // navigatorKey.currentState!.pop();
       return;
@@ -152,8 +160,11 @@ class _ChatPageState extends State<ChatPage> {
     chatProvider.sendMessage(chatidd, _controller.text.trim(), widget.chat);
     _controller.clear();
     if (_scrollController.hasClients) {
-      _scrollController.animateTo(_scrollController.position.maxScrollExtent,
-          duration: const Duration(milliseconds: 300), curve: Curves.easeOut);
+      _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOut,
+      );
     }
     setState(() {});
   }
@@ -164,6 +175,7 @@ class _ChatPageState extends State<ChatPage> {
     final chatProvider = context.read<ChatProvider>();
 
     log('build chatid ${chatId.toString()}');
+
     if (widget.chat.chatId == null && chatId == null) {
       newChatId();
     }
@@ -174,105 +186,120 @@ class _ChatPageState extends State<ChatPage> {
 
     /// [ Text field ] to send messages
     final textField = Padding(
-        padding: EdgeInsets.only(
-            left: size.width * 0.03,
-            right: size.width * 0.03,
-            bottom: size.height * 0.02,
-            top: size.height * 0.01),
-        child: Container(
-          constraints: BoxConstraints(maxHeight: size.height * 0.15),
-          child: TextField(
-              controller: _controller,
-              textInputAction: TextInputAction.newline,
-              maxLines: null,
-              maxLength: 500,
-              buildCounter: (BuildContext context,
-                      {required int currentLength,
-                      required bool isFocused,
-                      required int? maxLength}) =>
-                  const SizedBox.shrink(),
-              decoration: kInputDecoration.copyWith(
-                  hintText: 'Type a message',
-                  fillColor: AppColors.white,
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(50),
-                      borderSide: BorderSide.none),
-                  suffixIcon: Consumer<ChatProvider>(builder: (_, ref, __) {
-                    // return ref.loadingState == LoadingState.loading
-                    //     ? Container(
-                    //         constraints: const BoxConstraints(
-                    //             maxHeight: 20, maxWidth: 20),
-                    //         padding: const EdgeInsets.all(5),
-                    //         child: const CircularProgressIndicator(
-                    //           strokeWidth: 2,
-                    //         ))
-                    //     :
-                    return IconButton(
-                        onPressed: () {
-                          /// [ Send message ] if text field is not empty
-                          if (_controller.text.isNotEmpty) _sendMessage();
-                        },
-                        icon: SvgPicture.asset('assets/svg/chat/send.svg'));
-                  })),
-              style:
-                  const TextStyle(fontSize: 16, fontWeight: FontWeight.normal)),
-        ));
+      padding: EdgeInsets.only(
+        left: size.width * 0.03,
+        right: size.width * 0.03,
+        bottom: size.height * 0.02,
+        top: size.height * 0.01,
+      ),
+      child: Container(
+        constraints: BoxConstraints(maxHeight: size.height * 0.15),
+        child: TextField(
+          controller: _controller,
+          textInputAction: TextInputAction.newline,
+          maxLines: null,
+          maxLength: 500,
+          buildCounter:
+              (
+                BuildContext context, {
+                required int currentLength,
+                required bool isFocused,
+                required int? maxLength,
+              }) => const SizedBox.shrink(),
+          decoration: kInputDecoration.copyWith(
+            hintText: 'Type a message',
+            fillColor: AppColors.white,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(50),
+              borderSide: BorderSide.none,
+            ),
+            suffixIcon: Consumer<ChatProvider>(
+              builder: (_, ref, __) {
+                // return ref.loadingState == LoadingState.loading
+                //     ? Container(
+                //         constraints: const BoxConstraints(
+                //             maxHeight: 20, maxWidth: 20),
+                //         padding: const EdgeInsets.all(5),
+                //         child: const CircularProgressIndicator(
+                //           strokeWidth: 2,
+                //         ))
+                //     :
+                return IconButton(
+                  onPressed: () {
+                    /// [ Send message ] if text field is not empty
+                    if (_controller.text.isNotEmpty) _sendMessage();
+                  },
+                  icon: SvgPicture.asset('assets/svg/chat/send.svg'),
+                );
+              },
+            ),
+          ),
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.normal),
+        ),
+      ),
+    );
 
     /// [ Messages ] stream builder
     final messagesStream = Expanded(
-        child: StreamBuilder<QuerySnapshot>(
-            stream: messagesSteram,
-            builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return mainLoadingAnimationDark;
-              } else if (snapshot.hasError) {
-                debugPrint('Error: ${snapshot.error}');
-                return const Text('Something went wrong',
-                    textAlign: TextAlign.center);
-              } else if (snapshot.data == null || snapshot.data!.docs.isEmpty) {
-                debugPrint(
-                    '=====================> Empty snapshot: ${snapshot.data!.docs}');
+      child: StreamBuilder<QuerySnapshot>(
+        stream: messagesSteram,
+        builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return mainLoadingAnimationDark;
+          } else if (snapshot.hasError) {
+            debugPrint('Error: ${snapshot.error}');
+            return const Text(
+              'Something went wrong',
+              textAlign: TextAlign.center,
+            );
+          } else if (snapshot.data == null || snapshot.data!.docs.isEmpty) {
+            debugPrint(
+              '=====================> Empty snapshot: ${snapshot.data!.docs}',
+            );
 
-                return NoMsgsDisplay(
-                  uid: widget.chat.targetId,
-                  userImage: widget.chat.image,
-                  userName: widget.chat.name,
-                );
-              }
+            return NoMsgsDisplay(
+              uid: widget.chat.targetId,
+              userImage: widget.chat.image,
+              userName: widget.chat.name,
+            );
+          }
 
-              debugPrint(
-                  '=====================> last msg time: ${snapshot.data!.docs.last['time']}}');
+          debugPrint(
+            '=====================> last msg time: ${snapshot.data!.docs.last['time']}}',
+          );
 
-              final chatProvider = context.read<ChatProvider>();
-              if (chatId != null) {
-                chatProvider.clearUnread(chatId!);
-                chatProvider.updateLastSeen(
-                    chatId!, snapshot.data!.docs.last['time']);
-                // chatProvider.lastMsgSeen =
-                //     snapshot.data!.docs.last['time'].toDate();
-              }
+          final chatProvider = context.read<ChatProvider>();
+          if (chatId != null) {
+            chatProvider.clearUnread(chatId!);
+            chatProvider.updateLastSeen(
+              chatId!,
+              snapshot.data!.docs.last['time'],
+            );
+            // chatProvider.lastMsgSeen =
+            //     snapshot.data!.docs.last['time'].toDate();
+          }
 
-              final List<DocumentSnapshot> messages = snapshot.data!.docs;
+          final List<DocumentSnapshot> messages = snapshot.data!.docs;
 
-              // messages.removeWhere((element) => element['isDeleted'] == 106);
-              log(messages.last.id.toString());
-              // chatProvider.lastChatId = messages.last.id;
-              return MsgsList(
-                msgs: messages,
-                image: widget.chat.image,
-                chatId: widget.chat.chatId ??
-                    chatId ??
-                    chatProvider.inChatID ??
-                    chatidd,
-              );
-            }));
+          // messages.removeWhere((element) => element['isDeleted'] == 106);
+          log(messages.last.id.toString());
+          // chatProvider.lastChatId = messages.last.id;
+          return MsgsList(
+            msgs: messages,
+            image: widget.chat.image,
+            chatId:
+                widget.chat.chatId ??
+                chatId ??
+                chatProvider.inChatID ??
+                chatidd,
+          );
+        },
+      ),
+    );
 
     return BackgroundImage(
       child: Scaffold(
-        appBar: ChatAppBar(
-          chat: widget.chat,
-          chatId: chatId,
-        ),
+        appBar: ChatAppBar(chat: widget.chat, chatId: chatId),
         body: Column(
           children: [
             messagesStream,

@@ -102,29 +102,83 @@ class CallsProvider with ChangeNotifier {
 
   // This function is called first when user enter the ongling call page
   Future<void> initEngine(bool isVideo) async {
-    agoraEngine = createAgoraRtcEngine();
-    await [Permission.microphone].request();
+    try {
+      log("🔧 [initEngine] Starting Agora initialization...");
+      log("🎥 Call type: ${isVideo ? 'Video Call' : 'Voice Call'}");
 
-    if (await Permission.microphone.isGranted) {
+      agoraEngine = createAgoraRtcEngine();
+      log("✅ Agora engine instance created successfully");
+
+      // Request microphone permission
+      log("🔊 Requesting microphone permission...");
+      await [Permission.microphone].request();
+
+      final micGranted = await Permission.microphone.isGranted;
+      log("🎤 Microphone permission granted: $micGranted");
+
+      if (!micGranted) {
+        showSnackBar('Microphone access is required to make a call');
+        navigatorKey.currentState?.pop();
+        throw Exception('[initEngine] Microphone permission not granted');
+      }
+
+      // For video calls, also request camera permission
       if (isVideo) {
+        log("📸 Requesting camera permission...");
         await [Permission.camera].request();
 
-        if (await Permission.camera.isGranted) {
-          await setupSDKEngine(isVideo);
-        } else {
-          navigatorKey.currentState!.pop();
+        final camGranted = await Permission.camera.isGranted;
+        log("📷 Camera permission granted: $camGranted");
+
+        if (!camGranted) {
           showSnackBar('Camera access is required to make a video call');
-          throw Exception('Camera permission not granted');
+          navigatorKey.currentState?.pop();
+          throw Exception('[initEngine] Camera permission not granted');
         }
-      } else {
+
+        log("⚙️ Calling setupSDKEngine() for video...");
         await setupSDKEngine(isVideo);
+        log("✅ [initEngine] setupSDKEngine() completed successfully for video");
+      } else {
+        log("⚙️ Calling setupSDKEngine() for voice...");
+        await setupSDKEngine(isVideo);
+        log("✅ [initEngine] setupSDKEngine() completed successfully for voice");
       }
-    } else {
-      showSnackBar('Microphone access is required to make a call');
-      navigatorKey.currentState!.pop();
-      throw Exception('Microphone permission not granted');
+
+      log("🎉 [initEngine] Initialization completed successfully!");
+    } catch (e, stack) {
+      log("❌ [initEngine] Error occurred: $e");
+      log("🧱 Stack trace:\n$stack");
+      showSnackBar('Failed to initialize call engine: ${e.toString()}');
+      navigatorKey.currentState?.pop();
     }
   }
+
+  // Future<void> initEngine(bool isVideo) async {
+  //   log("*************Initializing calling***********");
+  //   agoraEngine = createAgoraRtcEngine();
+  //   await [Permission.microphone].request();
+
+  //   if (await Permission.microphone.isGranted) {
+  //     if (isVideo) {
+  //       await [Permission.camera].request();
+
+  //       if (await Permission.camera.isGranted) {
+  //         await setupSDKEngine(isVideo);
+  //       } else {
+  //         navigatorKey.currentState!.pop();
+  //         showSnackBar('Camera access is required to make a video call');
+  //         throw Exception('Camera permission not granted');
+  //       }
+  //     } else {
+  //       await setupSDKEngine(isVideo);
+  //     }
+  //   } else {
+  //     showSnackBar('Microphone access is required to make a call');
+  //     navigatorKey.currentState!.pop();
+  //     throw Exception('Microphone permission not granted');
+  //   }
+  // }
 
   /// [ Initialize the Agora SDK ]
   Future<void> setupSDKEngine(bool isVideo) async {
@@ -147,13 +201,19 @@ class CallsProvider with ChangeNotifier {
           _remoteUid = remoteUid;
           callStatus = CallStatus.connected;
         },
-        onUserOffline: (RtcConnection connection, int remoteUid,
-            UserOfflineReasonType reason) {
-          _remoteUid = null;
-          callStatus = CallStatus.ended;
-          debugPrint('=============User Offline: $remoteUid, Reason: $reason');
-          leaveChannel();
-        },
+        onUserOffline:
+            (
+              RtcConnection connection,
+              int remoteUid,
+              UserOfflineReasonType reason,
+            ) {
+              _remoteUid = null;
+              callStatus = CallStatus.ended;
+              debugPrint(
+                '=============User Offline: $remoteUid, Reason: $reason',
+              );
+              leaveChannel();
+            },
         onLeaveChannel: (connection, state) {
           // Navigator.pop(callContext);
           leaveChannel();
@@ -162,60 +222,108 @@ class CallsProvider with ChangeNotifier {
     );
   }
 
-  // void sendCallNotification(
-  //     {required String name,
-  //     // required String pushId,
-  //     // required bool isVideo,
-  //     // required String callId,
-  //     required String image}) {
-  //   final dio = Dio();
-  //   final apiKey = dotenv.env['ONE_SIGNAL_REST_API_KEY'];
-  //   final appId = dotenv.env['ONE_SIGNAL_APP_ID'];
-  //   final options = Options(headers: {
-  //     'Authorization': 'Basic $apiKey',
-  //     'Content-Type': 'application/json'
-  //   });
-  //   final callsChannelId = dotenv.env['ONE_SIGNAL_CALLS_CHANNEL_ID'];
+  // ✅ UPDATED sendCallNotification method with proper parameters
+  void sendCallNotification({
+    required String name,
+    required String pushId,
+    required bool isVideo,
+    required String callId,
+    required String image,
+  }) {
+    final dio = Dio();
+    final apiKey = dotenv.env['ONE_SIGNAL_REST_API_KEY'];
+    final appId = dotenv.env['ONE_SIGNAL_APP_ID'];
+    final callsChannelId = dotenv.env['ONE_SIGNAL_CALLS_CHANNEL_ID'];
 
-  //   final data = {
-  //     "include_external_user_ids": ["511a6f19-8f6d-443b-8635-8b0de6f98fdf"],
-  //     "app_id": appId,
-  //     "contents": {"en": "$name is calling you"},
-  //     "data": {
-  //       "type": "call",
-  //       "call_id": "121",
-  //       "action_type": "1",
-  //       "user_image": image,
-  //       "user_name": name
-  //     },
-  //     "android_channel_id": "d1082c11-9734-435f-b629-143fa20719a5"
-  //   };
+    final options = Options(
+      headers: {
+        'Authorization': 'Basic $apiKey',
+        'Content-Type': 'application/json',
+      },
+    );
 
-  //   dio
-  //       .post('https://onesignal.com/api/v1/notifications',
-  //           data: data, options: options)
-  //       .then((value) => debugPrint(
-  //           '====================>> Call notif send result: $value'));
-  // }
+    // ✅ Use the actual push ID of the target user
+    final data = {
+      "include_external_user_ids": [pushId], // Use actual push ID
+      "app_id": appId,
+      "contents": {"en": "$name is calling you"},
+      "headings": {"en": isVideo ? "Incoming Video Call" : "Incoming Call"},
+      "data": {
+        "type": "call",
+        "call_id": callId,
+        "action_type": isVideo ? "2" : "1",
+        "user_image": image,
+        "user_name": name,
+      },
+      "android_channel_id": callsChannelId,
+      "ios_category": "CALL_INVITE",
+      "priority": 10,
+      "ios_sound": "call_sound.wav",
+      "android_sound": "call_sound",
+      // Add action buttons for call notifications
+      "buttons": [
+        {"id": "accept", "text": "Accept", "icon": "ic_accept_call"},
+        {"id": "decline", "text": "Decline", "icon": "ic_decline_call"},
+      ],
+    };
+
+    debugPrint('=============Sending call notification to: $pushId');
+    debugPrint('=============Notification data: $data');
+
+    dio
+        .post(
+          'https://onesignal.com/api/v1/notifications',
+          data: data,
+          options: options,
+        )
+        .then((value) {
+          debugPrint(
+            '====================>> Call notification sent successfully: ${value.data}',
+          );
+        })
+        .catchError((error) {
+          debugPrint('====================>> Call notification failed: $error');
+        });
+  }
 
   /// Create an [ outgoing call ]
-  void makeCall(BuildContext context,
-      {required int uid, required bool isVideo}) async {
+  /// Create an [ outgoing call ]
+  void makeCall(
+    BuildContext context, {
+    required int uid,
+    required bool isVideo,
+    required String userName,
+    required String userImage,
+    required String targetPushId, // Add this parameter
+  }) async {
     debugPrint('=============Start Call: $uid, isVideo: $isVideo');
-
+    log('=============Start Call: $uid, isVideo: $isVideo');
     try {
       final response = await createCallWithServer(id: uid, isVideo: isVideo);
+      log("################## create call with server response : $response");
+
       if (response.isNotEmpty) {
         _channelName = response['channelName'];
         final callId = _channelName?.split('_')[1];
         debugPrint('=============Call ID: $callId');
         debugPrint('=============Make Call Response $response');
-        // Wakelock.enable();
+
+        // ✅ SEND PUSH NOTIFICATION TO THE OTHER USER
+        sendCallNotification(
+          name: userName,
+          pushId: targetPushId,
+          isVideo: isVideo,
+          callId: callId!,
+          image: userImage,
+        );
+
+        // Join the channel
         await joinChannel(
-            token: response['token'],
-            channelName: _channelName!,
-            isIncoming: false,
-            isVideo: isVideo);
+          token: response['token'],
+          channelName: _channelName!,
+          isIncoming: false,
+          isVideo: isVideo,
+        );
         debugPrint('=============Response: $response');
       } else {
         Navigator.pop(context);
@@ -227,8 +335,6 @@ class CallsProvider with ChangeNotifier {
                 'You don\'t have permission to ${isVideo ? 'video call' : 'call'} this person, Please ask him/her to give permission in Call settings',
           ),
         );
-
-        //
       }
     } catch (error) {
       debugPrint('=============Error: $error');
@@ -238,22 +344,28 @@ class CallsProvider with ChangeNotifier {
   }
 
   /// Accept an [ incoming call ]
-  void answerCall(BuildContext context,
-      {required int callId, required bool isVideo}) async {
+  void answerCall(
+    BuildContext context, {
+    required int callId,
+    required bool isVideo,
+  }) async {
     debugPrint('=============Accept Call: $callId');
     callStatus = CallStatus.ringing;
 
     try {
-      final response =
-          await getReceiverTokenFromServer(context, callId: callId);
+      final response = await getReceiverTokenFromServer(
+        context,
+        callId: callId,
+      );
 
       _channelName = response['channelName'];
       // Wakelock.enable();
       await joinChannel(
-          token: response['token'],
-          channelName: _channelName!,
-          isIncoming: true,
-          isVideo: isVideo);
+        token: response['token'],
+        channelName: _channelName!,
+        isIncoming: true,
+        isVideo: isVideo,
+      );
       debugPrint('=============Answer Call Response: $response');
     } catch (error) {
       debugPrint('=============Error: $error');
@@ -264,10 +376,14 @@ class CallsProvider with ChangeNotifier {
 
   // request a call with the server by the call initiator
   // and get the token and channel name
-  Future<Map<String, dynamic>> createCallWithServer(
-      {required int id, required bool isVideo}) async {
-    final data = FormData.fromMap(
-        {'user_id': '$id', 'action_type': '${isVideo ? 2 : 1}'});
+  Future<Map<String, dynamic>> createCallWithServer({
+    required int id,
+    required bool isVideo,
+  }) async {
+    final data = FormData.fromMap({
+      'user_id': '$id',
+      'action_type': '${isVideo ? 2 : 1}',
+    });
     debugPrint('=============Data: ${data.fields}');
 
     try {
@@ -290,8 +406,10 @@ class CallsProvider with ChangeNotifier {
   }
 
   // Receive the token and channel name from the server by the call receiver
-  Future<Map<String, dynamic>> getReceiverTokenFromServer(BuildContext context,
-      {required int callId}) async {
+  Future<Map<String, dynamic>> getReceiverTokenFromServer(
+    BuildContext context, {
+    required int callId,
+  }) async {
     final data = FormData.fromMap({'call_id': '$callId'});
 
     try {
@@ -300,7 +418,7 @@ class CallsProvider with ChangeNotifier {
         debugPrint('=============Response: ${response.data}');
         return {
           'token': response.data['token'],
-          'channelName': response.data['channelName']
+          'channelName': response.data['channelName'],
         };
       } else {
         throw Exception(response.data['message']);
@@ -311,11 +429,12 @@ class CallsProvider with ChangeNotifier {
     }
   }
 
-  Future<void> joinChannel(
-      {required String token,
-      required String channelName,
-      required bool isIncoming,
-      required bool isVideo}) async {
+  Future<void> joinChannel({
+    required String token,
+    required String channelName,
+    required bool isIncoming,
+    required bool isVideo,
+  }) async {
     debugPrint('=============Joining Channel: $channelName');
 
     if (isVideo) {
@@ -323,15 +442,17 @@ class CallsProvider with ChangeNotifier {
     }
 
     ChannelMediaOptions options = const ChannelMediaOptions(
-        clientRoleType: ClientRoleType.clientRoleBroadcaster,
-        channelProfile: ChannelProfileType.channelProfileCommunication);
+      clientRoleType: ClientRoleType.clientRoleBroadcaster,
+      channelProfile: ChannelProfileType.channelProfileCommunication,
+    );
 
     try {
       await agoraEngine.joinChannel(
-          token: token,
-          channelId: channelName,
-          options: options,
-          uid: isIncoming ? 2 : 1);
+        token: token,
+        channelId: channelName,
+        options: options,
+        uid: isIncoming ? 2 : 1,
+      );
       if (isVideo) {
         await agoraEngine.setEnableSpeakerphone(true);
       } else {
@@ -384,12 +505,13 @@ class CallsProvider with ChangeNotifier {
 
   getCallSettings(Chat chat) async {
     final userTokens = await AuthProvider().retrieveUserTokens();
-    final data = FormData.fromMap({
-      'user_id': '${chat.targetId}',
-    });
+    final data = FormData.fromMap({'user_id': '${chat.targetId}'});
     final headers = {"Authorization": "Bearer ${userTokens['access']}"};
-    final response = await dio.post(Endpoints.getCallSettings,
-        data: data, options: Options(headers: headers));
+    final response = await dio.post(
+      Endpoints.getCallSettings,
+      data: data,
+      options: Options(headers: headers),
+    );
     if (response.statusCode == 200) {
       if (response.data['status'] == true) {
         _videoAllowed = response.data['video_allowed'];
@@ -414,8 +536,11 @@ class CallsProvider with ChangeNotifier {
       'video': video ? 1 : 0,
     });
     final headers = {"Authorization": "Bearer ${userTokens['access']}"};
-    final response = await dio.post(Endpoints.updateCallSettings,
-        data: data, options: Options(headers: headers));
+    final response = await dio.post(
+      Endpoints.updateCallSettings,
+      data: data,
+      options: Options(headers: headers),
+    );
     if (response.statusCode == 200) {
       final userBox = Hive.box('user');
       userBox.put('audio_allowed', response.data['audio_allowed']);
@@ -434,8 +559,11 @@ class CallsProvider with ChangeNotifier {
       'action_type': actionType,
     });
     final headers = {"Authorization": "Bearer ${userTokens['access']}"};
-    final response = await dio.post(Endpoints.callCredits,
-        data: data, options: Options(headers: headers));
+    final response = await dio.post(
+      Endpoints.callCredits,
+      data: data,
+      options: Options(headers: headers),
+    );
     if (response.statusCode == 200) {
       userBox.put('audio_call_balance', response.data['audio_call_balance']);
       userBox.put('video_call_balance', response.data['video_call_balance']);

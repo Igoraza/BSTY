@@ -1,5 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'dart:developer';
+
 import 'package:bsty/common_widgets/upgrade_plan.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -49,40 +51,45 @@ class ChatAppBar extends StatelessWidget implements PreferredSizeWidget {
       actions: [
         CustomIconBtn(
           onTap: () {
-            if (userPlan > 2 && !planExpired) {
-              if (audioBalance != 0) {
-                Navigator.of(context).pushNamed(
-                  OnGoingCallPage.routeName,
-                  arguments: {
-                    'callId': 0,
-                    'targetUserId': id,
-                    'isIncoming': false,
-                    'isVideo': false,
-                    'user_image': image,
-                    'user_name': name,
-                    'isOutgoing': true,
-                  },
-                );
-              } else {
-                showDialog(
-                  context: context,
-                  builder: (context) => BuyPlanDialog(
-                    // title: 'Minute Of Voice',
-                    desc: 'Buy Audio Minutes As Needed !',
-                    img: 'assets/svg/upgrade_dialog/minute.svg',
-                    btnText: 'Buy Now',
-                    paymentList: planDetails.payAudio,
-                  ),
-                );
-              }
-            } else {
-              // showDialog(
-              //   context: context,
-              //   builder: (context) => UpgradePlanDialog(),
-              // );
+            log(
+              "User name :: $name    /////////////////   target push id :: ${chat.pushId}",
+            );
+            //TODO: Uncomment this
+            // if (userPlan > 2 && !planExpired) {
+            // if (audioBalance != 0) {
+            Navigator.of(context).pushNamed(
+              OnGoingCallPage.routeName,
+              arguments: {
+                'callId': 0,
+                'targetUserId': id,
+                'isIncoming': false,
+                'isVideo': false,
+                'user_image': image,
+                'user_name': name,
+                'isOutgoing': true,
+                'targetPushId': chat.pushId,
+              },
+            );
+            // } else {
+            //   showDialog(
+            //     context: context,
+            //     builder: (context) => BuyPlanDialog(
+            //       // title: 'Minute Of Voice',
+            //       desc: 'Buy Audio Minutes As Needed !',
+            //       img: 'assets/svg/upgrade_dialog/minute.svg',
+            //       btnText: 'Buy Now',
+            //       paymentList: planDetails.payAudio,
+            //     ),
+            //   );
+            // }
+            // } else {
+            // showDialog(
+            //   context: context,
+            //   builder: (context) => UpgradePlanDialog(),
+            // );
 
-              Navigator.pushNamed(context, UpgradePlanScreen.routeName);
-            }
+            // Navigator.pushNamed(context, UpgradePlanScreen.routeName);
+            // }
           },
           child: const Icon(Icons.call_rounded),
         ),
@@ -100,6 +107,7 @@ class ChatAppBar extends StatelessWidget implements PreferredSizeWidget {
                     'user_image': image,
                     'user_name': name,
                     'isOutgoing': true,
+                    'targetPushId': chat.pushId,
                   },
                 );
               } else {

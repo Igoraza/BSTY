@@ -98,7 +98,177 @@ class _MainPageState extends State<MainPage> {
   @override
   void initState() {
     super.initState();
-    // initOneSignal();
+    initOneSignal();
+  }
+
+  // import 'package:onesignal_flutter/onesignal_flutter.dart';
+
+  Future<void> initOneSignal() async {
+    log("Initializing onesignal");
+    if (!mounted) return;
+
+    // Initialize OneSignal with your App ID
+    final appId = dotenv.env['ONE_SIGNAL_APP_ID'];
+    OneSignal.initialize(appId!);
+
+    // Set log level for debugging (remove in production)
+    OneSignal.Debug.setLogLevel(OSLogLevel.verbose);
+
+    // Set external user ID
+    final pushId = Hive.box('user').get('push_id');
+    if (pushId != null) {
+      OneSignal.login(pushId);
+      debugPrint('OneSignal user logged in: $pushId');
+    }
+
+    // Request notification permission
+    final permissionAccepted = await OneSignal.Notifications.requestPermission(
+      true,
+    );
+    if (permissionAccepted) {
+      debugPrint('User accepted notifications');
+    } else {
+      showSnackBar(
+        'Please enable notifications to receive calls and other updates',
+      );
+    }
+
+    // Handle notification received in foreground
+    OneSignal.Notifications.addForegroundWillDisplayListener((event) {
+      // Will be called whenever a notification is received in foreground
+      final data = event.notification.additionalData;
+      debugPrint('===================>>Notification received: $data');
+
+      if (data != null) {
+        switch (data['type']) {
+          case 'chat':
+            // Don't display notification for chat messages
+            event.preventDefault();
+            break;
+
+          case 'match':
+            // Display notification for matches
+            event.notification.display();
+            break;
+
+          case 'call':
+            // Don't display notification for calls (handled by CallKit)
+            event.preventDefault();
+            break;
+
+          default:
+            // Display notification for other types
+            event.notification.display();
+            break;
+        }
+      }
+    });
+
+    // Handle notification clicked/opened
+    OneSignal.Notifications.addClickListener((event) {
+      // Will be called whenever a notification is opened/button pressed
+      final data = event.notification.additionalData;
+      debugPrint('===================>>Notification opened: $data');
+
+      if (data != null) {
+        if (data['type'] == 'call') {
+          debugPrint(
+            "===================Call notification: ${data['action_type']}",
+          );
+
+          // Check if a button was clicked
+          if (event.result.actionId != null &&
+              event.result.actionId!.isNotEmpty) {
+            debugPrint("Button pressed with id: ${event.result.actionId}");
+            navigatorKey.currentState!.pushNamed(
+              OnGoingCallPage.routeName,
+              arguments: {
+                'callId': int.parse(data['call_id'].toString()),
+                'isIncoming': true,
+                'isVideo': int.parse(data['action_type'].toString()) == 2,
+                'user_image': data['user_image'] ?? '',
+                'user_name': data['user_name'] ?? '',
+              },
+            );
+          } else {
+            debugPrint("===================Call Notification opened $data");
+            navigatorKey.currentState!.pushNamed(
+              IncomingCall.routeName,
+              arguments: {
+                'callId': int.parse(data['call_id'].toString()),
+                'isVideo': int.parse(data['action_type'].toString()) == 2,
+                'user_image': data['user_image'] ?? '',
+                'user_name': data['user_name'] ?? '',
+              },
+            );
+          }
+        } else if (data['type'] == 'chat') {
+          final chat = Chat(
+            targetId: data['target_id'],
+            name: data['name'],
+            image: data['image'],
+            pushId: data['pushId'],
+            matchId: data['matchId'],
+            chatId: data['chatId'],
+          );
+          navigatorKey.currentState!.pushNamed(
+            ChatPage.routeName,
+            arguments: chat,
+          );
+        } else if (data['type'] == 'match') {
+          navigatorKey.currentContext!.read<AuthProvider>().fromMatch = true;
+          navigatorKey.currentState!.pushNamedAndRemoveUntil(
+            MainPage.routeName,
+            (route) => false,
+            arguments: 3,
+          );
+        } else {
+          debugPrint("===================Type is not call: ${data['type']}");
+        }
+      }
+    });
+
+    // Listen to permission changes
+    OneSignal.Notifications.addPermissionObserver((permission) {
+      debugPrint("Permission state changed: $permission");
+    });
+
+    // Listen to subscription changes (push token changes)
+    OneSignal.User.pushSubscription.addObserver((state) {
+      debugPrint("Push subscription state changed: ${state.current.id}");
+    });
+  }
+
+  // Additional helper methods for the new SDK
+
+  // Logout user (removes external user ID)
+  void logoutOneSignal() {
+    OneSignal.logout();
+  }
+
+  // Get the OneSignal player/subscription ID
+  String? getOneSignalPlayerId() {
+    return OneSignal.User.pushSubscription.id;
+  }
+
+  // Add tags to user
+  void addUserTags(Map<String, String> tags) {
+    OneSignal.User.addTags(tags);
+  }
+
+  // Remove tags from user
+  void removeUserTags(List<String> keys) {
+    OneSignal.User.removeTags(keys);
+  }
+
+  // Set email
+  void setUserEmail(String email) {
+    OneSignal.User.addEmail(email);
+  }
+
+  // Remove email
+  void removeUserEmail(String email) {
+    OneSignal.User.removeEmail(email);
   }
 
   // Future<void> initOneSignal() async {
@@ -163,34 +333,34 @@ class _MainPageState extends State<MainPage> {
 
   //     final data = result.notification.additionalData;
   //     debugPrint('===================>>Notification opened: $data');
-  //     // if (data!['type'] == 'call') {
-  //     //   debugPrint(
-  //     //       "===================Call notification: ${data['action_type']}");
-  //     //   if (result.action!.type == OSNotificationActionType.actionTaken) {
-  //     //     debugPrint("Button pressed with id: ${result.action!.actionId}");
-  //     //     navigatorKey.currentState!.pushNamed(
-  //     //       OnGoingCallPage.routeName,
-  //     //       arguments: {
-  //     //         'callId': int.parse(data['call_id']),
-  //     //         'isIncoming': true,
-  //     //         'isVideo': int.parse(data['action_type']) == 2 ? true : false,
-  //     //         'user_image': data['user_image'] ?? '',
-  //     //         'user_name': data['user_name'] ?? ''
-  //     //       },
-  //     //     );
-  //     //   } else {
-  //     //     debugPrint("===================Call Notification opened $data");
-  //     //     navigatorKey.currentState!.pushNamed(
-  //     //       IncomingCall.routeName,
-  //     //       arguments: {
-  //     //         'callId': int.parse(data['call_id']),
-  //     //         'isVideo': int.parse(data['action_type']) == 2,
-  //     //         'user_image': data['user_image'] ?? '',
-  //     //         'user_name': data['user_name'] ?? ''
-  //     //       },
-  //     //     );
-  //     //   }
-  //     // } else
+  //     if (data!['type'] == 'call') {
+  //       debugPrint(
+  //           "===================Call notification: ${data['action_type']}");
+  //       if (result.action!.type == OSNotificationActionType.actionTaken) {
+  //         debugPrint("Button pressed with id: ${result.action!.actionId}");
+  //         navigatorKey.currentState!.pushNamed(
+  //           OnGoingCallPage.routeName,
+  //           arguments: {
+  //             'callId': int.parse(data['call_id']),
+  //             'isIncoming': true,
+  //             'isVideo': int.parse(data['action_type']) == 2 ? true : false,
+  //             'user_image': data['user_image'] ?? '',
+  //             'user_name': data['user_name'] ?? ''
+  //           },
+  //         );
+  //       } else {
+  //         debugPrint("===================Call Notification opened $data");
+  //         navigatorKey.currentState!.pushNamed(
+  //           IncomingCall.routeName,
+  //           arguments: {
+  //             'callId': int.parse(data['call_id']),
+  //             'isVideo': int.parse(data['action_type']) == 2,
+  //             'user_image': data['user_image'] ?? '',
+  //             'user_name': data['user_name'] ?? ''
+  //           },
+  //         );
+  //       }
+  //     } else
   //     if (data!['type'] == 'chat') {
   //       final chat = Chat(
   //           targetId: data['target_id'],

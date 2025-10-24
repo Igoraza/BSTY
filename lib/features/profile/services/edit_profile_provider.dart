@@ -70,8 +70,13 @@ class EditProfileProvider extends ChangeNotifier {
 
   Future<Map<String, dynamic>> fetchMyProfile() async {
     try {
+      log(">>>>>>>>>>>>>>>>>>>>Getting profile<<<<<<<<<<<<<<<<<<<<<<<<<<<");
       final response = await dio.get(Endpoints.getMyProfile);
       final data = response.data;
+
+      log(
+        ">>>>>>>>>>>>>>>>>>>>Profile response : ${response}<<<<<<<<<<<<<<<<<<<<<<<<<<<",
+      );
 
       if (response.statusCode == 200 && data['status']) {
         final user = UserProfile.fromJson(data['user']);
@@ -86,10 +91,7 @@ class EditProfileProvider extends ChangeNotifier {
         allGenders = data['genders'];
         allOrientations = data['orientations'];
         allInterests = data['interests'];
-        return {
-          'profile': user,
-          'images': images,
-        };
+        return {'profile': user, 'images': images};
       } else {
         throw Exception('Error fetching profile');
       }
@@ -160,18 +162,19 @@ class EditProfileProvider extends ChangeNotifier {
           .read<InitialProfileProvider>()
           .uploadUserImages(navigatorKey.currentContext!, validImages)
           .then((value) {
-        if (value) {
-          debugPrint('Images uploaded successfully');
-        } else {
-          showSnackBar('Something went wrong while uploading images');
-        }
-      });
+            if (value) {
+              debugPrint('Images uploaded successfully');
+            } else {
+              showSnackBar('Something went wrong while uploading images');
+            }
+          });
     }
   }
 
   Future<int?> uploadImage(File img) async {
-    FormData formData =
-        FormData.fromMap({"image": await MultipartFile.fromFile(img.path)});
+    FormData formData = FormData.fromMap({
+      "image": await MultipartFile.fromFile(img.path),
+    });
     final userTokens = await AuthProvider().retrieveUserTokens();
 
     final headers = {"Authorization": "Bearer ${userTokens['access']}"};

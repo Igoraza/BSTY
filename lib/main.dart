@@ -118,7 +118,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   /// [ initialize dependencies ]
-  // OneSignal.Debug.setLogLevel(OSLogLevel.verbose);
+  OneSignal.Debug.setLogLevel(OSLogLevel.verbose);
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   // Set the background messaging handler early on, as a named top-level function
@@ -138,7 +138,11 @@ void main() async {
   await dotenv.load(fileName: ".env");
 
   //
-  OneSignal.initialize(dotenv.env['ONE_SIGNAL_APP_ID']!);
+  try {
+    OneSignal.initialize(dotenv.env['ONE_SIGNAL_APP_ID']!);
+  } catch (e) {
+    log("Onesignal initialize error: $e");
+  }
 
   //
 

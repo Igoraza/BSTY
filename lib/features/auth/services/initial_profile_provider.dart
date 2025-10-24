@@ -5,6 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/widgets.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:bsty/utils/functions.dart';
+import 'package:provider/provider.dart';
 
 import '../../../api/api_helper.dart';
 import '../../../api/endpoints.dart';
@@ -39,7 +40,11 @@ class InitialProfileProvider with ChangeNotifier {
 
   final _dio = Api().api;
   final _initialProfile = InitialProfileModel(
-      gender: '', orientation: '1', fit: '1', interests: '');
+    gender: '',
+    orientation: '1',
+    fit: '1',
+    interests: '',
+  );
 
   InitialProfileModel get initialProfile => _initialProfile;
 
@@ -102,7 +107,9 @@ class InitialProfileProvider with ChangeNotifier {
 
   // Get data from server to display
   Future<List> getGenderList() async {
+    log("Getting genders..............");
     final response = await _dio.get(Endpoints.gendersList);
+    log("Genders response : $response");
     return response.data['genders'];
   }
 
@@ -118,7 +125,11 @@ class InitialProfileProvider with ChangeNotifier {
 
   // Submit user data ( dob, gender, etc ... ) to server
   Future<bool> submitInitialProfile(BuildContext context) async {
+    final authProvider = context.read<AuthProvider>();
     bool returnVal = false;
+    final token = authProvider.retrieveUserTokens().then(
+      (value) => value['access'],
+    );
 
     authStatus = AuthStatus.checking;
     notifyListeners();
@@ -127,21 +138,28 @@ class InitialProfileProvider with ChangeNotifier {
       var formData = FormData.fromMap(_initialProfile.toJson());
       await _dio
           .post(
-        Endpoints.updateProfile,
-        data: formData,
-      )
+            Endpoints.updateProfile,
+            data: formData,
+            options: Options(
+              headers: {
+                'Authorization': 'Bearer $token',
+                'Content-Type': Headers.jsonContentType,
+              },
+            ),
+          )
           .then((response) {
-        if (response.statusCode == 200 &&
-            response.data['status'] == 'success') {
-          returnVal = true;
-          authStatus = AuthStatus.done;
-          notifyListeners();
-        } else {
-          returnVal = false;
-        }
-      });
-    } on DioError catch (error) {
+            if (response.statusCode == 200 &&
+                response.data['status'] == 'success') {
+              returnVal = true;
+              authStatus = AuthStatus.done;
+              notifyListeners();
+            } else {
+              returnVal = false;
+            }
+          });
+    } on DioException catch (error) {
       debugPrint('Initial Profile Error: ${error.message}');
+      debugPrint('Initial Profile Error response: ${error.response}');
       returnVal = false;
     } catch (error) {
       debugPrint('Initial Profile Error: $error');
@@ -155,15 +173,18 @@ class InitialProfileProvider with ChangeNotifier {
 
   // Upload user images to server
   Future<bool> uploadUserImages(
-      BuildContext context, List<File?> images) async {
+    BuildContext context,
+    List<File?> images,
+  ) async {
     bool returnVal = false;
 
     authStatus = AuthStatus.checking;
     notifyListeners();
 
     for (File? img in images) {
-      FormData formData =
-          FormData.fromMap({"image": await MultipartFile.fromFile(img!.path)});
+      FormData formData = FormData.fromMap({
+        "image": await MultipartFile.fromFile(img!.path),
+      });
       try {
         final response = await _dio.post(
           Endpoints.addUserImage,
@@ -176,7 +197,8 @@ class InitialProfileProvider with ChangeNotifier {
           },
         );
         debugPrint(
-            '===========Initial Profile Images Response: ${response.data}');
+          '===========Initial Profile Images Response: ${response.data}',
+        );
         if (response.statusCode == 200 &&
             response.data['status'] == 'success') {
           final displayImage = response.data['display_image '];
@@ -212,8 +234,10 @@ class InitialProfileProvider with ChangeNotifier {
       isLoading = true;
       final userTokens = await AuthProvider().retrieveUserTokens();
       final headers = {"Authorization": "Bearer ${userTokens['access']}"};
-      final response = await _dio.get(Endpoints.profileConfig,
-          options: Options(headers: headers));
+      final response = await _dio.get(
+        Endpoints.profileConfig,
+        options: Options(headers: headers),
+      );
       if (response.statusCode == 200) {
         showMe = response.data['show_me'];
         notification = response.data['notification'];
@@ -221,7 +245,8 @@ class InitialProfileProvider with ChangeNotifier {
         log(response.data.toString());
       } else {
         debugPrint(
-            'getProfileConfig response.statusCode ${response.statusCode}');
+          'getProfileConfig response.statusCode ${response.statusCode}',
+        );
       }
       isLoading = false;
     } catch (e) {
@@ -232,9 +257,7 @@ class InitialProfileProvider with ChangeNotifier {
   updateIncognito(bool value) async {
     final userTokens = await AuthProvider().retrieveUserTokens();
     final headers = {"Authorization": "Bearer ${userTokens['access']}"};
-    final data = FormData.fromMap({
-      'incognito': value ? 1 : 0,
-    });
+    final data = FormData.fromMap({'incognito': value ? 1 : 0});
     final response = await _dio.post(
       Endpoints.updateIncognito,
       data: data,
@@ -252,9 +275,7 @@ class InitialProfileProvider with ChangeNotifier {
   updateNotific(bool value) async {
     final userTokens = await AuthProvider().retrieveUserTokens();
     final headers = {"Authorization": "Bearer ${userTokens['access']}"};
-    final data = FormData.fromMap({
-      'notification': value ? 1 : 0,
-    });
+    final data = FormData.fromMap({'notification': value ? 1 : 0});
     final response = await _dio.post(
       Endpoints.updateNotification,
       data: data,
@@ -268,9 +289,7 @@ class InitialProfileProvider with ChangeNotifier {
   updateShowMe(int value) async {
     final userTokens = await AuthProvider().retrieveUserTokens();
     final headers = {"Authorization": "Bearer ${userTokens['access']}"};
-    final data = FormData.fromMap({
-      'gender': value,
-    });
+    final data = FormData.fromMap({'gender': value});
     final response = await _dio.post(
       Endpoints.updateShowMe,
       data: data,
@@ -286,10 +305,7 @@ class InitialProfileProvider with ChangeNotifier {
       isLoading = true;
       final userTokens = await AuthProvider().retrieveUserTokens();
       final headers = {"Authorization": "Bearer ${userTokens['access']}"};
-      final data = FormData.fromMap({
-        'title': title,
-        'content': content,
-      });
+      final data = FormData.fromMap({'title': title, 'content': content});
       final response = await _dio.post(
         Endpoints.sendQuery,
         data: data,
@@ -308,8 +324,12 @@ class InitialProfileProvider with ChangeNotifier {
     }
   }
 
-  reportAndBlock(int userId, String title, int selectedId,
-      {int? userImg}) async {
+  reportAndBlock(
+    int userId,
+    String title,
+    int selectedId, {
+    int? userImg,
+  }) async {
     try {
       isLoading = true;
       final userTokens = await AuthProvider().retrieveUserTokens();

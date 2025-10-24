@@ -44,11 +44,15 @@ class _SelectInterestState extends State<SelectInterest> {
     /// [ Widgets ]
 
     final searchField = CupertinoSearchTextField(
-      onChanged: (value) => setState(() => _searchedItems = interests
-          .where((element) => element['title']!
-              .toLowerCase()
-              .contains(value.trim().toLowerCase()))
-          .toList()),
+      onChanged: (value) => setState(
+        () => _searchedItems = interests
+            .where(
+              (element) => element['title']!.toLowerCase().contains(
+                value.trim().toLowerCase(),
+              ),
+            )
+            .toList(),
+      ),
       placeholder: 'Search your interests',
       style: Theme.of(context).textTheme.bodyMedium,
       padding: const EdgeInsets.all(12),
@@ -56,58 +60,78 @@ class _SelectInterestState extends State<SelectInterest> {
     );
 
     final interestItemsGrid = Expanded(
-        child: Wrap(
-            spacing: 16,
-            runSpacing: 16,
-            children: (_searchedItems.isNotEmpty ? _searchedItems : interests)
-                .map((e) => GestureDetector(
-                    onTap: () => setState(() =>
-                        selectedInterests.contains(e['id'])
-                            ? selectedInterests.remove(e['id'])
-                            : selectedInterests.add(e['id'])),
-                    child: CustomChip(
-                        text: e['title'],
-                        isSelected: selectedInterests.contains(e['id']),
-                        bgColor: selectedInterests.contains(e['id'])
-                            ? AppColors.borderBlue
-                            : AppColors.white,
-                        texColor: selectedInterests.contains(e['id'])
-                            ? AppColors.white
-                            : AppColors.black)))
-                .toList()));
+      child: Wrap(
+        spacing: 16,
+        runSpacing: 16,
+        children: (_searchedItems.isNotEmpty ? _searchedItems : interests)
+            .map(
+              (e) => GestureDetector(
+                onTap: () => setState(
+                  () => selectedInterests.contains(e['id'])
+                      ? selectedInterests.remove(e['id'])
+                      : selectedInterests.add(e['id']),
+                ),
+                child: CustomChip(
+                  text: e['title'],
+                  isSelected: selectedInterests.contains(e['id']),
+                  bgColor: selectedInterests.contains(e['id'])
+                      ? AppColors.borderBlue
+                      : AppColors.white,
+                  texColor: selectedInterests.contains(e['id'])
+                      ? AppColors.white
+                      : AppColors.black,
+                ),
+              ),
+            )
+            .toList(),
+      ),
+    );
 
     final continueBtn = PrimaryBtn(
-        text: 'Continue',
-        gradient: AppColors.buttonBlue,
-        onPressed: () {
-          if (selectedInterests.isEmpty) {
-            showSnackBar('Please select at least one interest');
-            return;
-          }
-          final interestsString = selectedInterests.join('#');
-          context.read<InitialProfileProvider>().interests = interestsString;
-          Navigator.of(context).pushNamed(PerfectFit.routeName);
-        });
+      text: 'Continue',
+      gradient: AppColors.buttonBlue,
+      onPressed: () {
+        if (selectedInterests.isEmpty) {
+          showSnackBar('Please select at least one interest');
+          return;
+        }
+        final interestsString = selectedInterests.join('#');
+        context.read<InitialProfileProvider>().interests = interestsString;
+        Navigator.of(context).pushNamed(PerfectFit.routeName);
+      },
+    );
 
     return BackgroundImage(
-        child: Scaffold(
-            appBar: AppBar(title: const Text('Interests'), actions: [
-              TextButton(
-                  onPressed: () => debugPrint('Skipped'),
-                  child: Text('Skip',
-                      style: Theme.of(context).textTheme.bodyMedium))
-            ]),
-            body: Padding(
-                padding: EdgeInsets.all(appWidth * 0.05)
-                    .copyWith(bottom: appHeight * 0.05),
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      searchField,
-                      SizedBox(height: appHeight * 0.025),
-                      interestItemsGrid,
-                      SizedBox(height: appHeight * 0.025),
-                      continueBtn
-                    ]))));
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Interests'),
+          actions: [
+            TextButton(
+              onPressed: () =>
+                  Navigator.of(context).pushNamed(PerfectFit.routeName),
+              child: Text(
+                'Skip',
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+            ),
+          ],
+        ),
+        body: Padding(
+          padding: EdgeInsets.all(
+            appWidth * 0.05,
+          ).copyWith(bottom: appHeight * 0.05),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              searchField,
+              SizedBox(height: appHeight * 0.025),
+              interestItemsGrid,
+              SizedBox(height: appHeight * 0.025),
+              continueBtn,
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }

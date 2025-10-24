@@ -32,35 +32,35 @@ class VerifyOtp extends StatelessWidget {
 
     /// [ Functions ]
     void verifyOtp(BuildContext context, String otp) {
-      showSnackBar(
-        'This is dummy function. login with google to access app functionalities',
-      );
-      // final authProvider = context.read<AuthProvider>();
-      // try {
-      //   (args.isEmail
-      //           ? authProvider.verifyEmailOtp(context)
-      //           : authProvider.verifyOtp(context, otp: otp, args: args))
-      //       .then((value) {
-      //         if (value) {
-      //           showSnackBar('OTP verified successfully.');
-      //           args.isLoggingIn
-      //               ? Navigator.of(context).pushNamedAndRemoveUntil(
-      //                   MainPage.routeName,
-      //                   (route) => false,
-      //                 )
-      //               : args.isEmail
-      //               ? Navigator.of(
-      //                   context,
-      //                 ).pushReplacementNamed(SelectDob.routeName)
-      //               : Navigator.pushReplacementNamed(
-      //                   context,
-      //                   AccountCreated.routeName,
-      //                 );
-      //         }
-      //       });
-      // } catch (e) {
-      //   showSnackBar(e.toString());
-      // }
+      // showSnackBar(
+      //   'This is dummy function. login with google to access app functionalities',
+      // );
+      final authProvider = context.read<AuthProvider>();
+      try {
+        (args.isEmail
+                ? authProvider.verifyEmailOtp(context)
+                : authProvider.verifyOtp(context, otp: otp, args: args))
+            .then((value) {
+              if (value) {
+                showSnackBar('OTP verified successfully.');
+                args.isLoggingIn
+                    ? Navigator.of(context).pushNamedAndRemoveUntil(
+                        MainPage.routeName,
+                        (route) => false,
+                      )
+                    : args.isEmail
+                    ? Navigator.of(
+                        context,
+                      ).pushReplacementNamed(SelectDob.routeName)
+                    : Navigator.pushReplacementNamed(
+                        context,
+                        AccountCreated.routeName,
+                      );
+              }
+            });
+      } catch (e) {
+        showSnackBar(e.toString());
+      }
     }
 
     /// [ Widgets ]

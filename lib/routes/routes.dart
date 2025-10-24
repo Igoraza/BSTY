@@ -174,6 +174,7 @@ class MyRoutes {
             targetUserImg: data['user_image'] as String?,
             targetUserName: data['user_name'] as String?,
             isOutgoing: data['isOutgoing'] as bool?,
+            targetPushId: data['targetPushId'],
           ),
         );
 

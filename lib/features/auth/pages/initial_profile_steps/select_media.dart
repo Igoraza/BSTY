@@ -1,13 +1,17 @@
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:bsty/common_widgets/crop_image_screen.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:bsty/screens/permission/permit_location.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
+import 'dart:typed_data';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:path/path.dart' as path;
 
 import '../../../../common_widgets/background_image.dart';
 import '../../../../common_widgets/stadium_button.dart';
@@ -44,44 +48,107 @@ class _SelectMediaState extends State<SelectMedia> {
       final pickedFile = await ImagePicker().pickImage(
         source: ImageSource.gallery,
       );
-
       if (pickedFile == null) return;
-      CroppedFile? croppedFile = await ImageCropper().cropImage(
-        sourcePath: pickedFile.path,
-        aspectRatio: const CropAspectRatio(ratioX: 4, ratioY: 5),
-        maxWidth: _remoteConfigService.imageMaxWidth,
-        maxHeight: _remoteConfigService.imageMaxHeight,
-        uiSettings: [
-          AndroidUiSettings(
-            toolbarTitle: 'Adjust the Image',
-            toolbarColor: Colors.black,
-            toolbarWidgetColor: AppColors.white,
-            hideBottomControls: true,
+
+      // Read image bytes
+      final imageBytes = await pickedFile.readAsBytes();
+      final imageProvider = MemoryImage(imageBytes);
+
+      if (!mounted) return;
+
+      // Open crop screen
+      final Uint8List? croppedBytes = await Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => CropImageScreen(
+            image: Image(image: imageProvider),
+            aspectRatio: 4 / 5,
           ),
-          IOSUiSettings(
-            title: 'Cropper',
-            aspectRatioPickerButtonHidden: true,
-            aspectRatioLockEnabled: true,
-          ),
-        ],
+        ),
       );
-      if (croppedFile != null) {
-        setState(() => images[index] = File(croppedFile.path));
+
+      if (croppedBytes != null) {
+        // Save to temporary file
+        final tempDir = await getTemporaryDirectory();
+        final file = File(
+          '${tempDir.path}/cropped_${DateTime.now().millisecondsSinceEpoch}.jpg',
+        );
+        await file.writeAsBytes(croppedBytes);
+
+        // ✅ Update state directly
+        setState(() {
+          images[index] = file;
+        });
       }
     } catch (e, stack) {
-      log("Error in picking image from gallery: $e");
+      log("Error picking image from gallery: $e");
       log("Stack trace: $stack");
     }
   }
+
+  // void pickImgFromGallery(int index) async {
+  //   try {
+  //     final pickedFile = await ImagePicker().pickImage(
+  //       source: ImageSource.gallery,
+  //     );
+  //     if (pickedFile == null) return;
+
+  //     CroppedFile? croppedFile = await ImageCropper().cropImage(
+  //       sourcePath: pickedFile.path,
+  //       aspectRatio: const CropAspectRatio(ratioX: 4, ratioY: 5),
+  //       maxWidth: _remoteConfigService.imageMaxWidth,
+  //       maxHeight: _remoteConfigService.imageMaxHeight,
+  //       uiSettings: [
+  //         AndroidUiSettings(
+  //           toolbarTitle: 'Adjust the Image',
+  //           toolbarColor: Colors.black,
+  //           toolbarWidgetColor: AppColors.white,
+  //           statusBarColor: Colors.black,
+  //           hideBottomControls: true,
+  //           initAspectRatio: CropAspectRatioPreset.original,
+  //           lockAspectRatio: true,
+  //         ),
+  //         IOSUiSettings(
+  //           title: 'Adjust the Image',
+  //           aspectRatioPickerButtonHidden: true,
+  //           aspectRatioLockEnabled: true,
+  //         ),
+  //       ],
+  //     );
+  //     if (croppedFile != null) {
+  //       setState(() => images[index] = File(croppedFile.path));
+  //     }
+  //   } catch (e, stack) {
+  //     log("Error in picking image from gallery: $e");
+  //     log("Stack trace: $stack");
+  //   }
+  // }
 
   void uploadMedia() async {
     final validImages = images.where((image) => image != null).toList();
     if (validImages.length < 2) {
       showSnackBar('Please add at least 2 images');
     } else {
+      // Show loading indicator
+      // showSnackBar('Compressing images...');
+
+      // Compress images
+      List<File> compressedImages = [];
+      for (var image in validImages) {
+        final compressedImage = await compressImage(image!);
+        if (compressedImage != null) {
+          compressedImages.add(compressedImage);
+        }
+      }
+
+      if (compressedImages.isEmpty) {
+        showSnackBar('Failed to compress images');
+        return;
+      }
+
       context
           .read<InitialProfileProvider>()
-          .uploadUserImages(context, validImages)
+          .uploadUserImages(context, compressedImages)
           .then((value) {
             if (value) {
               context.read<AuthProvider>().saveLoggedInStatus(true);
@@ -95,6 +162,48 @@ class _SelectMediaState extends State<SelectMedia> {
           });
     }
   }
+
+  Future<File?> compressImage(File file) async {
+    try {
+      final filePath = file.absolute.path;
+      final lastIndex = filePath.lastIndexOf(RegExp(r'.jp'));
+      final outPath = "${filePath.substring(0, lastIndex)}_compressed.jpg";
+
+      final result = await FlutterImageCompress.compressAndGetFile(
+        file.absolute.path,
+        outPath,
+        quality: 60, // Adjust quality (0-100)
+        minWidth: 1024, // Adjust dimensions as needed
+        minHeight: 1024,
+      );
+
+      return result != null ? File(result.path) : null;
+    } catch (e) {
+      print('Error compressing image: $e');
+      return null;
+    }
+  }
+  // void uploadMedia() async {
+  //   final validImages = images.where((image) => image != null).toList();
+  //   if (validImages.length < 2) {
+  //     showSnackBar('Please add at least 2 images');
+  //   } else {
+  //     context
+  //         .read<InitialProfileProvider>()
+  //         .uploadUserImages(context, validImages)
+  //         .then((value) {
+  //           if (value) {
+  //             context.read<AuthProvider>().saveLoggedInStatus(true);
+  //             Navigator.of(context).pushNamedAndRemoveUntil(
+  //               PermitLocation.routeName,
+  //               (route) => false,
+  //             );
+  //           } else {
+  //             showSnackBar('Something went wrong');
+  //           }
+  //         });
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -204,12 +313,9 @@ class _SelectMediaState extends State<SelectMedia> {
         ),
         child: GestureDetector(
           onTap: () => setState(() => images[index] = null),
-          child: Icon(
-            Icons.delete,
-            color: Colors.red,
-            size: appWidth * 0.08,
-          ) /* SvgPicture.asset('assets/svg/media/delete.svg',
-                  width: appWidth * 0.1) */,
+          child: Icon(Icons.delete, color: Colors.red, size: appWidth * 0.08),
+          /* SvgPicture.asset('assets/svg/media/delete.svg',
+                  width: appWidth * 0.1) */
         ),
       );
 }
