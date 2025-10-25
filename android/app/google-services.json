@@ -7,108 +7,6 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:606198864287:android:c3cfacaac25118e73a45aa",
-        "android_client_info": {
-          "package_name": "com.bsty.app"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "606198864287-17t8jkuuk68rcv6qkm6582sr4s2284e1.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.bsty.app",
-            "certificate_hash": "3ac817a150e8c06be0a710db17daff4d8d3b7bfc"
-          }
-        },
-        {
-          "client_id": "606198864287-d7gbs6tkk8dpglch6j9m49a2ppebk6jv.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.bsty.app",
-            "certificate_hash": "4fea2c3fa8b85f8a5d3e261438c2c9175de71863"
-          }
-        },
-        {
-          "client_id": "606198864287-qhvpa9suun6lur2uainrn8jfk4ahkim0.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyDcRowqE4u1uXcT_cFSYtk5pHQhOzF9BPg"
-        },
-        {
-          "current_key": "AIzaSyAPO4MNh8mH9wNlhp_aIQHbAAlbSNL3e7s"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "606198864287-qhvpa9suun6lur2uainrn8jfk4ahkim0.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "606198864287-b7as2ostd795qth51kic35qenq2qs318.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.example.bsty"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:606198864287:android:59289b5d695ae7183a45aa",
-        "android_client_info": {
-          "package_name": "com.example.bsty"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "606198864287-3ime91c62avk8khk4fie6bpspi0uqbvf.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.bsty",
-            "certificate_hash": "3ac817a150e8c06be0a710db17daff4d8d3b7bfc"
-          }
-        },
-        {
-          "client_id": "606198864287-qhvpa9suun6lur2uainrn8jfk4ahkim0.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyDcRowqE4u1uXcT_cFSYtk5pHQhOzF9BPg"
-        },
-        {
-          "current_key": "AIzaSyAPO4MNh8mH9wNlhp_aIQHbAAlbSNL3e7s"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "606198864287-qhvpa9suun6lur2uainrn8jfk4ahkim0.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "606198864287-b7as2ostd795qth51kic35qenq2qs318.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.example.bsty"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
         "mobilesdk_app_id": "1:606198864287:android:6e30a76f041ead583a45aa",
         "android_client_info": {
           "package_name": "com.wedconnect.bsty"
@@ -121,6 +19,14 @@
           "android_info": {
             "package_name": "com.wedconnect.bsty",
             "certificate_hash": "3ac817a150e8c06be0a710db17daff4d8d3b7bfc"
+          }
+        },
+        {
+          "client_id": "606198864287-omnn546hnhhs60i5l2n13ansdqmkgu8r.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.wedconnect.bsty",
+            "certificate_hash": "1ca8282bed440ec90e1f1a5f3aa87cd2ebb48940"
           }
         },
         {
@@ -139,9 +45,6 @@
       "api_key": [
         {
           "current_key": "AIzaSyDcRowqE4u1uXcT_cFSYtk5pHQhOzF9BPg"
-        },
-        {
-          "current_key": "AIzaSyAPO4MNh8mH9wNlhp_aIQHbAAlbSNL3e7s"
         }
       ],
       "services": {

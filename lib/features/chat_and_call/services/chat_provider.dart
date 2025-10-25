@@ -94,6 +94,7 @@ class ChatProvider with ChangeNotifier {
     try {
       List<Chat> matches = [];
       final response = await dio.get(Endpoints.myMatches);
+      log("Response: ${response.data}");
       if (response.statusCode == 200 && response.data['status']) {
         final matchesJson = response.data['matches'] as List;
         log('====================>> Get matches: ${jsonEncode(matchesJson)}');

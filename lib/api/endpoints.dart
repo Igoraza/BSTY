@@ -12,6 +12,7 @@ class Endpoints {
   static String loginVerifyUrl = "${loginUrl}verify/";
   static String completeProfile = "$baseUrl/v1/complete/profile/";
 
+
   static String refreshToken = "$baseUrl/token/refresh/";
   static String updateEmail = "$baseUrl/v1/update/email/";
 
