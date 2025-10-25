@@ -62,7 +62,7 @@ class _ManageEarningsPageState extends State<ManageEarningsPage> {
       child: Scaffold(
         key: _scaffoldKey,
         appBar: AppBar(
-          title: const Text('MEP'),
+          title: const Text('BSTYEP'),
           actions: [
             SvgPicture.asset('assets/svg/mep/question.svg'),
             SizedBox(width: appWidth * 0.05),

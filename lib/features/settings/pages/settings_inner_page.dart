@@ -394,7 +394,7 @@ class _SettingsInnerPageState extends State<SettingsInnerPage> {
                             showConfirmDialog(
                                 content: "Do you want to logout ?",
                                 onConfirm: () {
-                                  // ref.logout();
+                                  ref.logout();
                                 });
                           },
                           child: ref.authStatus == AuthStatus.checking

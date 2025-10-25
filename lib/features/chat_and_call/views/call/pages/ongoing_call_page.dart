@@ -71,7 +71,7 @@ class _OnGoingCallPageState extends State<OnGoingCallPage> {
           isVideo: _isVideo,
         );
       } else {
-        
+        log("Reciever name :::::: ${widget.targetUserName}");
         callsProvider.makeCall(
           context,
           uid: widget.targetUser?.id ?? widget.targetUserId ?? 0,

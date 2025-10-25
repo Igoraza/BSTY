@@ -196,20 +196,21 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                     activeColor: AppColors.borderBlue,
                     inactiveColor: AppColors.lightGrey,
                     onChanged: (val) {
-                      if (userPlan > 2 && !planExpired) {
-                        setState(() => distance = (val * 100).round());
-                      } else {
-                        // showDialog(
-                        //   context: context,
-                        //   builder: (context) => UpgradePlanDialog(),
-                        // );
+                      // TODO: Uncomment this
+                      // if (userPlan > 2 && !planExpired) {
+                      setState(() => distance = (val * 100).round());
+                      // } else {
+                      // showDialog(
+                      //   context: context,
+                      //   builder: (context) => UpgradePlanDialog(),
+                      // );
 
-                        Navigator.pushNamed(
-                          context,
-                          UpgradePlanScreen.routeName,
-                        );
-                        return;
-                      }
+                      // Navigator.pushNamed(
+                      //   context,
+                      //   UpgradePlanScreen.routeName,
+                      // );
+                      // return;
+                      // }
                     },
                   ),
                   SizedBox(height: widget.size.height * 0.02),

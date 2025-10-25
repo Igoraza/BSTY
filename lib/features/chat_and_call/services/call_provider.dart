@@ -10,6 +10,8 @@ import 'package:hive_flutter/adapters.dart';
 import 'package:bsty/common_widgets/custom_dialog.dart';
 import 'package:bsty/features/chat_and_call/models/chat.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+
 // import 'package:wakelock/wakelock.dart';
 
 import '../../../api/api_helper.dart';
@@ -308,13 +310,15 @@ class CallsProvider with ChangeNotifier {
         debugPrint('=============Call ID: $callId');
         debugPrint('=============Make Call Response $response');
 
-        // ✅ SEND PUSH NOTIFICATION TO THE OTHER USER
+        // SEND PUSH NOTIFICATION TO THE OTHER USER
         sendCallNotification(
-          name: userName,
+          // name: userName,
+          name: Hive.box('user').get('name'),
           pushId: targetPushId,
           isVideo: isVideo,
           callId: callId!,
-          image: userImage,
+          // image: userImage,
+          image: Hive.box('user').get('display_image'),
         );
 
         // Join the channel

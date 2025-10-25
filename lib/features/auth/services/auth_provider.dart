@@ -547,40 +547,44 @@ class AuthProvider with ChangeNotifier {
     return returnVal;
   }
 
-  // void logout() async {
-  //   authStatus = AuthStatus.checking;
-  //   notifyListeners();
-  //   try {
-  //     OneSignal.shared.removeExternalUserId().then((value) => debugPrint(
-  //         '===========> OneSignal External User Id Removed: $value'));
+  void logout() async {
+    authStatus = AuthStatus.checking;
+    notifyListeners();
 
-  //     navigatorKey.currentContext!.read<LocationProvider>().stopTracking();
+    try {
+      OneSignal.logout();
+      debugPrint('===========> OneSignal User Logged Out');
 
-  //     ///  the location geting null after continuos logout . saving location in another box
-  //     final latitude = Hive.box('user').get('user_latitude');
-  //     final longitude = Hive.box('user').get('user_longitude');
-  //     final location = Hive.box('user').get('location');
-  //     Hive.box('guide').put('user_latitude', latitude);
-  //     Hive.box('guide').put('user_longitude', longitude);
-  //     Hive.box('guide').put('location', location);
-  //     deleteUserTokens();
-  //     Hive.box('user').clear();
+      navigatorKey.currentContext!.read<LocationProvider>().stopTracking();
 
-  //     await FirebaseAuth.instance.signOut();
-  //     if (await GoogleSignIn().isSignedIn()) {
-  //       await GoogleSignIn().signOut();
-  //     }
+      /// The location getting null after continuous logout. Saving location in another box
+      final latitude = Hive.box('user').get('user_latitude');
+      final longitude = Hive.box('user').get('user_longitude');
+      final location = Hive.box('user').get('location');
+      Hive.box('guide').put('user_latitude', latitude);
+      Hive.box('guide').put('user_longitude', longitude);
+      Hive.box('guide').put('location', location);
 
-  //     navigatorKey.currentState!
-  //         .pushNamedAndRemoveUntil(SignInPage.routeName, (route) => false);
-  //   } catch (e) {
-  //     debugPrint('Error: Logout: $e');
-  //     showSnackBar('Error while logging out. Please try again.');
-  //   }
+      deleteUserTokens();
+      Hive.box('user').clear();
 
-  //   authStatus = AuthStatus.done;
-  //   notifyListeners();
-  // }
+      await FirebaseAuth.instance.signOut();
+      if (await GoogleSignIn().isSignedIn()) {
+        await GoogleSignIn().signOut();
+      }
+
+      navigatorKey.currentState!.pushNamedAndRemoveUntil(
+        SignInPage.routeName,
+        (route) => false,
+      );
+    } catch (e) {
+      debugPrint('Error: Logout: $e');
+      showSnackBar('Error while logging out. Please try again.');
+    }
+
+    authStatus = AuthStatus.done;
+    notifyListeners();
+  }
 
   Future<bool> verifyOtp(
     BuildContext context, {

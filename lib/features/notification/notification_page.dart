@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 
@@ -36,49 +37,52 @@ class _NotificationPageState extends State<NotificationPage> {
     double appHeight = MediaQuery.of(context).size.height;
 
     return BackgroundImage(
-        child: Scaffold(
-            backgroundColor: AppColors.black.withOpacity(0.7),
-            appBar: const PreferredSize(
-              preferredSize: Size.fromHeight(56),
-              child: NotifsAppBar(),
-            ),
-            body: FutureBuilder(
-                future: _future,
-                builder: (context, AsyncSnapshot snapshot) {
-                  if (snapshot.connectionState != ConnectionState.done) {
-                    return mainLoadingAnimationLight;
-                  }
-                  if (snapshot.hasError) {
-                    String errorMsg = '';
+      child: Scaffold(
+        backgroundColor: AppColors.black.withOpacity(0.7),
+        appBar: const PreferredSize(
+          preferredSize: Size.fromHeight(56),
+          child: NotifsAppBar(),
+        ),
+        body: FutureBuilder(
+          future: _future,
+          builder: (context, AsyncSnapshot snapshot) {
+            log("Getting notification : ${snapshot.connectionState}");
+            log("Notification data : ${snapshot.data}");
+            if (snapshot.connectionState != ConnectionState.done) {
+              return mainLoadingAnimationLight;
+            }
+            if (snapshot.hasError) {
+              String errorMsg = '';
 
-                    debugPrint(snapshot.error.toString());
+              debugPrint(snapshot.error.toString());
+              log("Notification error : ${snapshot.error}");
 
-                    /// chieck if [ connection error ]
-                    if (snapshot.error.toString().contains('SocketException')) {
-                      errorMsg =
-                          'Error retrieving Notifications.\nPlease check your internet connection';
-                    } else {
-                      errorMsg =
-                          'Error retrieving Notifications. Try again later';
-                    }
+              /// chieck if [ connection error ]
+              if (snapshot.error.toString().contains('SocketException')) {
+                errorMsg =
+                    'Error retrieving Notifications.\nPlease check your internet connection';
+              } else {
+                errorMsg = 'Error retrieving Notifications. Try again later';
+              }
 
-                    return SnapshotErrorWidget(
-                      errorMsg,
-                      color: AppColors.white,
-                    );
-                  }
-                  final notifsJson =
-                      jsonDecode(snapshot.data.toString())['notifications'];
-                  final notifs = notifsJson
-                      .map((e) => NotificationModel.fromJson(e))
-                      .toList();
+              return SnapshotErrorWidget(errorMsg, color: AppColors.white);
+            }
+            final notifsJson = jsonDecode(
+              snapshot.data.toString(),
+            )['notifications'];
+            final notifs = notifsJson
+                .map((e) => NotificationModel.fromJson(e))
+                .toList();
 
-                  return ListView.separated(
-                      padding: EdgeInsets.all(appHeight * 0.02),
-                      itemCount: notifs.length,
-                      itemBuilder: (_, i) => NotificationTile(notifs[i]),
-                      separatorBuilder: (context, index) =>
-                          const SizedBox(height: 15));
-                })));
+            return ListView.separated(
+              padding: EdgeInsets.all(appHeight * 0.02),
+              itemCount: notifs.length,
+              itemBuilder: (_, i) => NotificationTile(notifs[i]),
+              separatorBuilder: (context, index) => const SizedBox(height: 15),
+            );
+          },
+        ),
+      ),
+    );
   }
 }

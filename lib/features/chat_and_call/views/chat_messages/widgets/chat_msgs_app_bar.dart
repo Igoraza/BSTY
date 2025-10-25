@@ -95,42 +95,39 @@ class ChatAppBar extends StatelessWidget implements PreferredSizeWidget {
         ),
         CustomIconBtn(
           onTap: () {
-            if (userPlan > 2 && !planExpired) {
-              if (videoBalance != 0) {
-                Navigator.of(context).pushNamed(
-                  OnGoingCallPage.routeName,
-                  arguments: {
-                    'callId': 0,
-                    'targetUserId': id,
-                    'isIncoming': false,
-                    'isVideo': true,
-                    'user_image': image,
-                    'user_name': name,
-                    'isOutgoing': true,
-                    'targetPushId': chat.pushId,
-                  },
-                );
-              } else {
-                showDialog(
-                  context: context,
-                  builder: (context) => BuyPlanDialog(
-                    // title: 'Minute Of Voice',
-                    desc: 'Buy Video Minutes As Needed !',
-                    img: 'assets/svg/upgrade_dialog/telephone.svg',
-                    btnText: 'Buy Now',
-                    paymentList: planDetails.payVideo,
-                  ),
-                );
-              }
-            } else {
-              // showDialog(
-              //   context: context,
-              //   builder: (context) => UpgradePlanDialog(),
-              // );
+            // TODO: Uncomment this
+            // if (userPlan > 2 && !planExpired) {
+            //   if (videoBalance != 0) {
+            Navigator.of(context).pushNamed(
+              OnGoingCallPage.routeName,
+              arguments: {
+                'callId': 0,
+                'targetUserId': id,
+                'isIncoming': false,
+                'isVideo': true,
+                'user_image': image,
+                'user_name': name,
+                'isOutgoing': true,
+                'targetPushId': chat.pushId,
+              },
+            );
+            // } else {
+            //   showDialog(
+            //     context: context,
+            //     builder: (context) => BuyPlanDialog(
+            //       // title: 'Minute Of Voice',
+            //       desc: 'Buy Video Minutes As Needed !',
+            //       img: 'assets/svg/upgrade_dialog/telephone.svg',
+            //       btnText: 'Buy Now',
+            //       paymentList: planDetails.payVideo,
+            //     ),
+            //   );
+            // }
+            // } else {
 
-              Navigator.pushNamed(context, UpgradePlanScreen.routeName);
-              return;
-            }
+            //   Navigator.pushNamed(context, UpgradePlanScreen.routeName);
+            //   return;
+            // }
           },
           padding: const EdgeInsets.all(10),
           child: SvgPicture.asset('assets/svg/chat/video_cam.svg'),
