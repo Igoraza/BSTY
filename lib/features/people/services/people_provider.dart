@@ -267,6 +267,7 @@ class PeopleProvider with ChangeNotifier {
       'user_id': '$userId',
       'action_type': action,
     });
+    log("Like Data : $userId  $action");
     try {
       debugPrint('======>> Sending user action: $action');
       final response = await dio.post(Endpoints.userAction, data: data);
@@ -403,6 +404,7 @@ class PeopleProvider with ChangeNotifier {
     try {
       log("Fetching likes.......");
       final response = await dio.get(Endpoints.likes);
+      log("Likes data :: ${response.data}");
       if (response.data['status']) {
         final likesJson = response.data['user_actions'] as List<dynamic>;
         final likes = likesJson.map((e) => LikesModel.fromJson(e)).toList();

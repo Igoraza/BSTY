@@ -96,9 +96,7 @@ class ChatProvider with ChangeNotifier {
       final response = await dio.get(Endpoints.myMatches);
       if (response.statusCode == 200 && response.data['status']) {
         final matchesJson = response.data['matches'] as List;
-        debugPrint(
-          '====================>> Get matches: ${jsonEncode(matchesJson)}',
-        );
+        log('====================>> Get matches: ${jsonEncode(matchesJson)}');
 
         final uid = Hive.box('user').get('id');
         if (jsonEncode(matchesJson).isNotEmpty) {
@@ -251,9 +249,9 @@ class ChatProvider with ChangeNotifier {
     await chatsRef.doc(chatId).collection('messages').add(msgData);
     final name = Hive.box('user').get('name');
     if (currentTargetPushId != null) {
-       log(
-              "User name :: $name    /////////////////   target push id :: ${chat.pushId}",
-            );
+      log(
+        "User name :: $name    /////////////////   target push id :: ${chat.pushId}",
+      );
       log(
         "///////////////// sending notification to targetPushId :: $currentTargetPushId  /////////////",
       );
