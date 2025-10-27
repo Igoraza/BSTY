@@ -17,39 +17,46 @@ class NotificationTile extends StatelessWidget {
     final textTheme = Theme.of(context).textTheme;
 
     return ListTile(
-      onTap: () => navigatorKey.currentState!
-          .pushNamed(PersonDetailedPage.routeName, arguments: {
-        'id': notification.sourceUser.id,
-        'name': notification.sourceUser.name,
-        'image': notification.sourceUser.displayImage,
-      }),
+      onTap: () => navigatorKey.currentState!.pushNamed(
+        PersonDetailedPage.routeName,
+        arguments: {
+          'id': notification.sourceUser.id,
+          'name': notification.sourceUser.name,
+          'image': notification.sourceUser.displayImage,
+        },
+      ),
       // onTap: () {
       //   context.read<AuthProvider>().signInWithGoogle();
       // },
       isThreeLine: true,
       leading: CircleAvatar(
         radius: 30,
-        backgroundImage:
-            CachedNetworkImageProvider(notification.sourceUser.displayImage),
+        backgroundImage: CachedNetworkImageProvider(
+          notification.sourceUser.displayImage ?? "",
+        ),
       ),
       tileColor: AppColors.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      title: Row(children: [
-        Text(notification.sourceUser.name,
-            style: Theme.of(context)
-                .textTheme
-                .bodyMedium!
-                .copyWith(color: AppColors.black, fontWeight: FontWeight.bold)),
-        // const SizedBox(width: 4),
-        // Expanded(
-        //     child: Text(headline6,
-        //         style: Theme.of(context)
-        //             .textTheme
-        //             .bodyMedium!
-        //             .copyWith(color: AppColors.black.withOpacity(0.5)))),
-        // const SizedBox(width: 4),
-        //TODO: Add icon based on notification type
-      ]),
+      title: Row(
+        children: [
+          Text(
+            notification.sourceUser.name ?? "",
+            style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+              color: AppColors.black,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          // const SizedBox(width: 4),
+          // Expanded(
+          //     child: Text(headline6,
+          //         style: Theme.of(context)
+          //             .textTheme
+          //             .bodyMedium!
+          //             .copyWith(color: AppColors.black.withOpacity(0.5)))),
+          // const SizedBox(width: 4),
+          //TODO: Add icon based on notification type
+        ],
+      ),
       subtitle: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -60,8 +67,10 @@ class NotificationTile extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
             style: textTheme.bodySmall!.copyWith(color: AppColors.orange),
           ),
-          Text(timeago.format(notification.created),
-              style: textTheme.bodySmall!.copyWith(color: AppColors.grey)),
+          Text(
+            timeago.format(notification.created),
+            style: textTheme.bodySmall!.copyWith(color: AppColors.grey),
+          ),
         ],
       ),
     );

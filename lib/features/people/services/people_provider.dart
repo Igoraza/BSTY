@@ -399,71 +399,33 @@ class PeopleProvider with ChangeNotifier {
     }
   }
 
+
+  /// get the [ list of ] people who [ liked ] you
   Future<List<LikesModel>> fetchLikes(BuildContext context) async {
     try {
       log("Fetching likes.......");
-      final response = await dio.get(Endpoints.likes);
-      log("Likes data :: ${response.data}");
+      final userTokens = await AuthProvider().retrieveUserTokens();
+      final headers = {"Authorization": "Bearer ${userTokens['access']}"};
 
+      final response = await dio.get(
+        Endpoints.likes,
+        options: Options(headers: headers),
+      );
+      log("Likes data :: ${response.data}");
       if (response.data['status']) {
         final likesJson = response.data['user_actions'] as List<dynamic>;
-
-        // Map nested 'user' object correctly
-        final likes = likesJson
-            .map(
-              (e) => LikesModel.fromJson({
-                'id': e['id'],
-                'target_user': e['target_user'],
-                'action_type': e['action_type'],
-                'created': e['created'],
-                'hidden': e['hidden'],
-                'deleted': e['deleted'],
-                'user': {
-                  'name': e['user']['name'],
-                  'display_image': e['user']['display_image'],
-                },
-              }),
-            )
-            .toList();
-
+        final likes = likesJson.map((e) => LikesModel.fromJson(e)).toList();
         likedList = likes;
         return likes;
       } else {
-        debugPrint(response.statusMessage ?? 'Failed to fetch likes');
-        throw Exception(response.statusMessage ?? 'Failed to fetch likes');
+        debugPrint(response.statusMessage);
+        throw Exception(response.statusMessage);
       }
     } catch (error) {
-      debugPrint('Err fetching likes: $error');
+      debugPrint('Err: $error');
       rethrow;
     }
   }
-
-  /// get the [ list of ] people who [ liked ] you
-  // Future<List<LikesModel>> fetchLikes(BuildContext context) async {
-  //   try {
-  //     log("Fetching likes.......");
-  //     final userTokens = await AuthProvider().retrieveUserTokens();
-  //     final headers = {"Authorization": "Bearer ${userTokens['access']}"};
-
-  //     final response = await dio.get(
-  //       Endpoints.likes,
-  //       options: Options(headers: headers),
-  //     );
-  //     log("Likes data :: ${response.data}");
-  //     if (response.data['status']) {
-  //       final likesJson = response.data['user_actions'] as List<dynamic>;
-  //       final likes = likesJson.map((e) => LikesModel.fromJson(e)).toList();
-  //       likedList = likes;
-  //       return likes;
-  //     } else {
-  //       debugPrint(response.statusMessage);
-  //       throw Exception(response.statusMessage);
-  //     }
-  //   } catch (error) {
-  //     debugPrint('Err: $error');
-  //     rethrow;
-  //   }
-  // }
 
   /// get the [ list of ] people who [ super liked ] you
   Future<List<LikesModel>> fetchSuperLikes(BuildContext context) async {

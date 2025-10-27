@@ -104,7 +104,10 @@ class _ExplorePageState extends State<ExplorePage> {
           ],
         ),
       ),
-      body: exploreScreens[_currentIndex],
+      body: Padding(
+        padding: const EdgeInsets.only(bottom: 70.0),
+        child: exploreScreens[_currentIndex],
+      ),
     );
   }
 }

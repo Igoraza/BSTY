@@ -38,29 +38,32 @@ class _ChatsSectionState extends State<ChatsSection>
   Widget build(BuildContext context) {
     /// [ Widgets ]
     final tabBtns = TabBar(
-        controller: controller,
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        labelColor: AppColors.white,
-        unselectedLabelColor: AppColors.black,
-        overlayColor: MaterialStateProperty.all(Colors.transparent),
-        indicatorSize: TabBarIndicatorSize.tab,
-        dividerColor: Colors.transparent,
-        indicatorWeight: 0,
-        indicator: BoxDecoration(
-            borderRadius: BorderRadius.circular(50),
-            gradient: AppColors.buttonBlue,
-            boxShadow: [
-              BoxShadow(
-                  color: AppColors.buttonBlue.colors[0].withOpacity(0.5),
-                  spreadRadius: 5,
-                  blurRadius: 7,
-                  offset: const Offset(0, 3))
-            ]),
-        tabs: const [
-          Tab(text: 'Recent Chat'),
-          Tab(text: 'Call'),
-          Tab(text: 'Matches')
-        ]);
+      controller: controller,
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      labelColor: AppColors.white,
+      unselectedLabelColor: AppColors.black,
+      overlayColor: MaterialStateProperty.all(Colors.transparent),
+      indicatorSize: TabBarIndicatorSize.tab,
+      dividerColor: Colors.transparent,
+      indicatorWeight: 0,
+      indicator: BoxDecoration(
+        borderRadius: BorderRadius.circular(50),
+        gradient: AppColors.buttonBlue,
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.buttonBlue.colors[0].withOpacity(0.5),
+            spreadRadius: 5,
+            blurRadius: 7,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      tabs: const [
+        Tab(text: 'Recent Chat'),
+        Tab(text: 'Call'),
+        Tab(text: 'Matches'),
+      ],
+    );
 
     return BackgroundImage(
       child: Scaffold(
@@ -68,19 +71,19 @@ class _ChatsSectionState extends State<ChatsSection>
           title: const Text('Messages'),
           actions: [
             CustomIconBtn(
-                onTap: () => navigatorKey.currentState!
-                    .pushNamed(NotificationPage.routeName),
-                child: SvgPicture.asset('assets/svg/ui_icons/bell.svg'))
+              onTap: () => navigatorKey.currentState!.pushNamed(
+                NotificationPage.routeName,
+              ),
+              child: SvgPicture.asset('assets/svg/ui_icons/bell.svg'),
+            ),
           ],
           bottom: tabBtns,
         ),
         body: TabBarView(
           controller: controller,
-          children: const [
-            RecentChats(),
-            CallsHistory(),
-            MatchesPage(),
-          ],
+          children:
+              // const
+              [RecentChats(), CallsHistory(), MatchesPage()],
         ),
       ),
     );
