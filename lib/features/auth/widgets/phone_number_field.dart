@@ -7,14 +7,16 @@ import '../../../utils/theme/colors.dart';
 typedef StringCallback = void Function(String val);
 
 class PhoneNumberField extends StatefulWidget {
-  const PhoneNumberField({
+  PhoneNumberField({
     Key? key,
     required this.phoneNumController,
     required this.phoneCodeController,
+    this.onSubmitted,
   }) : super(key: key);
 
   final TextEditingController phoneNumController;
   final TextEditingController phoneCodeController;
+  Function(String)? onSubmitted;
 
   @override
   State<PhoneNumberField> createState() => _PhoneNumberFieldState();
@@ -84,6 +86,7 @@ class _PhoneNumberFieldState extends State<PhoneNumberField> {
                   borderRadius: BorderRadius.all(Radius.circular(20)),
                 ),
               ),
+              onSubmitted: widget.onSubmitted,
             ),
           ),
         ],

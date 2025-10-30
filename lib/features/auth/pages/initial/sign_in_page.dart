@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:bsty/features/auth/models/verify_otp_args.dart';
@@ -37,18 +38,19 @@ class SignInPage extends StatelessWidget {
     /// [ Functions ]
 
     Future<void> signIn() async {
+      log("Signing in");
       final authProvider = context.read<AuthProvider>();
       final reqId = DateTime.now().millisecondsSinceEpoch.toString();
       final phone = _phoneCode.text.substring(1) + _phoneNum.text;
-      await authProvider.login(context, phone, reqId).then((value) {
-        if (value) {
+      await authProvider.login(context, phone, reqId).then((requestId) {
+        if (requestId != null) {
           Navigator.pushNamed(
             context,
             VerifyOtp.routeName,
             arguments: VerifyOtpArgs(
               isLoggingIn: true,
               phone: phone,
-              requestId: reqId,
+              requestId: requestId,
             ),
           );
         }
@@ -80,55 +82,50 @@ class SignInPage extends StatelessWidget {
       ],
     );
 
-    final termsAndConditions = Center(
-      child: RichText(
-        textAlign: TextAlign.center,
-        text: TextSpan(
-          text: 'By using our mobile app, you agree to our\n',
-          style: Theme.of(
-            context,
-          ).textTheme.bodySmall!.merge(const TextStyle(height: 2)),
-          children: <TextSpan>[
-            TextSpan(
-              text: 'Terms of use',
-              style: Theme.of(context).textTheme.bodySmall!.merge(
-                const TextStyle(
-                  decoration: TextDecoration.underline,
-                  color: AppColors.toggleBlue,
-                  fontWeight: FontWeight.bold,
-                ),
+    final termsAndConditions = RichText(
+      textAlign: TextAlign.center,
+      text: TextSpan(
+        text: 'By using our mobile app, you agree to our\n',
+        style: Theme.of(
+          context,
+        ).textTheme.bodySmall!.merge(const TextStyle(height: 2)),
+        children: <TextSpan>[
+          TextSpan(
+            text: 'Terms of use',
+            style: Theme.of(context).textTheme.bodySmall!.merge(
+              const TextStyle(
+                decoration: TextDecoration.underline,
+                color: AppColors.toggleBlue,
+                fontWeight: FontWeight.bold,
               ),
-              recognizer: TapGestureRecognizer()
-                ..onTap = () {
-                  navigatorKey.currentState!.pushNamed(
-                    WebViewPage.routeName,
-                    arguments: WebViewUrls.termsOfService,
-                  );
-                },
             ),
-            TextSpan(
-              text: ' & ',
-              style: Theme.of(context).textTheme.bodySmall!,
-            ),
-            TextSpan(
-              text: 'Privacy Policy',
-              style: Theme.of(context).textTheme.bodySmall!.merge(
-                const TextStyle(
-                  decoration: TextDecoration.underline,
-                  color: AppColors.toggleBlue,
-                  fontWeight: FontWeight.bold,
-                ),
+            recognizer: TapGestureRecognizer()
+              ..onTap = () {
+                navigatorKey.currentState!.pushNamed(
+                  WebViewPage.routeName,
+                  arguments: WebViewUrls.termsOfService,
+                );
+              },
+          ),
+          TextSpan(text: ' & ', style: Theme.of(context).textTheme.bodySmall!),
+          TextSpan(
+            text: 'Privacy Policy',
+            style: Theme.of(context).textTheme.bodySmall!.merge(
+              const TextStyle(
+                decoration: TextDecoration.underline,
+                color: AppColors.toggleBlue,
+                fontWeight: FontWeight.bold,
               ),
-              recognizer: TapGestureRecognizer()
-                ..onTap = () {
-                  navigatorKey.currentState!.pushNamed(
-                    WebViewPage.routeName,
-                    arguments: WebViewUrls.privacyPolicy,
-                  );
-                },
             ),
-          ],
-        ),
+            recognizer: TapGestureRecognizer()
+              ..onTap = () {
+                navigatorKey.currentState!.pushNamed(
+                  WebViewPage.routeName,
+                  arguments: WebViewUrls.privacyPolicy,
+                );
+              },
+          ),
+        ],
       ),
     );
 
@@ -245,128 +242,101 @@ class SignInPage extends StatelessWidget {
 
     return BackgroundImage(
       child: Scaffold(
+        resizeToAvoidBottomInset: true, // ✅ keeps screen moving up
         appBar: AppBar(title: const Text('Sign in')),
-        body: Padding(
-          padding: EdgeInsets.all(
-            appWidth * 0.05,
-          ).copyWith(bottom: appHeight * 0.05),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Expanded(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Image.asset('assets/images/auth/login.png'),
-                    // SizedBox(height: appHeight * 0.05),
-                    signInWithGoogleBtn,
-                    if (Platform.isIOS) SizedBox(height: appHeight * 0.01),
-                    if (Platform.isIOS)
-                      Row(
-                        children: [
-                          SizedBox(width: appWidth * 0.03),
-                          const Expanded(
-                            child: Divider(
-                              // thickness: 4,
-                              // height: 4,
-                              // indent: appWidth * 0.2,
-                              // endIndent: appWidth * 0.2,
-                              color: AppColors.grey,
-                            ),
-                          ),
-                          SizedBox(width: appWidth * 0.03),
-                          Text(
-                            'or',
-                            style: Theme.of(context).textTheme.titleMedium!
-                                .copyWith(color: AppColors.grey),
-                          ),
-                          SizedBox(width: appWidth * 0.03),
-                          const Expanded(child: Divider(color: AppColors.grey)),
-                          SizedBox(width: appWidth * 0.03),
-                        ],
+        body: SafeArea(
+          child: Padding(
+            padding: EdgeInsets.only(
+              left: appWidth * 0.05,
+              right: appWidth * 0.05,
+              top: appWidth * 0.02,
+              // bottom: MediaQuery.of(
+              //   context,
+              // ).viewInsets.bottom, // ✅ adds space for keyboard
+            ),
+            child: SingleChildScrollView(
+              // ✅ make full content scrollable
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  SizedBox(
+                    height: appHeight * 0.45,
+                    child: Image.asset('assets/images/auth/login.png'),
+                  ),
+                  signInWithGoogleBtn,
+                  if (Platform.isIOS) SizedBox(height: appHeight * 0.01),
+                  if (Platform.isIOS)
+                    Row(
+                      children: [
+                        SizedBox(width: appWidth * 0.03),
+                        const Expanded(child: Divider(color: AppColors.grey)),
+                        SizedBox(width: appWidth * 0.03),
+                        Text(
+                          'or',
+                          style: Theme.of(context).textTheme.titleMedium!
+                              .copyWith(color: AppColors.grey),
+                        ),
+                        SizedBox(width: appWidth * 0.03),
+                        const Expanded(child: Divider(color: AppColors.grey)),
+                        SizedBox(width: appWidth * 0.03),
+                      ],
+                    ),
+                  if (Platform.isIOS) SizedBox(height: appHeight * 0.01),
+                  if (Platform.isIOS) signInWithAppleBtn,
+                  SizedBox(height: appHeight * 0.01),
+                  if (Platform.isIOS)
+                    InkWell(
+                      onTap: () => Navigator.pushNamed(
+                        context,
+                        EmailSignInPage.routeName,
                       ),
-                    if (Platform.isIOS) SizedBox(height: appHeight * 0.01),
-                    if (Platform.isIOS) signInWithAppleBtn,
-                    SizedBox(height: appHeight * 0.01),
-
-                    Platform.isIOS
-                        ? Row(
-                            children: [
-                              SizedBox(width: appWidth * 0.03),
-                              const Expanded(
-                                child: Divider(
-                                  // thickness: 4,
-                                  // height: 4,
-                                  // indent: appWidth * 0.2,
-                                  // endIndent: appWidth * 0.2,
-                                  color: AppColors.grey,
-                                ),
-                              ),
-                              SizedBox(width: appWidth * 0.03),
-                              Text(
-                                'or',
-                                style: Theme.of(context).textTheme.titleMedium!
-                                    .copyWith(color: AppColors.grey),
-                              ),
-                              SizedBox(width: appWidth * 0.03),
-                              const Expanded(
-                                child: Divider(color: AppColors.grey),
-                              ),
-                              SizedBox(width: appWidth * 0.03),
-                            ],
-                          )
-                        : const SizedBox.shrink(),
-                    SizedBox(height: appHeight * 0.01),
-                    signInWithEmailBtn,
-                    SizedBox(height: appHeight * 0.02),
-                    signInWithPhoneNumberBtn,
-                    Platform.isIOS
-                        ? InkWell(
-                            onTap: () => Navigator.pushNamed(
-                              context,
-                              EmailSignInPage.routeName,
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 50,
-                                vertical: 10.0,
-                              ),
-                              child: Text(
-                                'Log in with email and password',
-                                style: Theme.of(
-                                  context,
-                                ).textTheme.bodyLarge!.copyWith(fontSize: 15),
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                          )
-                        : const SizedBox.shrink(),
-
-                    /// This is currently commented out because we are not using phone number login
-                    // Container(
-                    //     padding: EdgeInsets.all(appHeight * 0.02),
-                    //     decoration: BoxDecoration(
-                    //         color: Colors.white,
-                    //         borderRadius: BorderRadius.circular(20)),
-                    //     child: Column(children: [
-                    //       Text(
-                    //         'Enter your phone number to login',
-                    //         style: Theme.of(context).textTheme.bodyLarge,
-                    //       ),
-                    //       gapV025,
-                    //       PhoneNumberField(
-                    //           phoneCodeController: _phoneCode,
-                    //           phoneNumController: _phoneNum),
-                    //       gapV025,
-                    //       switchToSignUp
-                    //     ]))
-                  ],
-                ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 50,
+                          vertical: 10.0,
+                        ),
+                        child: Text(
+                          'Log in with email and password',
+                          style: Theme.of(
+                            context,
+                          ).textTheme.bodyLarge!.copyWith(fontSize: 15),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+                  SizedBox(height: appHeight * 0.01),
+                  Container(
+                    padding: EdgeInsets.all(appHeight * 0.02),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Column(
+                      children: [
+                        Text(
+                          'Enter your phone number to login',
+                          style: Theme.of(context).textTheme.bodyLarge,
+                        ),
+                        gapV025,
+                        PhoneNumberField(
+                          phoneCodeController: _phoneCode,
+                          phoneNumController: _phoneNum,
+                          onSubmitted: (value) {
+                            signIn();
+                          },
+                        ),
+                        gapV025,
+                        switchToSignUp,
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 24),
+                  // Spacer(),
+                  termsAndConditions,
+                  SizedBox(height: 24),
+                ],
               ),
-              termsAndConditions,
-              gapV025,
-              // signInBtn
-            ],
+            ),
           ),
         ),
       ),

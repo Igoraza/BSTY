@@ -508,9 +508,10 @@ class UpgradePlanScreenState extends State<UpgradePlanScreen> {
   }
 
   void _startPurchase() async {
+    log("Starting purchase");
     // Run diagnostics first if store is not available
     if (!await _inAppPurchase.isAvailable()) {
-      print('Store not available - running diagnostics...');
+      log('Store not available - running diagnostics...');
       await _runIAPDiagnostics();
 
       showDialog(

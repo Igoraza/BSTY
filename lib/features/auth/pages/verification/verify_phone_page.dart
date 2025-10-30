@@ -37,6 +37,7 @@ class _VerifyPhoneState extends State<VerifyPhone> {
   // final _nameController = TextEditingController();
 
   Future<void>? validatePhone(BuildContext context) async {
+    log("Validating phone");
     if (VerifyPhone.formkey.currentState!.validate()) {
       // if (_nameController.text.isEmpty) {
       //   showSnackBar('User Name is required');
@@ -55,20 +56,21 @@ class _VerifyPhoneState extends State<VerifyPhone> {
       final reqId = DateTime.now().millisecondsSinceEpoch.toString();
       final phone = _phoneCode.text.substring(1) + _phoneNum.text;
       final userData = SignUpModel(
-        name: "displayName",
+        name: "User",
         phone: phone,
         requestId: reqId,
       );
-      context.read<AuthProvider>().signUp(context, userData).then((value) {
-        if (value) {
+      context.read<AuthProvider>().signUp(context, userData).then((requestId) {
+        log("Request id $requestId");
+        if (requestId != null) {
           Navigator.pushNamed(
             context,
             VerifyOtp.routeName,
             arguments: VerifyOtpArgs(
               isLoggingIn: false,
-              name: "displayName",
+              name: "User",
               phone: phone,
-              requestId: reqId,
+              requestId: requestId,
             ),
           );
         }

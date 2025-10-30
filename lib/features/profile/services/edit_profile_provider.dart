@@ -83,6 +83,13 @@ class EditProfileProvider extends ChangeNotifier {
         final images = data['images'];
         serverImageCount = images.length;
         log('-----------${user.referral_code}');
+        log("Gender : ${user.gender['id']}");
+        log("Orientation : ${user.gender['id']}");
+        log("interests : ${user.gender['id']}");
+        log("height : ${user.gender['id']}");
+        log("dob : ${user.gender['id']}");
+        log("all genders : ${user.gender['id']}");
+        log("all orien : ${user.gender['id']}");
         gender = user.gender['id'];
         orientation = user.orientation['id'];
         interests = user.interests.map((e) => e['id']).toList();
@@ -96,7 +103,7 @@ class EditProfileProvider extends ChangeNotifier {
         throw Exception('Error fetching profile');
       }
     } catch (e) {
-      debugPrint('Err: $e');
+      log('Err in fetching profile: $e');
       rethrow;
     }
   }

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -18,17 +19,16 @@ import '../initial/ac_created.dart';
 import '../initial_profile_steps/select_dob_page.dart';
 
 class VerifyOtp extends StatelessWidget {
-  const VerifyOtp(this.args, {Key? key}) : super(key: key);
+  VerifyOtp(this.args, {Key? key}) : super(key: key);
 
   final VerifyOtpArgs args;
 
   static const String routeName = '/verify-otp';
-
+  String otp = '';
   @override
   Widget build(BuildContext context) {
     double appHeight = MediaQuery.of(context).size.height;
     double appWidth = MediaQuery.of(context).size.width;
-    String otp = '';
 
     /// [ Functions ]
     void verifyOtp(BuildContext context, String otp) {
@@ -37,6 +37,7 @@ class VerifyOtp extends StatelessWidget {
       // );
       final authProvider = context.read<AuthProvider>();
       try {
+        log("Entered otp : $otp");
         (args.isEmail
                 ? authProvider.verifyEmailOtp(context)
                 : authProvider.verifyOtp(context, otp: otp, args: args))
@@ -86,7 +87,8 @@ class VerifyOtp extends StatelessWidget {
       ).textTheme.titleLarge!.copyWith(color: AppColors.white),
       animationDuration: const Duration(milliseconds: 300),
       enableActiveFill: true,
-      onCompleted: (otp) => verifyOtp(context, otp),
+      onCompleted: (value) => verifyOtp(context, value),
+
       onChanged: (value) => otp = value,
       beforeTextPaste: (text) {
         debugPrint("Allowing to paste $text");

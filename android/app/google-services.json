@@ -30,6 +30,14 @@
           }
         },
         {
+          "client_id": "606198864287-rq0jcdmph793nhm95d33onrio2eggp2s.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.wedconnect.bsty",
+            "certificate_hash": "e76b265e214f471a2e2b4b3038049b7d91542cd7"
+          }
+        },
+        {
           "client_id": "606198864287-u7agia3ijr6jqj6smupq364di4qbtk4e.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

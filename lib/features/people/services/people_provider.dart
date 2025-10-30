@@ -108,7 +108,7 @@ class PeopleProvider with ChangeNotifier {
   }) async {
     /// [ returnVal ] is a list of all the people in the app.
     List<dynamic> returnVal = [];
-
+    log("fetching people.......");
     try {
       final locationProvider = context.read<LocationProvider>();
 
@@ -152,13 +152,21 @@ class PeopleProvider with ChangeNotifier {
         'country': locationMap['country'],
         'fcm': fcm,
       };
-      // log('fcm ---- ${fcm.toString()}');
+      log('fcm ---- ${fcm.toString()}');
+      log(data.toString());
+      log(
+        "Fetch people url : ${isMap ? Endpoints.userHomeMap : Endpoints.userHome}",
+      );
       final options = Options(extra: {'data': data});
       final response = await dio.post(
         isMap ? Endpoints.userHomeMap : Endpoints.userHome,
         data: FormData.fromMap(data),
         options: options,
       );
+
+      // log(
+      //   "Fetch people url : ${isMap ? Endpoints.userHomeMap : Endpoints.userHome}",
+      // );
 
       debugPrint(
         '=====================> FetchPeopleRes: ${response.data['plan']}',
@@ -251,7 +259,10 @@ class PeopleProvider with ChangeNotifier {
       log("Returning value -- $returnVal");
       return returnVal;
     } catch (error) {
-      log("fetch people error $error");
+      // log("fetch people error $error");
+      if (error is DioException) {
+        // log("Fetch people error :: ${error.response}");
+      }
       rethrow;
     }
   }
@@ -370,7 +381,9 @@ class PeopleProvider with ChangeNotifier {
         data: FormData.fromMap(data),
         options: options,
       );
-      //  log('=====================> Person Profile Res: ${response.data['user']}');
+      log(
+        '=====================> Person Profile Res: ${response.data['user']}',
+      );
 
       debugPrint(
         '=====================> Person Profile Res: ${response.data.keys}',
@@ -398,7 +411,6 @@ class PeopleProvider with ChangeNotifier {
       rethrow;
     }
   }
-
 
   /// get the [ list of ] people who [ liked ] you
   Future<List<LikesModel>> fetchLikes(BuildContext context) async {

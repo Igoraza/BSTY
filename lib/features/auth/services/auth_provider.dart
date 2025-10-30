@@ -42,6 +42,8 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  String requestId = "";
+
   bool _passVisible = false;
   bool get passVisible => _passVisible;
   set passVisible(bool value) {
@@ -145,31 +147,38 @@ class AuthProvider with ChangeNotifier {
 
   final dio = Dio();
 
-  Future<bool> signUp(BuildContext context, SignUpModel userData) async {
-    bool returnVal = false;
-
+  Future<String?> signUp(BuildContext context, SignUpModel userData) async {
+    String? returnVal;
+    log("Trying signup");
     authStatus = AuthStatus.checking;
     notifyListeners();
 
     try {
       var formData = FormData.fromMap(userData.toJson());
+      log("Trying signup.......");
       await dio.post(Endpoints.signUpUrl, data: formData).then((response) {
+        log("Signup response : ${response.data}");
+        returnVal = response.data["request_id"];
+
         if (response.data['status'] == 'success') {
           showSnackBar('OTP sent to your phone number.');
-          returnVal = true;
+
+          log("====== req id :: ${returnVal}");
+          // return returnVal;
         } else {
           showSnackBar(response.data['message']);
-          returnVal = false;
+          // returnVal = false;
         }
       });
     } catch (error) {
-      debugPrint('Signup Error: $error');
+      log('Signup Error: $error');
       if (error is DioError) {
+        log('Signup Error: ${error.response}');
         if (error.message!.contains('SocketException')) {
           showSnackBar('Please check your internet connection.');
         }
       }
-      returnVal = false;
+      // returnVal = false;
     }
     authStatus = AuthStatus.done;
     notifyListeners();
@@ -503,12 +512,12 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<bool> login(
+  Future<String?> login(
     BuildContext context,
     String phone,
     String requestId,
   ) async {
-    bool returnVal = false;
+    String? returnVal;
 
     authStatus = AuthStatus.checking;
     notifyListeners();
@@ -517,26 +526,29 @@ class AuthProvider with ChangeNotifier {
         "phone": phone,
         "request_id": requestId,
       });
-      debugPrint('phone: $phone');
+      log('phone: $phone');
       await dio.post(Endpoints.loginUrl, data: formData).then((response) {
-        debugPrint('=========>> login response: ${response.data}');
+        log('=========>> login response: ${response.data}');
         if (response.data['status'] == 'success') {
           debugPrint('========= ${response.data} =========');
           showSnackBar('OTP sent to your phone number.');
-          returnVal = true;
+          returnVal = response.data["request_id"];
+          // returnVal = true;
         } else if (response.data['message'] == 'User not found') {
           showSnackBar(
             "We couldn't find an account with this phone number. Please check your details or create a new account.",
           );
-          returnVal = false;
+          // returnVal = false;
         } else {
           showSnackBar(response.data['message']);
-          returnVal = false;
+          // returnVal = false;
         }
+        return returnVal;
       });
     } catch (error) {
-      debugPrint('Login Error: $error');
-      if (error is DioError) {
+      log('Login Error: $error');
+      if (error is DioException) {
+        log("Login error : ${error.response}");
         if (error.message!.contains('SocketException')) {
           showSnackBar('Please check your internet connection.');
         }
@@ -546,6 +558,9 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
     return returnVal;
   }
+
+
+  
 
   void logout() async {
     authStatus = AuthStatus.checking;
@@ -591,6 +606,7 @@ class AuthProvider with ChangeNotifier {
     required String otp,
     required VerifyOtpArgs args,
   }) async {
+    log("Verifying otp");
     bool returnVal = false;
 
     authStatus = AuthStatus.checking;
@@ -602,11 +618,14 @@ class AuthProvider with ChangeNotifier {
         "phone": args.phone,
         "request_id": args.requestId,
       });
+      log(
+        "Starting verification with $otp - ${args.phone} - ${args.requestId}",
+      );
       final response = await dio.post(
         args.isLoggingIn ? Endpoints.loginVerifyUrl : Endpoints.signUpVerifyUrl,
         data: formData,
       );
-      debugPrint('========= ${response.data} =========');
+      log('=========Response ${response.data} =========');
       if (response.data['status'] == 'success') {
         final userBox = Hive.box('user');
         userBox.put('id', response.data['user']['id']);
@@ -625,8 +644,14 @@ class AuthProvider with ChangeNotifier {
         throw (response.data);
       }
     } catch (error) {
-      debugPrint('Error: $error');
-      if (error is DioError) {
+      log(
+        'Error from ${args.isLoggingIn ? Endpoints.loginVerifyUrl : Endpoints.signUpVerifyUrl}: $error',
+      );
+      if (error is DioException) {
+        log(error.response.toString());
+        if (error.response?.data["message"] != null) {
+          showSnackBar(error.response!.data["message"]);
+        }
         if (error.message!.contains('SocketException')) {
           showSnackBar('Please check your internet connection.');
         }

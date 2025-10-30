@@ -528,7 +528,9 @@ class _PersonDetailedPageState extends State<PersonDetailedPage> {
                                             SizedBox(height: appHeight * 0.005),
                                             Text(
                                               DateFormat('dd-MM-yyyy').format(
-                                                DateTime.parse(person.created),
+                                                DateTime.parse(
+                                                  person.created ?? "",
+                                                ),
                                               ),
                                             ),
                                           ],
