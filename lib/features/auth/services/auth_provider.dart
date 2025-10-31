@@ -178,6 +178,9 @@ class AuthProvider with ChangeNotifier {
         if (error.message!.contains('SocketException')) {
           showSnackBar('Please check your internet connection.');
         }
+        if (error.response?.data["message"] != null) {
+          showSnackBar(error.response?.data["message"]);
+        }
       }
       // returnVal = false;
     }
@@ -349,112 +352,113 @@ class AuthProvider with ChangeNotifier {
     return returnVal;
   }
 
-
-
   Future<void> signInWithGoogle() async {
-  authStatus = AuthStatus.checking;
-  final userBox = Hive.box('user');
-  final latitude = userBox.get('user_latitude');
-  final longitude = userBox.get('user_longitude');
-  notifyListeners();
+    authStatus = AuthStatus.checking;
+    final userBox = Hive.box('user');
+    final latitude = userBox.get('user_latitude');
+    final longitude = userBox.get('user_longitude');
+    notifyListeners();
 
-  log('====================== GOOGLE SIGN-IN START ======================');
+    log('====================== GOOGLE SIGN-IN START ======================');
 
-  try {
-    log('[STEP 1] Creating GoogleSignIn instance...');
-    final GoogleSignIn _googleSignIn = GoogleSignIn(
-      scopes: ['email'],
-      clientId: DefaultFirebaseOptions.currentPlatform.iosClientId,
-    );
-
-    log('[STEP 2] GoogleSignIn clientId: ${_googleSignIn.clientId}');
-    log('[STEP 3] Starting Google sign-in flow...');
-
-    final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-
-    if (googleUser == null) {
-      log('[INFO] Google Sign-In was cancelled by the user.');
-      authStatus = AuthStatus.done;
-      notifyListeners();
-      return;
-    }
-
-    log('[STEP 4] Google user obtained: ${googleUser.displayName} (${googleUser.email})');
-    log('[STEP 5] Fetching Google authentication tokens...');
-
-    final GoogleSignInAuthentication googleAuth =
-        await googleUser.authentication;
-
-    log('[DEBUG] Access token: ${googleAuth.accessToken?.substring(0, 10)}... (truncated)');
-    log('[DEBUG] ID token: ${googleAuth.idToken?.substring(0, 10)}... (truncated)');
-
-    log('[STEP 6] Creating Firebase credential...');
-    final credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth.accessToken,
-      idToken: googleAuth.idToken,
-    );
-
-    log('[STEP 7] Signing in to Firebase with Google credential...');
-    final firebaseUser = await FirebaseAuth.instance.signInWithCredential(
-      credential,
-    );
-
-    log('[STEP 8] Firebase user received: ${firebaseUser.user?.uid}');
-    log('[STEP 9] Sending credentials to server...');
-    final response = await sendCredentialsToServer(
-      firebaseUser,
-      false,
-      null,
-    );
-
-    log('[STEP 10] Server responded successfully, new user: $response');
-
-    if (response) {
-      log('[STEP 11] Navigating to VerifyPhone screen...');
-      navigatorKey.currentState!.pushNamedAndRemoveUntil(
-        VerifyPhone.routeName,
-        (route) => false,
+    try {
+      log('[STEP 1] Creating GoogleSignIn instance...');
+      final GoogleSignIn _googleSignIn = GoogleSignIn(
+        scopes: ['email'],
+        clientId: DefaultFirebaseOptions.currentPlatform.iosClientId,
       );
-    } else {
-      log('[STEP 12] Navigating based on location availability...');
-      if (latitude == null && longitude == null) {
+
+      log('[STEP 2] GoogleSignIn clientId: ${_googleSignIn.clientId}');
+      log('[STEP 3] Starting Google sign-in flow...');
+
+      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+
+      if (googleUser == null) {
+        log('[INFO] Google Sign-In was cancelled by the user.');
+        authStatus = AuthStatus.done;
+        notifyListeners();
+        return;
+      }
+
+      log(
+        '[STEP 4] Google user obtained: ${googleUser.displayName} (${googleUser.email})',
+      );
+      log('[STEP 5] Fetching Google authentication tokens...');
+
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+
+      log(
+        '[DEBUG] Access token: ${googleAuth.accessToken?.substring(0, 10)}... (truncated)',
+      );
+      log(
+        '[DEBUG] ID token: ${googleAuth.idToken?.substring(0, 10)}... (truncated)',
+      );
+
+      log('[STEP 6] Creating Firebase credential...');
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      log('[STEP 7] Signing in to Firebase with Google credential...');
+      final firebaseUser = await FirebaseAuth.instance.signInWithCredential(
+        credential,
+      );
+
+      log('[STEP 8] Firebase user received: ${firebaseUser.user?.uid}');
+      log('[STEP 9] Sending credentials to server...');
+      final response = await sendCredentialsToServer(firebaseUser, false, null);
+
+      log('[STEP 10] Server responded successfully, new user: $response');
+
+      if (response) {
+        log('[STEP 11] Navigating to VerifyPhone screen...');
         navigatorKey.currentState!.pushNamedAndRemoveUntil(
-          PermitLocation.routeName,
+          VerifyPhone.routeName,
           (route) => false,
         );
       } else {
-        navigatorKey.currentState!.pushNamedAndRemoveUntil(
-          MainPage.routeName,
-          (route) => false,
-        );
+        log('[STEP 12] Navigating based on location availability...');
+        if (latitude == null && longitude == null) {
+          navigatorKey.currentState!.pushNamedAndRemoveUntil(
+            PermitLocation.routeName,
+            (route) => false,
+          );
+        } else {
+          navigatorKey.currentState!.pushNamedAndRemoveUntil(
+            MainPage.routeName,
+            (route) => false,
+          );
+        }
+      }
+
+      log(
+        '====================== GOOGLE SIGN-IN SUCCESS ======================',
+      );
+    } catch (error, stack) {
+      log('====================== GOOGLE SIGN-IN ERROR ======================');
+      log('[ERROR TYPE] ${error.runtimeType}');
+      log('[ERROR DETAILS] $error');
+      log('[STACK TRACE] $stack');
+
+      authStatus = AuthStatus.done;
+      notifyListeners();
+
+      if (error is DioError) {
+        if (error.message?.contains('SocketException') ?? false) {
+          showSnackBar('Please check your internet connection.');
+        } else {
+          showSnackBar('Network error during Google Sign-In.');
+        }
+      } else {
+        showSnackBar('Something went wrong during Google Sign-In.');
       }
     }
-
-    log('====================== GOOGLE SIGN-IN SUCCESS ======================');
-  } catch (error, stack) {
-    log('====================== GOOGLE SIGN-IN ERROR ======================');
-    log('[ERROR TYPE] ${error.runtimeType}');
-    log('[ERROR DETAILS] $error');
-    log('[STACK TRACE] $stack');
 
     authStatus = AuthStatus.done;
     notifyListeners();
-
-    if (error is DioError) {
-      if (error.message?.contains('SocketException') ?? false) {
-        showSnackBar('Please check your internet connection.');
-      } else {
-        showSnackBar('Network error during Google Sign-In.');
-      }
-    } else {
-      showSnackBar('Something went wrong during Google Sign-In.');
-    }
   }
-
-  authStatus = AuthStatus.done;
-  notifyListeners();
-}
-
 
   // Future<void> signInWithGoogle() async {
   //   authStatus = AuthStatus.checking;
@@ -669,9 +673,6 @@ class AuthProvider with ChangeNotifier {
     return returnVal;
   }
 
-
-  
-
   void logout() async {
     authStatus = AuthStatus.checking;
     notifyListeners();
@@ -795,10 +796,14 @@ class AuthProvider with ChangeNotifier {
       debugPrint('------------${response.statusCode.toString()}');
       debugPrint('------------${response.data.toString()}');
       if (response.statusCode == 200) {
+        log("######################### Update phone.......... ::: ${response}");
         // ignore: use_build_context_synchronously
-        Navigator.of(
-          context,
-        ).pushNamedAndRemoveUntil(SelectDob.routeName, (route) => false);
+        // Navigator.of(
+        //   context,
+        // ).pushNamedAndRemoveUntil(SelectDob.routeName, (route) => false);
+        // Navigator.of(
+        //   context,
+        // ).pushNamedAndRemoveUntil(SelectDob.routeName, (route) => false);
       } else {
         showSnackBar('Something went wrong');
       }

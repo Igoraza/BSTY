@@ -34,15 +34,15 @@ class _VerifyPhoneState extends State<VerifyPhone> {
 
   final _referralCode = TextEditingController();
 
-  // final _nameController = TextEditingController();
+  final _nameController = TextEditingController();
 
   Future<void>? validatePhone(BuildContext context) async {
     log("Validating phone");
     if (VerifyPhone.formkey.currentState!.validate()) {
-      // if (_nameController.text.isEmpty) {
-      //   showSnackBar('User Name is required');
-      //   return;
-      // }
+      if (_nameController.text.isEmpty) {
+        showSnackBar('User Name is required');
+        return;
+      }
       VerifyPhone.formkey.currentState!.save();
       if (_phoneNum.text.isEmpty) {
         showSnackBar('Phone number is required');
@@ -56,7 +56,7 @@ class _VerifyPhoneState extends State<VerifyPhone> {
       final reqId = DateTime.now().millisecondsSinceEpoch.toString();
       final phone = _phoneCode.text.substring(1) + _phoneNum.text;
       final userData = SignUpModel(
-        name: "User",
+        name: _nameController.text,
         phone: phone,
         requestId: reqId,
       );
@@ -68,18 +68,18 @@ class _VerifyPhoneState extends State<VerifyPhone> {
             VerifyOtp.routeName,
             arguments: VerifyOtpArgs(
               isLoggingIn: false,
-              name: "User",
+              name: _nameController.text,
               phone: phone,
               requestId: requestId,
             ),
           );
         }
       });
-      await AuthProvider().updatePhone(
-        context,
-        phone: _phoneCode.text + _phoneNum.text,
-        referralCode: _referralCode.text,
-      );
+      // await AuthProvider().updatePhone(
+      //   context,
+      //   phone: _phoneCode.text + _phoneNum.text,
+      //   referralCode: _referralCode.text,
+      // );
       log('------validate phone');
     }
   }
@@ -128,18 +128,16 @@ class _VerifyPhoneState extends State<VerifyPhone> {
       key: VerifyPhone.formkey,
       child: Column(
         children: [
-          // TextFormField(
-          //   controller: _nameController,
-          //   decoration: kInputDecoration.copyWith(
-          //     hintText: 'Name',
-          // prefixIcon: Padding(
-          //   padding: const EdgeInsets.all(16.0),
-          //   child: SvgPicture.asset(
-          //     'assets/images/auth/referral_code.svg',
-          //   ),
-          // ),
-          //   ),
-          // ),
+          TextFormField(
+            controller: _nameController,
+            decoration: kInputDecoration.copyWith(
+              hintText: 'Name',
+              prefixIcon: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: SvgPicture.asset('assets/images/auth/referral_code.svg'),
+              ),
+            ),
+          ),
           SizedBox(height: appHeight * 0.02),
           PhoneNumberField(
             phoneCodeController: _phoneCode,
