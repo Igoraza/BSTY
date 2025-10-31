@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:bsty/firebase_options.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -348,78 +349,187 @@ class AuthProvider with ChangeNotifier {
     return returnVal;
   }
 
+
+
   Future<void> signInWithGoogle() async {
-    authStatus = AuthStatus.checking;
-    final userBox = Hive.box('user');
-    final latitude = userBox.get('user_latitude');
-    final longitude = userBox.get('user_longitude');
-    notifyListeners();
+  authStatus = AuthStatus.checking;
+  final userBox = Hive.box('user');
+  final latitude = userBox.get('user_latitude');
+  final longitude = userBox.get('user_longitude');
+  notifyListeners();
 
-    try {
-      // ignore: no_leading_underscores_for_local_identifiers
-      GoogleSignIn _googleSignIn = GoogleSignIn(
-        scopes: ['email'],
-        // The OAuth client id of your app. This is required.
-        clientId:
-            '606198864287-qhvpa9suun6lur2uainrn8jfk4ahkim0.apps.googleusercontent.com',
+  log('====================== GOOGLE SIGN-IN START ======================');
 
-        // If you need to authenticate to a backend server, specify its OAuth client. This is optional.
-        // serverClientId: ...,
-      );
-      debugPrint('===========> Google Login');
-      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-      final GoogleSignInAuthentication googleAuth =
-          await googleUser!.authentication;
-      final credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
-      );
+  try {
+    log('[STEP 1] Creating GoogleSignIn instance...');
+    final GoogleSignIn _googleSignIn = GoogleSignIn(
+      scopes: ['email'],
+      clientId: DefaultFirebaseOptions.currentPlatform.iosClientId,
+    );
 
-      final firebaseUser = await FirebaseAuth.instance.signInWithCredential(
-        credential,
+    log('[STEP 2] GoogleSignIn clientId: ${_googleSignIn.clientId}');
+    log('[STEP 3] Starting Google sign-in flow...');
+
+    final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+
+    if (googleUser == null) {
+      log('[INFO] Google Sign-In was cancelled by the user.');
+      authStatus = AuthStatus.done;
+      notifyListeners();
+      return;
+    }
+
+    log('[STEP 4] Google user obtained: ${googleUser.displayName} (${googleUser.email})');
+    log('[STEP 5] Fetching Google authentication tokens...');
+
+    final GoogleSignInAuthentication googleAuth =
+        await googleUser.authentication;
+
+    log('[DEBUG] Access token: ${googleAuth.accessToken?.substring(0, 10)}... (truncated)');
+    log('[DEBUG] ID token: ${googleAuth.idToken?.substring(0, 10)}... (truncated)');
+
+    log('[STEP 6] Creating Firebase credential...');
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth.accessToken,
+      idToken: googleAuth.idToken,
+    );
+
+    log('[STEP 7] Signing in to Firebase with Google credential...');
+    final firebaseUser = await FirebaseAuth.instance.signInWithCredential(
+      credential,
+    );
+
+    log('[STEP 8] Firebase user received: ${firebaseUser.user?.uid}');
+    log('[STEP 9] Sending credentials to server...');
+    final response = await sendCredentialsToServer(
+      firebaseUser,
+      false,
+      null,
+    );
+
+    log('[STEP 10] Server responded successfully, new user: $response');
+
+    if (response) {
+      log('[STEP 11] Navigating to VerifyPhone screen...');
+      navigatorKey.currentState!.pushNamedAndRemoveUntil(
+        VerifyPhone.routeName,
+        (route) => false,
       );
-      log('firebaseUser --------- ${firebaseUser.toString()}');
-      if (firebaseUser.user != null) {
-        final respose = await sendCredentialsToServer(
-          firebaseUser,
-          false,
-          null,
+    } else {
+      log('[STEP 12] Navigating based on location availability...');
+      if (latitude == null && longitude == null) {
+        navigatorKey.currentState!.pushNamedAndRemoveUntil(
+          PermitLocation.routeName,
+          (route) => false,
         );
-        if (respose) {
-          navigatorKey.currentState!.pushNamedAndRemoveUntil(
-            VerifyPhone.routeName,
-            (route) => false,
-          );
-        } else {
-          if (latitude == null && longitude == null) {
-            navigatorKey.currentState!.pushNamedAndRemoveUntil(
-              PermitLocation.routeName,
-              (route) => false,
-            );
-          } else {
-            navigatorKey.currentState!.pushNamedAndRemoveUntil(
-              MainPage.routeName,
-              (route) => false,
-            );
-          }
-        }
-      }
-
-      authStatus = AuthStatus.done;
-      notifyListeners();
-    } catch (error) {
-      authStatus = AuthStatus.done;
-      notifyListeners();
-      debugPrint('===========> Google Login Error: $error');
-      if (error is DioError) {
-        if (error.message!.contains('SocketException')) {
-          showSnackBar('Please check your internet connection.');
-        }
+      } else {
+        navigatorKey.currentState!.pushNamedAndRemoveUntil(
+          MainPage.routeName,
+          (route) => false,
+        );
       }
     }
+
+    log('====================== GOOGLE SIGN-IN SUCCESS ======================');
+  } catch (error, stack) {
+    log('====================== GOOGLE SIGN-IN ERROR ======================');
+    log('[ERROR TYPE] ${error.runtimeType}');
+    log('[ERROR DETAILS] $error');
+    log('[STACK TRACE] $stack');
+
     authStatus = AuthStatus.done;
     notifyListeners();
+
+    if (error is DioError) {
+      if (error.message?.contains('SocketException') ?? false) {
+        showSnackBar('Please check your internet connection.');
+      } else {
+        showSnackBar('Network error during Google Sign-In.');
+      }
+    } else {
+      showSnackBar('Something went wrong during Google Sign-In.');
+    }
   }
+
+  authStatus = AuthStatus.done;
+  notifyListeners();
+}
+
+
+  // Future<void> signInWithGoogle() async {
+  //   authStatus = AuthStatus.checking;
+  //   final userBox = Hive.box('user');
+  //   final latitude = userBox.get('user_latitude');
+  //   final longitude = userBox.get('user_longitude');
+  //   notifyListeners();
+
+  //   try {
+  //     // ignore: no_leading_underscores_for_local_identifiers
+  //     GoogleSignIn _googleSignIn = GoogleSignIn(
+  //       scopes: ['email'],
+  //       // The OAuth client id of your app. This is required.
+  //       // clientId:
+  //       //     '606198864287-qhvpa9suun6lur2uainrn8jfk4ahkim0.apps.googleusercontent.com',
+
+  //       clientId: DefaultFirebaseOptions.currentPlatform.iosClientId,
+
+  //       // If you need to authenticate to a backend server, specify its OAuth client. This is optional.
+  //       // serverClientId: ...,
+  //     );
+  //     log('===========> Google Login');
+  //     final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+  //     final GoogleSignInAuthentication googleAuth =
+  //         await googleUser!.authentication;
+  //     final credential = GoogleAuthProvider.credential(
+  //       accessToken: googleAuth.accessToken,
+  //       idToken: googleAuth.idToken,
+  //     );
+
+  //     final firebaseUser = await FirebaseAuth.instance.signInWithCredential(
+  //       credential,
+  //     );
+  //     log('firebaseUser --------- ${firebaseUser.toString()}');
+  //     if (firebaseUser.user != null) {
+  //       final respose = await sendCredentialsToServer(
+  //         firebaseUser,
+  //         false,
+  //         null,
+  //       );
+  //       if (respose) {
+  //         navigatorKey.currentState!.pushNamedAndRemoveUntil(
+  //           VerifyPhone.routeName,
+  //           (route) => false,
+  //         );
+  //       } else {
+  //         if (latitude == null && longitude == null) {
+  //           navigatorKey.currentState!.pushNamedAndRemoveUntil(
+  //             PermitLocation.routeName,
+  //             (route) => false,
+  //           );
+  //         } else {
+  //           navigatorKey.currentState!.pushNamedAndRemoveUntil(
+  //             MainPage.routeName,
+  //             (route) => false,
+  //           );
+  //         }
+  //       }
+  //     }
+
+  //     authStatus = AuthStatus.done;
+  //     notifyListeners();
+  //   } catch (error) {
+  //     authStatus = AuthStatus.done;
+  //     notifyListeners();
+  //     log('===========> Google Login Error: $error');
+  //     if (error is DioError) {
+  //       if (error.message!.contains('SocketException')) {
+  //         showSnackBar('Please check your internet connection.');
+  //       }
+  //     }
+  //   }
+  //   authStatus = AuthStatus.done;
+  //   notifyListeners();
+  // }
 
   Future<void> signInWithApple() async {
     isLoading = true;
