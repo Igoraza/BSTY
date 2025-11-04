@@ -28,7 +28,7 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
-  adapty_flutter: ^3.10.0
+  # adapty_flutter: ^3.10.0
   agora_rtc_engine: ^6.5.2
   align_positioned: ^5.0.1
   cached_network_image: ^3.2.3
