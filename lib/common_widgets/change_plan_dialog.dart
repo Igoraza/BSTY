@@ -61,7 +61,7 @@ class _ChangePlanDialogState extends State<ChangePlanDialog> {
     {
       'title': 'Profile Boosts !',
       'image': 'assets/svg/upgrade_dialog/profile_boosts.svg',
-    }
+    },
   ];
 
   List<int> planDura = [1, 3, 6, 12];
@@ -100,14 +100,17 @@ class _ChangePlanDialogState extends State<ChangePlanDialog> {
   void initState() {
     final Stream<List<PurchaseDetails>> purchaseUpdated =
         _inAppPurchase.purchaseStream;
-    _subscription =
-        purchaseUpdated.listen((List<PurchaseDetails> purchaseDetailsList) {
-      _listenToPurchaseUpdated(purchaseDetailsList);
-    }, onDone: () {
-      _subscription.cancel();
-    }, onError: (Object error) {
-      // handle error here.
-    });
+    _subscription = purchaseUpdated.listen(
+      (List<PurchaseDetails> purchaseDetailsList) {
+        _listenToPurchaseUpdated(purchaseDetailsList);
+      },
+      onDone: () {
+        _subscription.cancel();
+      },
+      onError: (Object error) {
+        // handle error here.
+      },
+    );
     final userBox = Hive.box('user');
     final currentPlan = userBox.get('plan_duration');
 
@@ -125,15 +128,22 @@ class _ChangePlanDialogState extends State<ChangePlanDialog> {
   }
 
   Future<void> _listenToPurchaseUpdated(
-      List<PurchaseDetails> purchaseDetailsList) async {
+    List<PurchaseDetails> purchaseDetailsList,
+  ) async {
     final inAppProvider = context.read<InAppProvider>();
     for (final PurchaseDetails purchaseDetails in purchaseDetailsList) {
       log('-----------------------------------------');
-      log('localVerificationData  ${purchaseDetails.verificationData.localVerificationData}');
+      log(
+        'localVerificationData  ${purchaseDetails.verificationData.localVerificationData}',
+      );
       log('-----------------------------------------');
-      log('serverVerificationData  ${purchaseDetails.verificationData.serverVerificationData}');
+      log(
+        'serverVerificationData  ${purchaseDetails.verificationData.serverVerificationData}',
+      );
       log('-----------------------------------------');
-      log('purchase id ${purchaseDetails.purchaseID} productID ${purchaseDetails.productID}');
+      log(
+        'purchase id ${purchaseDetails.purchaseID} productID ${purchaseDetails.productID}',
+      );
       log('-----------------------------------------');
       log(purchaseDetails.status.toString());
       log(purchaseDetails.verificationData.toString());
@@ -161,19 +171,25 @@ class _ChangePlanDialogState extends State<ChangePlanDialog> {
             // Access properties of AppStorePurchaseDetails
             final String? transactionId = appStorePurchaseDetails.purchaseID;
             final String originalTransactionId = appStorePurchaseDetails
-                .skPaymentTransaction.transactionIdentifier
+                .skPaymentTransaction
+                .transactionIdentifier
                 .toString();
             final String productIdentifier = appStorePurchaseDetails.productID;
             final String verificationData = appStorePurchaseDetails
-                .verificationData.serverVerificationData
+                .verificationData
+                .serverVerificationData
                 .toString();
             final String quantity = appStorePurchaseDetails
-                .skPaymentTransaction.payment.quantity
+                .skPaymentTransaction
+                .payment
+                .quantity
                 .toString();
-            final String transactionDate =
-                appStorePurchaseDetails.transactionDate.toString();
+            final String transactionDate = appStorePurchaseDetails
+                .transactionDate
+                .toString();
             debugPrint(
-                '-----transactionId $transactionId \n ----originalTransactionId $originalTransactionId \n---productIdentifier $productIdentifier \n-----verificationData $verificationData  \n--------quantity$quantity\n ---transactionDate$transactionDate');
+              '-----transactionId $transactionId \n ----originalTransactionId $originalTransactionId \n---productIdentifier $productIdentifier \n-----verificationData $verificationData  \n--------quantity$quantity\n ---transactionDate$transactionDate',
+            );
             // ...
 
             // Handle the app store purchase details and perform necessary actions
@@ -188,7 +204,8 @@ class _ChangePlanDialogState extends State<ChangePlanDialog> {
             });
           } else {
             dynamic quantity = jsonDecode(
-                purchaseDetails.verificationData.localVerificationData);
+              purchaseDetails.verificationData.localVerificationData,
+            );
             data = FormData.fromMap({
               'product_id': purchaseDetails.productID,
               'purchase_time': purchaseDetails.purchaseID,
@@ -214,9 +231,9 @@ class _ChangePlanDialogState extends State<ChangePlanDialog> {
         }
         if (Platform.isAndroid) {
           if (!_kAutoConsume && purchaseDetails.productID == _kConsumableId) {
-            final InAppPurchaseAndroidPlatformAddition androidAddition =
-                _inAppPurchase.getPlatformAddition<
-                    InAppPurchaseAndroidPlatformAddition>();
+            final InAppPurchaseAndroidPlatformAddition
+            androidAddition = _inAppPurchase
+                .getPlatformAddition<InAppPurchaseAndroidPlatformAddition>();
             await androidAddition.consumePurchase(purchaseDetails);
           }
         }
@@ -289,10 +306,12 @@ class _ChangePlanDialogState extends State<ChangePlanDialog> {
       await iosPlatformAddition.setDelegate(ExamplePaymentQueueDelegate());
     }
 
-    final ProductDetailsResponse productDetailResponse =
-        await _inAppPurchase.queryProductDetails(identifiers);
+    final ProductDetailsResponse productDetailResponse = await _inAppPurchase
+        .queryProductDetails(identifiers);
     log('in app product details ${productDetailResponse.productDetails}');
-    log('initStoreInfo notFoundIDs ${productDetailResponse.notFoundIDs.toString()}');
+    log(
+      'initStoreInfo notFoundIDs ${productDetailResponse.notFoundIDs.toString()}',
+    );
     log('initStoreInfo isAvailable ${isAvailable.toString()}');
 
     if (productDetailResponse.error != null) {
@@ -381,336 +400,347 @@ class _ChangePlanDialogState extends State<ChangePlanDialog> {
     // }
 
     return Dialog(
-        insetPadding: EdgeInsets.symmetric(horizontal: authPro.isTab ? 80 : 10),
-        child: Container(
-          height: authPro.isTab ? 800 : 550,
-          padding: EdgeInsets.symmetric(vertical: mq.width * 0.05),
-          decoration: const BoxDecoration(gradient: AppColors.grayBlackH),
-          child: PageView.builder(
-            controller: widget.controller,
-            itemCount: plans.length,
-            itemBuilder: (context, index) {
-              log(plans[index].toString());
-              // _selectedPlan.value = 1;
-              return Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text(
-                    'Upgrade to BSTY ${index == 0 ? "Plus" : "Premium"}',
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyLarge!
-                        .copyWith(color: AppColors.white, fontSize: 20),
+      insetPadding: EdgeInsets.symmetric(horizontal: authPro.isTab ? 80 : 10),
+      child: Container(
+        height: authPro.isTab ? 800 : 550,
+        padding: EdgeInsets.symmetric(vertical: mq.width * 0.05),
+        decoration: const BoxDecoration(gradient: AppColors.grayBlackH),
+        child: PageView.builder(
+          controller: widget.controller,
+          itemCount: plans.length,
+          itemBuilder: (context, index) {
+            log(plans[index].toString());
+            // _selectedPlan.value = 1;
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  'Upgrade to BSTY ${index == 0 ? "Plus" : "Premium"}',
+                  style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                    color: AppColors.white,
+                    fontSize: 20,
                   ),
-                  SizedBox(height: mq.height * 0.01),
-                  CarouselSlider(
-                    options: CarouselOptions(
-                      height: mq.height * 0.1 + 37,
-                      viewportFraction: 1,
-                      autoPlay: true,
-                      autoPlayInterval: const Duration(seconds: 3),
-                      autoPlayAnimationDuration:
-                          const Duration(milliseconds: 800),
-                      autoPlayCurve: Curves.fastOutSlowIn,
-                      enlargeCenterPage: true,
-                      scrollDirection: Axis.horizontal,
-                      onPageChanged: (index, reason) =>
-                          _currentSlide.value = index,
+                ),
+                SizedBox(height: mq.height * 0.01),
+                CarouselSlider(
+                  options: CarouselOptions(
+                    height: mq.height * 0.1 + 37,
+                    viewportFraction: 1,
+                    autoPlay: true,
+                    autoPlayInterval: const Duration(seconds: 3),
+                    autoPlayAnimationDuration: const Duration(
+                      milliseconds: 800,
                     ),
-                    items: carouselData
-                        .map(
-                          (e) => Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              SvgPicture.asset(
-                                e['image']!,
-                                height: authPro.isTab
-                                    ? mq.height * 0.08
-                                    : mq.height * 0.1,
-                              ),
-                              Text(
-                                e['title']!,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyMedium!
-                                    .copyWith(color: AppColors.white),
-                              ),
-                            ],
-                          ),
-                        )
-                        .toList(),
+                    autoPlayCurve: Curves.fastOutSlowIn,
+                    enlargeCenterPage: true,
+                    scrollDirection: Axis.horizontal,
+                    onPageChanged: (index, reason) =>
+                        _currentSlide.value = index,
                   ),
-                  const SizedBox(height: 20),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: carouselData.map((e) {
-                      final index = carouselData.indexOf(e);
-                      return ValueListenableBuilder(
-                        valueListenable: _currentSlide,
-                        builder: (context, value, child) => Container(
-                          width: 6,
-                          height: 6,
-                          margin: const EdgeInsets.all(4),
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: _currentSlide.value == index
-                                ? AppColors.white
-                                : AppColors.disabled,
-                          ),
+                  items: carouselData
+                      .map(
+                        (e) => Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            SvgPicture.asset(
+                              e['image']!,
+                              height: authPro.isTab
+                                  ? mq.height * 0.08
+                                  : mq.height * 0.1,
+                            ),
+                            Text(
+                              e['title']!,
+                              style: Theme.of(context).textTheme.bodyMedium!
+                                  .copyWith(color: AppColors.white),
+                            ),
+                          ],
                         ),
-                      );
-                    }).toList(),
-                  ),
-                  SizedBox(height: mq.height * 0.05),
-                  SizedBox(
-                    height: authPro.isTab ? 180 : 140,
-                    width: authPro.isTab ? mq.width * 0.8 : mq.width * 2,
-                    child:
-                        //  _loading
-                        //     ? const Center(
-                        //         child: mainLoadingAnimationLight,
-                        //       )
-                        //     :
-                        ValueListenableBuilder(
-                      valueListenable: _selectedPlan,
-                      builder: (context, value, child) {
-                        return ListView.builder(
-                          itemCount: plans[index].length,
-                          // physics: NeverScrollableScrollPhysics(),
-                          scrollDirection: Axis.horizontal,
-                          itemBuilder: (BuildContext context, int count) {
-                            final metfiePlan = plans[index];
-                            // String price = _products[index].rawPrice.toString();
-                            // log(_products[index].id.toString());
-                            return GestureDetector(
-                              onTap: () {
-                                // if (_products.isNotEmpty) {
-                                //   _products.sort(
-                                //     (a, b) => a.rawPrice.compareTo(b.rawPrice),
-                                //   );
-                                _selectedPlan.value = count;
-                                //   selectedProduct = _products[index];
-                                // } else {
-                                //   navigatorKey.currentState!.pop();
-                                //   showSnackBar('Something went wrong!');
-                                // }
-                              },
-                              child: Container(
-                                height: mq.height * 0.23,
-                                width: authPro.isTab
-                                    ? mq.width * .2
-                                    : mq.width * .24,
-                                padding: EdgeInsets.symmetric(
-                                  vertical: count == 1 ? 0 : mq.height * 0.02,
-                                ),
-                                decoration: BoxDecoration(
-                                  border: Border.all(
-                                    color: _selectedPlan.value == count
-                                        ? AppColors.deepOrange
-                                        : AppColors.black,
-                                    width: _selectedPlan.value == count ? 3 : 1,
+                      )
+                      .toList(),
+                ),
+                const SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: carouselData.map((e) {
+                    final index = carouselData.indexOf(e);
+                    return ValueListenableBuilder(
+                      valueListenable: _currentSlide,
+                      builder: (context, value, child) => Container(
+                        width: 6,
+                        height: 6,
+                        margin: const EdgeInsets.all(4),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: _currentSlide.value == index
+                              ? AppColors.white
+                              : AppColors.disabled,
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                ),
+                SizedBox(height: mq.height * 0.05),
+                SizedBox(
+                  height: authPro.isTab ? 180 : 140,
+                  width: authPro.isTab ? mq.width * 0.8 : mq.width * 2,
+                  child:
+                      //  _loading
+                      //     ? const Center(
+                      //         child: mainLoadingAnimationLight,
+                      //       )
+                      //     :
+                      ValueListenableBuilder(
+                        valueListenable: _selectedPlan,
+                        builder: (context, value, child) {
+                          return ListView.builder(
+                            itemCount: plans[index].length,
+                            // physics: NeverScrollableScrollPhysics(),
+                            scrollDirection: Axis.horizontal,
+                            itemBuilder: (BuildContext context, int count) {
+                              final bstyPlan = plans[index];
+                              // String price = _products[index].rawPrice.toString();
+                              // log(_products[index].id.toString());
+                              return GestureDetector(
+                                onTap: () {
+                                  // if (_products.isNotEmpty) {
+                                  //   _products.sort(
+                                  //     (a, b) => a.rawPrice.compareTo(b.rawPrice),
+                                  //   );
+                                  _selectedPlan.value = count;
+                                  //   selectedProduct = _products[index];
+                                  // } else {
+                                  //   navigatorKey.currentState!.pop();
+                                  //   showSnackBar('Something went wrong!');
+                                  // }
+                                },
+                                child: Container(
+                                  height: mq.height * 0.23,
+                                  width: authPro.isTab
+                                      ? mq.width * .2
+                                      : mq.width * .24,
+                                  padding: EdgeInsets.symmetric(
+                                    vertical: count == 1 ? 0 : mq.height * 0.02,
                                   ),
-                                  color: AppColors.white,
-                                ),
-                                child: Column(
-                                  children: [
-                                    if (count == 1)
-                                      Align(
-                                        alignment: Alignment.topCenter,
-                                        child: Container(
-                                          height: mq.height * 0.02,
-                                          width: double.infinity,
-                                          decoration: const BoxDecoration(
-                                            color: AppColors.deepOrange,
-                                          ),
-                                          child: Center(
-                                            child: Text(
-                                              'OFFER FOR YOU!',
-                                              textAlign: TextAlign.center,
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .bodySmall!
-                                                  .copyWith(
-                                                    fontWeight: FontWeight.bold,
-                                                    color: AppColors.white,
-                                                    fontSize: 8,
-                                                  ),
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                      color: _selectedPlan.value == count
+                                          ? AppColors.deepOrange
+                                          : AppColors.black,
+                                      width: _selectedPlan.value == count
+                                          ? 3
+                                          : 1,
+                                    ),
+                                    color: AppColors.white,
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      if (count == 1)
+                                        Align(
+                                          alignment: Alignment.topCenter,
+                                          child: Container(
+                                            height: mq.height * 0.02,
+                                            width: double.infinity,
+                                            decoration: const BoxDecoration(
+                                              color: AppColors.deepOrange,
+                                            ),
+                                            child: Center(
+                                              child: Text(
+                                                'OFFER FOR YOU!',
+                                                textAlign: TextAlign.center,
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bodySmall!
+                                                    .copyWith(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: AppColors.white,
+                                                      fontSize: 8,
+                                                    ),
+                                              ),
                                             ),
                                           ),
                                         ),
+                                      if (authPro.isTab)
+                                        SizedBox(height: mq.height * 0.02),
+                                      Text(
+                                        bstyPlan[count]['plan'].toString(),
+                                        textAlign: TextAlign.center,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .displayLarge!
+                                            .copyWith(color: AppColors.black),
                                       ),
-                                    if (authPro.isTab)
-                                      SizedBox(
-                                        height: mq.height * 0.02,
+                                      Text(
+                                        'Months',
+                                        textAlign: TextAlign.center,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodySmall!
+                                            .copyWith(
+                                              fontWeight: FontWeight.bold,
+                                            ),
                                       ),
-                                    Text(
-                                      metfiePlan[count]['plan'].toString(),
-                                      textAlign: TextAlign.center,
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .displayLarge!
-                                          .copyWith(color: AppColors.black),
-                                    ),
-                                    Text(
-                                      'Months',
-                                      textAlign: TextAlign.center,
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodySmall!
-                                          .copyWith(
-                                              fontWeight: FontWeight.bold),
-                                    ),
-                                    Text(
-                                      'USD ${metfiePlan[count]['price']}',
-                                      textAlign: TextAlign.center,
-                                      style: const TextStyle(
-                                        color: AppColors.grey,
-                                        fontSize: 10,
-                                        fontWeight: FontWeight.bold,
+                                      Text(
+                                        'INR ${bstyPlan[count]['price']}',
+                                        textAlign: TextAlign.center,
+                                        style: const TextStyle(
+                                          color: AppColors.grey,
+                                          fontSize: 10,
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
-                              ),
-                            );
-                          },
-                        );
-                      },
-                    ),
-                  ),
-                  SizedBox(height: appHeight * 0.03),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: List.generate(
-                      plans.length,
-                      (i) => Container(
-                        width: 8,
-                        height: 8,
-                        margin: const EdgeInsets.symmetric(horizontal: 5),
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color:
-                              index == i ? AppColors.white : AppColors.disabled,
-                        ),
+                              );
+                            },
+                          );
+                        },
+                      ),
+                ),
+                SizedBox(height: appHeight * 0.03),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: List.generate(
+                    plans.length,
+                    (i) => Container(
+                      width: 8,
+                      height: 8,
+                      margin: const EdgeInsets.symmetric(horizontal: 5),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: index == i
+                            ? AppColors.white
+                            : AppColors.disabled,
                       ),
                     ),
                   ),
-                  SizedBox(height: mq.height * 0.05),
-                  StadiumButton(
-                    visualDensity: VisualDensity.adaptivePlatformDensity,
-                    gradient: AppColors.orangeYelloH,
-                    onPressed: () async {
-                      if (isLoading) {
-                        return;
-                      }
-                      // if (Platform.isIOS) {
-                      //   showPaymentNotAvailableDialog();
-                      //   return;
-                      // }
-                      setState(() {
-                        isLoading = true;
-                      });
-                      // showPaymentNotAvailableDialog();
-                      if (_selectedPlan.value == -1) {
-                        navigatorKey.currentState!.pop();
-                        showSnackBar('Please select a plan');
-                        return;
-                      }
+                ),
+                SizedBox(height: mq.height * 0.05),
+                StadiumButton(
+                  visualDensity: VisualDensity.adaptivePlatformDensity,
+                  gradient: AppColors.orangeYelloH,
+                  onPressed: () async {
+                    if (isLoading) {
+                      return;
+                    }
+                    // if (Platform.isIOS) {
+                    //   showPaymentNotAvailableDialog();
+                    //   return;
+                    // }
+                    setState(() {
+                      isLoading = true;
+                    });
+                    // showPaymentNotAvailableDialog();
+                    if (_selectedPlan.value == -1) {
+                      navigatorKey.currentState!.pop();
+                      showSnackBar('Please select a plan');
+                      return;
+                    }
 
-                      await initStoreInfo(
-                          {plans[index][_selectedPlan.value]['id']});
-                      if (_notFoundIds.isNotEmpty &&
-                          _notFoundIds[0] ==
-                              plans[index][_selectedPlan.value]['id']) {
-                        navigatorKey.currentState!.pop();
-                        showSnackBar(
-                            'We\'re sorry, but the requested in-app purchase is not available.');
-                        isLoading = false;
-                        return;
-                      }
-                      if (_products.isEmpty) {
-                        navigatorKey.currentState!.pop();
-                        showSnackBar('Something went wrong!,Please try again');
-                        isLoading = false;
-                        return;
-                      }
-                      late PurchaseParam purchaseParam;
-                      log(' in app purchase ---------');
-
-                      final Map<String, PurchaseDetails> purchases =
-                          Map<String, PurchaseDetails>.fromEntries(
-                              _purchases.map((PurchaseDetails purchase) {
-                        if (purchase.pendingCompletePurchase) {
-                          _inAppPurchase.completePurchase(purchase);
-                        }
-
-                        return MapEntry<String, PurchaseDetails>(
-                            purchase.productID, purchase);
-                      }));
-
-                      log('purchases ${purchases.toString()}');
-
-                      if (Platform.isAndroid) {
-                        // NOTE: If you are making a subscription purchase/upgrade/downgrade, we recommend you to
-                        // verify the latest status of you your subscription by using server side receipt validation
-                        // and update the UI accordingly. The subscription purchase status shown
-                        // inside the app may not be accurate.
-
-                        log(' in app purchase');
-                        final GooglePlayPurchaseDetails? oldSubscription =
-                            _getOldSubscription(_products.first, purchases);
-                        log(purchases.toString());
-                        purchaseParam = GooglePlayPurchaseParam(
-                            productDetails: _products.first,
-                            changeSubscriptionParam: (oldSubscription != null)
-                                ? ChangeSubscriptionParam(
-                                    oldPurchaseDetails: oldSubscription,
-                                    // prorationMode: ProrationMode
-                                    //     .immediateWithTimeProration,
-                                  )
-                                : null);
-                        log(purchaseParam.applicationUserName.toString());
-                      } else {
-                        purchaseParam = PurchaseParam(
-                          productDetails: _products.first,
-                        );
-                      }
-                      // if (selectedProduct!.id == _kConsumableId) {
-                      //   _inAppPurchase.buyConsumable(
-                      //       purchaseParam: purchaseParam, autoConsume: _kAutoConsume);
-                      //   log('consumable');
-                      // } else {
-                      _inAppPurchase.buyNonConsumable(
-                          purchaseParam: purchaseParam);
-                      log('non consumable');
-                      // }
+                    await initStoreInfo({
+                      plans[index][_selectedPlan.value]['id'],
+                    });
+                    if (_notFoundIds.isNotEmpty &&
+                        _notFoundIds[0] ==
+                            plans[index][_selectedPlan.value]['id']) {
+                      navigatorKey.currentState!.pop();
+                      showSnackBar(
+                        'We\'re sorry, but the requested in-app purchase is not available.',
+                      );
                       isLoading = false;
-                    },
-                    child: isLoading
-                        ? const SizedBox(
-                            width: 60, child: BtnLoadingAnimation())
-                        // ? SizedBox(
-                        //     height: mq.height * 0.03,
-                        //     width: authPro.isTab
-                        //         ? mq.height * 0.03
-                        //         : mq.width * 0.06,
-                        //     child: const CircularProgressIndicator(
-                        //       color: AppColors.white,
-                        //       strokeWidth: 2,
-                        //     ),
-                        //   )
-                        : const Text('Change Now'),
-                  )
-                ],
-              );
-            },
-          ),
-        ));
+                      return;
+                    }
+                    if (_products.isEmpty) {
+                      navigatorKey.currentState!.pop();
+                      showSnackBar('Something went wrong!,Please try again');
+                      isLoading = false;
+                      return;
+                    }
+                    late PurchaseParam purchaseParam;
+                    log(' in app purchase ---------');
+
+                    final Map<String, PurchaseDetails> purchases =
+                        Map<String, PurchaseDetails>.fromEntries(
+                          _purchases.map((PurchaseDetails purchase) {
+                            if (purchase.pendingCompletePurchase) {
+                              _inAppPurchase.completePurchase(purchase);
+                            }
+
+                            return MapEntry<String, PurchaseDetails>(
+                              purchase.productID,
+                              purchase,
+                            );
+                          }),
+                        );
+
+                    log('purchases ${purchases.toString()}');
+
+                    if (Platform.isAndroid) {
+                      // NOTE: If you are making a subscription purchase/upgrade/downgrade, we recommend you to
+                      // verify the latest status of you your subscription by using server side receipt validation
+                      // and update the UI accordingly. The subscription purchase status shown
+                      // inside the app may not be accurate.
+
+                      log(' in app purchase');
+                      final GooglePlayPurchaseDetails? oldSubscription =
+                          _getOldSubscription(_products.first, purchases);
+                      log(purchases.toString());
+                      purchaseParam = GooglePlayPurchaseParam(
+                        productDetails: _products.first,
+                        changeSubscriptionParam: (oldSubscription != null)
+                            ? ChangeSubscriptionParam(
+                                oldPurchaseDetails: oldSubscription,
+                                // prorationMode: ProrationMode
+                                //     .immediateWithTimeProration,
+                              )
+                            : null,
+                      );
+                      log(purchaseParam.applicationUserName.toString());
+                    } else {
+                      purchaseParam = PurchaseParam(
+                        productDetails: _products.first,
+                      );
+                    }
+                    // if (selectedProduct!.id == _kConsumableId) {
+                    //   _inAppPurchase.buyConsumable(
+                    //       purchaseParam: purchaseParam, autoConsume: _kAutoConsume);
+                    //   log('consumable');
+                    // } else {
+                    _inAppPurchase.buyNonConsumable(
+                      purchaseParam: purchaseParam,
+                    );
+                    log('non consumable');
+                    // }
+                    isLoading = false;
+                  },
+                  child: isLoading
+                      ? const SizedBox(width: 60, child: BtnLoadingAnimation())
+                      // ? SizedBox(
+                      //     height: mq.height * 0.03,
+                      //     width: authPro.isTab
+                      //         ? mq.height * 0.03
+                      //         : mq.width * 0.06,
+                      //     child: const CircularProgressIndicator(
+                      //       color: AppColors.white,
+                      //       strokeWidth: 2,
+                      //     ),
+                      //   )
+                      : const Text('Change Now'),
+                ),
+              ],
+            );
+          },
+        ),
+      ),
+    );
   }
 
   GooglePlayPurchaseDetails? _getOldSubscription(
-      ProductDetails productDetails, Map<String, PurchaseDetails> purchases) {
+    ProductDetails productDetails,
+    Map<String, PurchaseDetails> purchases,
+  ) {
     // This is just to demonstrate a subscription upgrade or downgrade.
     // This method assumes that you have only 2 subscriptions under a group, 'subscription_silver' & 'subscription_gold'.
     // The 'subscription_silver' subscription can be upgraded to 'subscription_gold' and

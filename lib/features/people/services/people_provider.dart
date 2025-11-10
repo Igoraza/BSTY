@@ -164,9 +164,9 @@ class PeopleProvider with ChangeNotifier {
         options: options,
       );
 
-      // log(
-      //   "Fetch people url : ${isMap ? Endpoints.userHomeMap : Endpoints.userHome}",
-      // );
+      log(
+        ">>>>>> Fetch people url : ${isMap ? Endpoints.userHomeMap : Endpoints.userHome}",
+      );
 
       debugPrint(
         '=====================> FetchPeopleRes: ${response.data['plan']}',
@@ -190,6 +190,9 @@ class PeopleProvider with ChangeNotifier {
           //   // return ;
           // }
           log('++==========${response.data.toString()}');
+          log(
+            "########################## Profile completed : ${response.data['profile_completed']}",
+          );
 
           debugPrint(
             '=====================> Plan: ${response.data['plan_expired']}',

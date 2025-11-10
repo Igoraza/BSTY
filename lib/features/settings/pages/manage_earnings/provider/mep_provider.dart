@@ -21,15 +21,19 @@ class MEPProvider extends ChangeNotifier {
   Future<MepModel?> getMep() async {
     try {
       // log("response.data");
+      log("Getting referals");
       final userTokens = await AuthProvider().retrieveUserTokens();
       // log(userTokens.toString());
       final headers = {"Authorization": "Bearer ${userTokens['access']}"};
-      final response =
-          await dio.get(Endpoints.getMep, options: Options(headers: headers));
+      final response = await dio.get(
+        Endpoints.getMep,
+        options: Options(headers: headers),
+      );
       // log(response.toString());
       if (response.statusCode == 200 && response.data['status']) {
         final MepModel mep = MepModel.fromJson(response.data);
         // log(mep.toString());
+        log("Referral response : $response");
         return mep;
       } else {
         throw Exception(response.data['message']);

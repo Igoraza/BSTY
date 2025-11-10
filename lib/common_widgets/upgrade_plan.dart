@@ -25,9 +25,9 @@ import '../utils/theme/colors.dart';
 import 'stadium_button.dart';
 
 String _kConsumableId = 'boost_1';
-const String _kUpgradeId = 'bsty_plus';
-const String _kSilverSubscriptionId = 'bsty_plus';
-const String _kGoldSubscriptionId = 'bsty_plus';
+// const String _kUpgradeId = 'bsty_plus';
+const String _kSilverSubscriptionId = 'bsty_plus_1';
+const String _kGoldSubscriptionId = 'bsty_premium_1';
 
 class UpgradePlanScreen extends StatefulWidget {
   final String? title;
@@ -310,24 +310,40 @@ class UpgradePlanScreenState extends State<UpgradePlanScreen> {
     ProductDetails productDetails,
     Map<String, PurchaseDetails> purchases,
   ) {
-    GooglePlayPurchaseDetails? oldSubscription;
-    if (productDetails.id == _kSilverSubscriptionId &&
-        purchases[_kGoldSubscriptionId] != null) {
-      oldSubscription =
-          purchases[_kGoldSubscriptionId]! as GooglePlayPurchaseDetails;
-    } else if (productDetails.id == _kGoldSubscriptionId &&
-        purchases[_kSilverSubscriptionId] != null) {
-      oldSubscription =
-          purchases[_kSilverSubscriptionId]! as GooglePlayPurchaseDetails;
+    // Look through all current subscriptions to find an active one
+    for (final purchase in purchases.values) {
+      if (purchase is GooglePlayPurchaseDetails &&
+          purchase.productID != productDetails.id &&
+          purchase.status == PurchaseStatus.purchased) {
+        return purchase; // Found an old subscription to replace
+      }
     }
-    return oldSubscription;
+    return null; // No active subscription found
   }
 
+  // GooglePlayPurchaseDetails? _getOldSubscription(
+  //   ProductDetails productDetails,
+  //   Map<String, PurchaseDetails> purchases,
+  // ) {
+  //   GooglePlayPurchaseDetails? oldSubscription;
+  //   if (productDetails.id == _kSilverSubscriptionId &&
+  //       purchases[_kGoldSubscriptionId] != null) {
+  //     oldSubscription =
+  //         purchases[_kGoldSubscriptionId]! as GooglePlayPurchaseDetails;
+  //   } else if (productDetails.id == _kGoldSubscriptionId &&
+  //       purchases[_kSilverSubscriptionId] != null) {
+  //     oldSubscription =
+  //         purchases[_kSilverSubscriptionId]! as GooglePlayPurchaseDetails;
+  //   }
+  //   return oldSubscription;
+  // }
+
   List<dynamic> get _currentPlans {
+    log("Plan --: ${widget.title}");
     if (widget.title == "Premium") {
       return planPriceDet.payOptionsPre;
     } else if (widget.title == "Plus") {
-      planPriceDet.payOptionsPlus;
+      return planPriceDet.payOptionsPlus;
     } else if (widget.title == "Boost") {
       return planPriceDet.payBoosts;
     } else if (widget.title == "Like") {
@@ -357,7 +373,7 @@ class UpgradePlanScreenState extends State<UpgradePlanScreen> {
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
     final authPro = context.read<AuthProvider>();
-
+    log("Current selected plan : ${widget.title}");
     return Scaffold(
       body: Stack(
         children: [
@@ -547,20 +563,20 @@ class UpgradePlanScreenState extends State<UpgradePlanScreen> {
 
     // Original purchase logic (your existing code)
     if (isLoading || _purchasePending) {
-      print(
+      log(
         'DEBUG: Purchase blocked - isLoading: $isLoading, _purchasePending: $_purchasePending',
       );
       return;
     }
 
     if (selectedIndex == -1) {
-      print('DEBUG: No plan selected');
+      log('DEBUG: No plan selected');
       showSnackBar('Please select a plan');
       return;
     }
 
     setState(() => isLoading = true);
-    print('DEBUG: Starting purchase process...');
+    log('DEBUG: Starting purchase process...');
 
     try {
       // Step 1: Get plan details
@@ -579,7 +595,7 @@ class UpgradePlanScreenState extends State<UpgradePlanScreen> {
       }
 
       final String planId = planList[selectedIndex]['id'];
-      print('DEBUG: Selected plan ID: $planId');
+      log('DEBUG: Selected plan ID: $planId');
 
       // Step 2: Check store availability FIRST
       print('DEBUG: Checking store availability...');
@@ -619,9 +635,9 @@ class UpgradePlanScreenState extends State<UpgradePlanScreen> {
 
       // Step 5: Check if products are available
       if (_products.isEmpty) {
-        print('DEBUG: No products available after store initialization');
-        print('DEBUG: _notFoundIds: $_notFoundIds');
-        print(
+        log('DEBUG: No products available after store initialization');
+        log('DEBUG: _notFoundIds: $_notFoundIds');
+        log(
           'DEBUG: Current store connection: ${await _inAppPurchase.isAvailable()}',
         );
         print('DEBUG: Requested plan ID: $planId');
@@ -687,11 +703,11 @@ class UpgradePlanScreenState extends State<UpgradePlanScreen> {
         );
 
         if (oldSubscription != null) {
-          print(
+          log(
             'DEBUG: Found old subscription to replace: ${oldSubscription.productID}',
           );
         } else {
-          print('DEBUG: No old subscription found');
+          log('DEBUG: No old subscription found');
         }
 
         purchaseParam = GooglePlayPurchaseParam(
@@ -701,17 +717,18 @@ class UpgradePlanScreenState extends State<UpgradePlanScreen> {
               : null,
         );
       } else {
-        print('DEBUG: iOS platform detected');
+        log('DEBUG: iOS platform detected');
         purchaseParam = PurchaseParam(productDetails: selectedProduct);
       }
 
       // Step 8: Start purchase (store availability already checked)
-      print('DEBUG: Initiating purchase...');
+      log('DEBUG: Initiating purchase...');
       final bool purchaseResult = await _inAppPurchase.buyNonConsumable(
         purchaseParam: purchaseParam,
       );
 
-      print('DEBUG: Purchase initiated. Result: $purchaseResult');
+      log('DEBUG: Purchase initiated. Result: ${purchaseResult.toString()}');
+      debugPrint('DEBUG: Purchase initiated. Result: $purchaseResult');
 
       if (!purchaseResult) {
         throw Exception(
@@ -719,7 +736,7 @@ class UpgradePlanScreenState extends State<UpgradePlanScreen> {
         );
       }
     } catch (e, stackTrace) {
-      print('ERROR: Purchase failed with exception: $e');
+      log('ERROR: Purchase failed with exception: $e');
       print('ERROR: Stack trace: $stackTrace');
 
       String errorMessage = 'Purchase failed';

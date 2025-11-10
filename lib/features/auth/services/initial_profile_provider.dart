@@ -176,6 +176,7 @@ class InitialProfileProvider with ChangeNotifier {
     BuildContext context,
     List<File?> images,
   ) async {
+    log("Uploading user images");
     bool returnVal = false;
 
     authStatus = AuthStatus.checking;
@@ -196,9 +197,7 @@ class InitialProfileProvider with ChangeNotifier {
             notifyListeners();
           },
         );
-        debugPrint(
-          '===========Initial Profile Images Response: ${response.data}',
-        );
+        log('===========Initial Profile Images Response: ${response.data}');
         if (response.statusCode == 200 &&
             response.data['status'] == 'success') {
           final displayImage = response.data['display_image '];

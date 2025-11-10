@@ -468,7 +468,7 @@ class ExceedLikeDialogState extends State<ExceedLikeDialog> {
                                     .copyWith(fontWeight: FontWeight.bold),
                               ),
                               Text(
-                                'USD ${planPriceDet.payOptionsPlus[index]['price']}',
+                                'INR ${planPriceDet.payOptionsPlus[index]['price']}',
                                 textAlign: TextAlign.center,
                                 style: const TextStyle(
                                   color: AppColors.grey,

@@ -198,10 +198,15 @@ class AllPlansDetails extends StatelessWidget {
               onPressed: () {
                 // log(currentIndex.toString());
                 if (currentIndex == 0) {
-                  Navigator.pushNamed(context, UpgradePlanScreen.routeName);
                   // showDialog(
                   //     context: context,
                   //     builder: (context) => UpgradePlanDialog());
+
+                  Navigator.pushNamed(
+                    context,
+                    UpgradePlanScreen.routeName,
+                    arguments: "Plus",
+                  );
                 } else if (currentIndex == 1) {
                   // showDialog(
                   //   context: context,
