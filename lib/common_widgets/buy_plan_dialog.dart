@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:bsty/features/people/services/people_provider.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -61,6 +62,7 @@ class BuyPlanDialogState extends State<BuyPlanDialog> {
   final _selectedPlan = ValueNotifier<int>(1);
 
   final bool _kAutoConsume = Platform.isIOS || true;
+  final peopleProvider = navigatorKey.currentContext!.read<PeopleProvider>();
 
   final carouselData = [
     {
@@ -74,7 +76,7 @@ class BuyPlanDialogState extends State<BuyPlanDialog> {
     {
       'title': 'Profile Boosts !',
       'image': 'assets/svg/upgrade_dialog/profile_boosts.svg',
-    }
+    },
   ];
 
   final InAppPurchase _inAppPurchase = InAppPurchase.instance;
@@ -97,71 +99,92 @@ class BuyPlanDialogState extends State<BuyPlanDialog> {
   void initState() {
     final Stream<List<PurchaseDetails>> purchaseUpdated =
         _inAppPurchase.purchaseStream;
-    _subscription =
-        purchaseUpdated.listen((List<PurchaseDetails> purchaseDetailsList) {
-      _listenToPurchaseUpdated(purchaseDetailsList);
-    }, onDone: () {
-      log('_subscription canceled');
-      _subscription.cancel();
-    }, onError: (Object error) {
-      // handle error here.
-    });
+    _subscription = purchaseUpdated.listen(
+      (List<PurchaseDetails> purchaseDetailsList) {
+        _listenToPurchaseUpdated(purchaseDetailsList);
+      },
+      onDone: () {
+        log('_subscription canceled');
+        _subscription.cancel();
+      },
+      onError: (Object error) {
+        // handle error here.
+      },
+    );
     // initStoreInfo();
     super.initState();
   }
 
   Future<void> _listenToPurchaseUpdated(
-      List<PurchaseDetails> purchaseDetailsList) async {
+    List<PurchaseDetails> purchaseDetailsList,
+  ) async {
     final inAppProvider = context.read<InAppProvider>();
     debugPrint(
-        'purchaseDetailsList-length---------------${purchaseDetailsList.length}-------------------------');
+      'purchaseDetailsList-length---------------${purchaseDetailsList.length}-------------------------',
+    );
+    log("Purchase details list : $purchaseDetailsList");
     for (final PurchaseDetails purchaseDetails in purchaseDetailsList) {
       debugPrint('-----------------------------------------');
       debugPrint(
-          'localVerificationData  ${purchaseDetails.verificationData.localVerificationData}');
+        'localVerificationData  ${purchaseDetails.verificationData.localVerificationData}',
+      );
       debugPrint('-----------------------------------------');
       debugPrint(
-          'serverVerificationData  ${purchaseDetails.verificationData.serverVerificationData}');
+        'serverVerificationData  ${purchaseDetails.verificationData.serverVerificationData}',
+      );
       debugPrint('-----------------------------------------');
       debugPrint(
-          'purchase id ${purchaseDetails.purchaseID} productID ${purchaseDetails.productID}');
+        'purchase id ${purchaseDetails.purchaseID} productID ${purchaseDetails.productID}',
+      );
       debugPrint('-----------------------------------------');
       debugPrint(purchaseDetails.status.toString());
       debugPrint(
-          "purchaseDetails.error ################${purchaseDetails.error.toString()}");
+        "purchaseDetails.error ################${purchaseDetails.error.toString()}",
+      );
       debugPrint(
-          purchaseDetails.verificationData.localVerificationData.toString());
+        purchaseDetails.verificationData.localVerificationData.toString(),
+      );
       debugPrint('-----------------------------------------');
       if (purchaseDetails.status == PurchaseStatus.pending) {
         isLoading = true;
-        log('@@@@@@@@@@@@@@@@@@----purchased---pending @ @@@@@@@@@@@@@@@----------------------------------');
+        log(
+          '@@@@@@@@@@@@@@@@@@----purchased---pending @ @@@@@@@@@@@@@@@----------------------------------',
+        );
         showPendingUI();
       } else {
         if (purchaseDetails.status == PurchaseStatus.error) {
           isLoading = false;
           debugPrint(
-              "purchaseDetails.error ################ error ${purchaseDetails.error.toString()}");
+            "purchaseDetails.error ################ error ${purchaseDetails.error.toString()}",
+          );
           log(purchaseDetails.error.toString());
           handleError(purchaseDetails.error!);
         } else if (purchaseDetails.status == PurchaseStatus.purchased ||
             purchaseDetails.status == PurchaseStatus.restored) {
-          log('@@@@@@@@@@@@@@@@@@----purchased---restored @ @@@@@@@@@@@@@@@----------------------------------');
+          log(
+            '@@@@@@@@@@@@@@@@@@----purchased---restored @ @@@@@@@@@@@@@@@----------------------------------',
+          );
 
           debugPrint('----purchased-------------------------------------');
           debugPrint(
-              'localVerificationData purchased  ${purchaseDetails.verificationData.localVerificationData}');
+            'localVerificationData purchased  ${purchaseDetails.verificationData.localVerificationData}',
+          );
           debugPrint('-----purchased------------------------------------');
           debugPrint(
-              'serverVerificationData  purchased ${purchaseDetails.verificationData.serverVerificationData}');
+            'serverVerificationData  purchased ${purchaseDetails.verificationData.serverVerificationData}',
+          );
           debugPrint('-----------------------------------------');
           debugPrint(
-              'purchase id purchased ${purchaseDetails.purchaseID} productID ${purchaseDetails.productID}');
+            'purchase id purchased ${purchaseDetails.purchaseID} productID ${purchaseDetails.productID}',
+          );
           debugPrint(
-              'purchaseDetails.verificationData.serverVerificationData purchased ${purchaseDetails.verificationData.serverVerificationData} productID ${purchaseDetails.productID}');
+            'purchaseDetails.verificationData.serverVerificationData purchased ${purchaseDetails.verificationData.serverVerificationData} productID ${purchaseDetails.productID}',
+          );
           debugPrint('----purchased-------------------------------------');
           debugPrint(purchaseDetails.status.toString());
-          debugPrint(purchaseDetails.verificationData.localVerificationData
-              .toString());
+          debugPrint(
+            purchaseDetails.verificationData.localVerificationData.toString(),
+          );
           debugPrint('-----purchased ------------------------------------');
           setState(() {
             isLoading = false;
@@ -184,19 +207,25 @@ class BuyPlanDialogState extends State<BuyPlanDialog> {
             // Access properties of AppStorePurchaseDetails
             final String? transactionId = appStorePurchaseDetails.purchaseID;
             final String originalTransactionId = appStorePurchaseDetails
-                .skPaymentTransaction.transactionIdentifier
+                .skPaymentTransaction
+                .transactionIdentifier
                 .toString();
             final String productIdentifier = appStorePurchaseDetails.productID;
             final String verificationData = appStorePurchaseDetails
-                .verificationData.serverVerificationData
+                .verificationData
+                .serverVerificationData
                 .toString();
             final String quantity = appStorePurchaseDetails
-                .skPaymentTransaction.payment.quantity
+                .skPaymentTransaction
+                .payment
+                .quantity
                 .toString();
-            final String transactionDate =
-                appStorePurchaseDetails.transactionDate.toString();
+            final String transactionDate = appStorePurchaseDetails
+                .transactionDate
+                .toString();
             debugPrint(
-                '-----transactionId $transactionId \n ----originalTransactionId $originalTransactionId \n---productIdentifier $productIdentifier \n-----verificationData $verificationData  \n--------quantity$quantity\n ---transactionDate$transactionDate');
+              '-----transactionId $transactionId \n ----originalTransactionId $originalTransactionId \n---productIdentifier $productIdentifier \n-----verificationData $verificationData  \n--------quantity$quantity\n ---transactionDate$transactionDate',
+            );
             // ...
 
             // Handle the app store purchase details and perform necessary actions
@@ -210,16 +239,23 @@ class BuyPlanDialogState extends State<BuyPlanDialog> {
               'quantity': quantity,
             });
           } else {
-            dynamic quantity = jsonDecode(
-                purchaseDetails.verificationData.localVerificationData);
-            debugPrint(
-                '----purchased---quantity------${quantity['quantity']}----------------------------');
+            int selectedQuantity = 1;
+            if (purchaseDetails.productID.contains('boost_')) {
+              selectedQuantity =
+                  int.tryParse(purchaseDetails.productID.split('_').last) ?? 1;
+            }
+            // dynamic quantity = jsonDecode(
+            //   purchaseDetails.verificationData.localVerificationData,
+            // );
+            log(
+              '----purchased---quantity------${selectedQuantity}----------------------------',
+            );
             data = FormData.fromMap({
               'product_id': purchaseDetails.productID,
               'purchase_time': purchaseDetails.purchaseID,
               'purchase_token':
                   purchaseDetails.verificationData.serverVerificationData,
-              'quantity': quantity['quantity'],
+              'quantity': selectedQuantity,
             });
           }
 
@@ -229,6 +265,7 @@ class BuyPlanDialogState extends State<BuyPlanDialog> {
             deliverProduct(purchaseDetails);
 
             await inAppProvider.purchaseAndroid(data);
+            peopleProvider.fetchPeople(context);
             // break;
             return;
           } else {
@@ -243,9 +280,9 @@ class BuyPlanDialogState extends State<BuyPlanDialog> {
         }
         if (Platform.isAndroid) {
           if (!_kAutoConsume && purchaseDetails.productID == _kConsumableId) {
-            final InAppPurchaseAndroidPlatformAddition androidAddition =
-                _inAppPurchase.getPlatformAddition<
-                    InAppPurchaseAndroidPlatformAddition>();
+            final InAppPurchaseAndroidPlatformAddition
+            androidAddition = _inAppPurchase
+                .getPlatformAddition<InAppPurchaseAndroidPlatformAddition>();
             await androidAddition.consumePurchase(purchaseDetails);
           }
         }
@@ -325,12 +362,14 @@ class BuyPlanDialogState extends State<BuyPlanDialog> {
       await iosPlatformAddition.setDelegate(ExamplePaymentQueueDelegate());
     }
 
-    final ProductDetailsResponse productDetailResponse =
-        await _inAppPurchase.queryProductDetails(identifiers);
+    final ProductDetailsResponse productDetailResponse = await _inAppPurchase
+        .queryProductDetails(identifiers);
     debugPrint(
-        'in app product details ${productDetailResponse.productDetails}');
+      'in app product details ${productDetailResponse.productDetails}',
+    );
     debugPrint(
-        'initStoreInfo notFoundIDs ${productDetailResponse.notFoundIDs.toString()}');
+      'initStoreInfo notFoundIDs ${productDetailResponse.notFoundIDs.toString()}',
+    );
     debugPrint('initStoreInfo isAvailable ${isAvailable.toString()}');
 
     if (productDetailResponse.error != null) {
@@ -345,7 +384,9 @@ class BuyPlanDialogState extends State<BuyPlanDialog> {
         _loading = false;
       });
 
-      log('initStoreInfo productDetailResponse error ${productDetailResponse.toString()}');
+      log(
+        'initStoreInfo productDetailResponse error ${productDetailResponse.toString()}',
+      );
 
       return;
     }
@@ -426,26 +467,22 @@ class BuyPlanDialogState extends State<BuyPlanDialog> {
             if (widget.title != null)
               Text(
                 widget.title!,
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyLarge!
-                    .copyWith(color: AppColors.white, fontSize: 20),
+                style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                  color: AppColors.white,
+                  fontSize: 20,
+                ),
               ),
             SizedBox(height: mq.height * 0.01),
             Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                SvgPicture.asset(
-                  widget.img,
-                  height: mq.height * 0.1,
-                ),
+                SvgPicture.asset(widget.img, height: mq.height * 0.1),
                 SizedBox(height: mq.height * 0.01),
                 Text(
                   widget.desc,
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyMedium!
-                      .copyWith(color: AppColors.white),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodyMedium!.copyWith(color: AppColors.white),
                 ),
               ],
             ),
@@ -472,147 +509,153 @@ class BuyPlanDialogState extends State<BuyPlanDialog> {
             // ),
             SizedBox(height: mq.height * 0.03),
             ValueListenableBuilder(
-                valueListenable: _selectedPlan,
-                builder: (context, value, child) {
-                  return SizedBox(
-                    height: authPro.isTab ? 300 : 180,
-                    width: mq.width * 1,
-                    child:
-                        // _loading
-                        //     ? const Center(child: mainLoadingAnimationLight)
-                        //     :
-                        ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: widget.paymentList.length,
-                      itemBuilder: (context, index) {
-                        final value = widget.paymentList;
-                        // String price = _products[index].rawPrice.toString();
-                        // //  value[index]['price'];
-                        // log('in app ${_products[index].rawPrice}');
+              valueListenable: _selectedPlan,
+              builder: (context, value, child) {
+                return SizedBox(
+                  height: authPro.isTab ? 300 : 180,
+                  width: mq.width * 1,
+                  child:
+                      // _loading
+                      //     ? const Center(child: mainLoadingAnimationLight)
+                      //     :
+                      ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: widget.paymentList.length,
+                        itemBuilder: (context, index) {
+                          final value = widget.paymentList;
+                          // String price = _products[index].rawPrice.toString();
+                          // //  value[index]['price'];
+                          // log('in app ${_products[index].rawPrice}');
 
-                        return Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: GestureDetector(
-                                onTap: () {
-                                  // if (_products.isNotEmpty) {
-                                  // _products.sort(
-                                  //   (a, b) => a.rawPrice.compareTo(b.rawPrice),
-                                  // );
+                          return Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: GestureDetector(
+                                  onTap: () {
+                                    // if (_products.isNotEmpty) {
+                                    // _products.sort(
+                                    //   (a, b) => a.rawPrice.compareTo(b.rawPrice),
+                                    // );
 
-                                  // selectedProduct = _products[index];
-                                  _selectedPlan.value = index;
-                                  // _kConsumableId = _products[index].id;
-                                  _kConsumableId = widget
-                                      .paymentList[_selectedPlan.value]['id'];
-                                  // } else {
-                                  //   navigatorKey.currentState!.pop();
-                                  //   showSnackBar('Something went wrong!');
-                                  // }
-                                },
-                                child: Container(
-                                  height: mq.height * 0.24,
-                                  width: authPro.isTab
-                                      ? mq.width * .25
-                                      : mq.width * .35,
-                                  margin:
-                                      const EdgeInsets.only(left: 5, right: 5),
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 10),
-                                  decoration: BoxDecoration(
-                                    borderRadius: const BorderRadius.all(
-                                        Radius.circular(14)),
-                                    border: Border.all(
-                                      color: _selectedPlan.value == index
-                                          ? AppColors.deepOrange
-                                          : AppColors.white,
-                                      width: 1,
+                                    // selectedProduct = _products[index];
+                                    _selectedPlan.value = index;
+                                    // _kConsumableId = _products[index].id;
+                                    _kConsumableId = widget
+                                        .paymentList[_selectedPlan.value]['id'];
+                                    // } else {
+                                    //   navigatorKey.currentState!.pop();
+                                    //   showSnackBar('Something went wrong!');
+                                    // }
+                                  },
+                                  child: Container(
+                                    height: mq.height * 0.24,
+                                    width: authPro.isTab
+                                        ? mq.width * .25
+                                        : mq.width * .35,
+                                    margin: const EdgeInsets.only(
+                                      left: 5,
+                                      right: 5,
+                                    ),
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 10,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      borderRadius: const BorderRadius.all(
+                                        Radius.circular(14),
+                                      ),
+                                      border: Border.all(
+                                        color: _selectedPlan.value == index
+                                            ? AppColors.deepOrange
+                                            : AppColors.white,
+                                        width: 1,
+                                      ),
+                                    ),
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          value[index]['plan'],
+                                          textAlign: TextAlign.center,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .displayLarge!
+                                              .copyWith(color: AppColors.white),
+                                        ),
+                                        Text(
+                                          widget.title != null
+                                              ? widget.title!
+                                              : 'Minutes',
+                                          textAlign: TextAlign.center,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodySmall!
+                                              .copyWith(
+                                                color: AppColors.white,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                        ),
+                                        Text(
+                                          'INR ${value[index]['price']} !',
+                                          textAlign: TextAlign.center,
+                                          style: const TextStyle(
+                                            color: AppColors.deepOrange,
+                                            fontSize: 10,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        // Text(
+                                        //   'MK${value[index]['price']}/Month',
+                                        //   textAlign: TextAlign.center,
+                                        //   style: const TextStyle(
+                                        //     color: AppColors.deepOrange,
+                                        //     fontSize: 10,
+                                        //     fontWeight: FontWeight.bold,
+                                        //   ),
+                                        // ),
+                                      ],
+                                      // ),
                                     ),
                                   ),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        value[index]['plan'],
-                                        textAlign: TextAlign.center,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .displayLarge!
-                                            .copyWith(
-                                              color: AppColors.white,
-                                            ),
+                                ),
+                              ),
+                              if (index == 1)
+                                Align(
+                                  alignment: Alignment.topCenter,
+                                  child: Container(
+                                    height: mq.height * 0.02,
+                                    width: mq.width * 0.16,
+                                    decoration: const BoxDecoration(
+                                      color: AppColors.deepOrange,
+                                      borderRadius: BorderRadius.all(
+                                        Radius.circular(10),
                                       ),
-                                      Text(
-                                        widget.title != null
-                                            ? widget.title!
-                                            : 'Minutes',
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        'Popular',
                                         textAlign: TextAlign.center,
                                         style: Theme.of(context)
                                             .textTheme
                                             .bodySmall!
                                             .copyWith(
-                                              color: AppColors.white,
                                               fontWeight: FontWeight.bold,
+                                              color: AppColors.white,
+                                              fontSize: 10,
                                             ),
                                       ),
-                                      Text(
-                                        'USD ${value[index]['price']} !',
-                                        textAlign: TextAlign.center,
-                                        style: const TextStyle(
-                                          color: AppColors.deepOrange,
-                                          fontSize: 10,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      // Text(
-                                      //   'MK${value[index]['price']}/Month',
-                                      //   textAlign: TextAlign.center,
-                                      //   style: const TextStyle(
-                                      //     color: AppColors.deepOrange,
-                                      //     fontSize: 10,
-                                      //     fontWeight: FontWeight.bold,
-                                      //   ),
-                                      // ),
-                                    ],
-                                    // ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            if (index == 1)
-                              Align(
-                                alignment: Alignment.topCenter,
-                                child: Container(
-                                  height: mq.height * 0.02,
-                                  width: mq.width * 0.16,
-                                  decoration: const BoxDecoration(
-                                      color: AppColors.deepOrange,
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(10))),
-                                  child: Center(
-                                    child: Text(
-                                      'Popular',
-                                      textAlign: TextAlign.center,
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodySmall!
-                                          .copyWith(
-                                            fontWeight: FontWeight.bold,
-                                            color: AppColors.white,
-                                            fontSize: 10,
-                                          ),
                                     ),
                                   ),
                                 ),
-                              ),
-                          ],
-                        );
-                      },
-                    ),
-                  );
-                }),
+                            ],
+                          );
+                        },
+                      ),
+                );
+              },
+            ),
             // );
             // }),
             SizedBox(height: mq.height * 0.05),
@@ -622,7 +665,8 @@ class BuyPlanDialogState extends State<BuyPlanDialog> {
               gradient: AppColors.orangeYelloH,
               onPressed: () async {
                 debugPrint(
-                    '-----------------------------------------====== $_kConsumableId');
+                  '-----------------------------------------====== $_kConsumableId',
+                );
                 if (isLoading) {
                   debugPrint('-----------------------------');
                   return;
@@ -638,14 +682,16 @@ class BuyPlanDialogState extends State<BuyPlanDialog> {
                 }
                 // restore purchases for ios test case
                 // await _inAppPurchase.restorePurchases();
-                await initStoreInfo(
-                    {widget.paymentList[_selectedPlan.value]['id']});
+                await initStoreInfo({
+                  widget.paymentList[_selectedPlan.value]['id'],
+                });
                 if (_notFoundIds.isNotEmpty &&
                     _notFoundIds[0] ==
                         widget.paymentList[_selectedPlan.value]['id']) {
                   navigatorKey.currentState!.pop();
                   showSnackBar(
-                      'We\'re sorry, but the requested in-app purchase is not available.');
+                    'We\'re sorry, but the requested in-app purchase is not available.',
+                  );
                   isLoading = false;
                   return;
                 }
@@ -661,14 +707,17 @@ class BuyPlanDialogState extends State<BuyPlanDialog> {
 
                 final Map<String, PurchaseDetails> purchases =
                     Map<String, PurchaseDetails>.fromEntries(
-                        _purchases.map((PurchaseDetails purchase) {
-                  if (purchase.pendingCompletePurchase) {
-                    _inAppPurchase.completePurchase(purchase);
-                  }
+                      _purchases.map((PurchaseDetails purchase) {
+                        if (purchase.pendingCompletePurchase) {
+                          _inAppPurchase.completePurchase(purchase);
+                        }
 
-                  return MapEntry<String, PurchaseDetails>(
-                      purchase.productID, purchase);
-                }));
+                        return MapEntry<String, PurchaseDetails>(
+                          purchase.productID,
+                          purchase,
+                        );
+                      }),
+                    );
 
                 log('purchases ${purchases.toString()}');
 
@@ -683,14 +732,15 @@ class BuyPlanDialogState extends State<BuyPlanDialog> {
                       _getOldSubscription(_products.first, purchases);
                   log(purchases.toString());
                   purchaseParam = GooglePlayPurchaseParam(
-                      productDetails: _products.first,
-                      changeSubscriptionParam: (oldSubscription != null)
-                          ? ChangeSubscriptionParam(
-                              oldPurchaseDetails: oldSubscription,
-                              // prorationMode:
-                              //     ProrationMode.immediateWithTimeProration,
-                            )
-                          : null);
+                    productDetails: _products.first,
+                    changeSubscriptionParam: (oldSubscription != null)
+                        ? ChangeSubscriptionParam(
+                            oldPurchaseDetails: oldSubscription,
+                            // prorationMode:
+                            //     ProrationMode.immediateWithTimeProration,
+                          )
+                        : null,
+                  );
                   log(purchaseParam.applicationUserName.toString());
                 } else {
                   purchaseParam = PurchaseParam(
@@ -699,7 +749,9 @@ class BuyPlanDialogState extends State<BuyPlanDialog> {
                 }
 
                 _inAppPurchase.buyConsumable(
-                    purchaseParam: purchaseParam, autoConsume: _kAutoConsume);
+                  purchaseParam: purchaseParam,
+                  autoConsume: _kAutoConsume,
+                );
                 log('consumable');
 
                 isLoading = false;
@@ -716,7 +768,7 @@ class BuyPlanDialogState extends State<BuyPlanDialog> {
                   // ),
                   // )
                   : Text(widget.btnText),
-            )
+            ),
           ],
         ),
       ),
@@ -725,32 +777,35 @@ class BuyPlanDialogState extends State<BuyPlanDialog> {
 
   void showPaymentNotAvailableDialog() {
     showDialog(
-        context: context,
-        builder: (context) => Dialog(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      "Payment option is not currently available. We'll be adding it soon",
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.titleMedium,
-                    ),
-                    const SizedBox(height: 20),
-                    StadiumButton(
-                      text: 'Ok',
-                      bgColor: AppColors.black,
-                      onPressed: () => Navigator.of(context).pop(),
-                    )
-                  ],
-                ),
+      context: context,
+      builder: (context) => Dialog(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                "Payment option is not currently available. We'll be adding it soon",
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.titleMedium,
               ),
-            ));
+              const SizedBox(height: 20),
+              StadiumButton(
+                text: 'Ok',
+                bgColor: AppColors.black,
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   GooglePlayPurchaseDetails? _getOldSubscription(
-      ProductDetails productDetails, Map<String, PurchaseDetails> purchases) {
+    ProductDetails productDetails,
+    Map<String, PurchaseDetails> purchases,
+  ) {
     // This is just to demonstrate a subscription upgrade or downgrade.
     // This method assumes that you have only 2 subscriptions under a group, 'subscription_silver' & 'subscription_gold'.
     // The 'subscription_silver' subscription can be upgraded to 'subscription_gold' and

@@ -21,23 +21,39 @@ class InAppProvider extends ChangeNotifier {
   }
 
   purchaseAndroid(FormData data) async {
-    final userTokens = await AuthProvider().retrieveUserTokens();
-    final headers = {"Authorization": "Bearer ${userTokens['access']}"};
+    try {
+      final userTokens = await AuthProvider().retrieveUserTokens();
+      final headers = {"Authorization": "Bearer ${userTokens['access']}"};
 
-    final response = await dio.post(
+      log("Updating user plan : $data");
+
+      final response = await dio.post(
         Platform.isIOS ? Endpoints.purchaseIos : Endpoints.purchaseAndroid,
         options: Options(headers: headers),
-        data: data);
-    debugPrint("&&&&&&&&&&&&&&&&&&&&&& ${response.statusCode.toString()}");
-    debugPrint("&&&&&&&&&&&&&&&&&&&&&& ${response.data.toString()}");
-    log(response.data.toString());
-    if (response.data['status'] == true) {
-      showSnackBar(response.data['message']);
-      final profileBoost = Hive.box('user').get('profile_boost_balance') ?? 0;
-      Hive.box('user').put('profile_boost_balance', profileBoost + 1);
-      boost = boost;
-    } else {
-      showSnackBar('Something went wrong!');
+        data: data,
+      );
+
+      log("&&&&&&&&&&&&&&&&&&&&&& ${response.statusCode.toString()}");
+      log("&&&&&&&&&&&&&&&&&&&&&& ${response.data.toString()}");
+      log('------ Purchase Data to be sent to Server ------');
+      data.fields.forEach((field) {
+        log('${field.key}: ${field.value}');
+      });
+      log('-----------------------------------------------');
+      log("Quantity :: ${data.fields[2]}");
+      log(response.data.toString());
+      if (response.data['status'] == true) {
+        showSnackBar(response.data['message']);
+        final profileBoost = Hive.box('user').get('profile_boost_balance') ?? 0;
+        Hive.box('user').put('profile_boost_balance', profileBoost + 1);
+        boost = boost;
+      } else {
+        showSnackBar('Something went wrong!');
+      }
+    } on DioException catch (e) {
+      log("Error updating purchase to server : $e");
+
+      log("Error updating purchase to server : ${e.response}");
     }
   }
 }

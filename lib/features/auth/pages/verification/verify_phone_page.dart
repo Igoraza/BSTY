@@ -75,11 +75,11 @@ class _VerifyPhoneState extends State<VerifyPhone> {
           );
         }
       });
-      // await AuthProvider().updatePhone(
-      //   context,
-      //   phone: _phoneCode.text + _phoneNum.text,
-      //   referralCode: _referralCode.text,
-      // );
+      await AuthProvider().updatePhone(
+        context,
+        phone: _phoneCode.text + _phoneNum.text,
+        referralCode: _referralCode.text,
+      );
       log('------validate phone');
     }
   }

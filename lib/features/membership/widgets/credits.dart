@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:bsty/common_widgets/upgrade_plan.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -205,6 +207,8 @@ class CreditCard extends StatelessWidget {
         ),
         CustomIconBtn(
           onTap: () {
+            log("Title : $title");
+            log("User plan : $userPlan");
             // if (userPlan > 2 && !planExpired) {
             if (title == 'super likes') {
               showDialog(
@@ -229,41 +233,41 @@ class CreditCard extends StatelessWidget {
                 ),
               );
             } else if (title == 'minutes of voice') {
-              if (userPlan > 2 && !planExpired) {
-                showDialog(
-                  context: context,
-                  builder: (context) => BuyPlanDialog(
-                    // title: 'Minute Of Voice',
-                    desc: 'Buy Audio Minutes As Needed !',
-                    img: 'assets/svg/upgrade_dialog/minute.svg',
-                    btnText: 'Buy Now',
-                    paymentList: planDetails.payAudio,
-                  ),
-                );
-              } else {
-                // showDialog(
-                //   context: context,
-                //   builder: (context) => UpgradePlanDialog(),
-              }
+              // if (userPlan > 2 && !planExpired) {
+              showDialog(
+                context: context,
+                builder: (context) => BuyPlanDialog(
+                  // title: 'Minute Of Voice',
+                  desc: 'Buy Audio Minutes As Needed !',
+                  img: 'assets/svg/upgrade_dialog/minute.svg',
+                  btnText: 'Buy Now',
+                  paymentList: planDetails.payAudio,
+                ),
+              );
+              // } else {
+              //   // showDialog(
+              //   //   context: context,
+              //   //   builder: (context) => UpgradePlanDialog(),
+              // }
             } else if (title == 'minutes of video') {
-              if (userPlan > 2 && !planExpired) {
-                showDialog(
-                  context: context,
-                  builder: (context) => BuyPlanDialog(
-                    // title: 'Minute Of Voice',
-                    desc: 'Buy Video Minutes As Needed !',
-                    img: 'assets/svg/upgrade_dialog/telephone.svg',
-                    btnText: 'Buy Now',
-                    paymentList: planDetails.payVideo,
-                  ),
-                );
-              } else {
-                // showDialog(
-                //   context: context,
-                //   builder: (context) => UpgradePlanDialog(),
-                // );
-                Navigator.pushNamed(context, UpgradePlanScreen.routeName);
-              }
+              // if (userPlan > 2 && !planExpired) {
+              showDialog(
+                context: context,
+                builder: (context) => BuyPlanDialog(
+                  // title: 'Minute Of Voice',
+                  desc: 'Buy Video Minutes As Needed !',
+                  img: 'assets/svg/upgrade_dialog/telephone.svg',
+                  btnText: 'Buy Now',
+                  paymentList: planDetails.payVideo,
+                ),
+              );
+              // } else {
+              // showDialog(
+              //   context: context,
+              //   builder: (context) => UpgradePlanDialog(),
+              // );
+              // Navigator.pushNamed(context, UpgradePlanScreen.routeName);
+              // }
             }
             // showDialog(
             //     context: context,

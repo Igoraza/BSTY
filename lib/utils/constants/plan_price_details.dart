@@ -17,11 +17,13 @@ class PlanPriceDetails {
     {'id': 'audio_call_240', 'plan': '240', 'price': 74},
   ];
 
+
   final payLikes = [
     {'id': 'like_1', 'plan': '1', 'price': 83},
     {'id': 'like_3', 'plan': '3', 'price': 140},
     {'id': 'like_6', 'plan': '6', 'price': 190},
   ];
+
 
   final payBoosts = [
     {'id': 'boost_1', 'plan': '1', 'price': 74},

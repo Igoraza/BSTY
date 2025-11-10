@@ -315,10 +315,7 @@ class AuthProvider with ChangeNotifier {
       log("firebase user ${firebaseUser.user}");
       log("****** form data ${formData.fields}");
       final response = await dio.post(
-        !isApple
-            // ? "https://api.bsty.in/api/v1/google/login/"
-            ? Endpoints.googleLoginUrl
-            : Endpoints.appleLoginUrl,
+        !isApple ? Endpoints.googleLoginUrl : Endpoints.appleLoginUrl,
         data: formData,
       );
       log('===========> Google Login Data: ${response.statusCode}');
@@ -952,6 +949,7 @@ class AuthProvider with ChangeNotifier {
     String? referralCode,
   }) async {
     try {
+      log("Referral code : $referralCode");
       final userTokens = await retrieveUserTokens();
       var formData = FormData.fromMap({
         "phone": phone,
