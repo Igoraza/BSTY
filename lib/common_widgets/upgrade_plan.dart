@@ -580,7 +580,7 @@ class UpgradePlanScreenState extends State<UpgradePlanScreen> {
 
     try {
       // Step 1: Get plan details
-      final planList = widget.title == null
+      final planList = widget.title == "Plus"
           ? planPriceDet.payOptionsPlus
           : planPriceDet.payOptionsPre;
 
