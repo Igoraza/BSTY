@@ -1188,17 +1188,6 @@ PODS:
     - abseil/meta/type_traits
     - abseil/xcprivacy
   - abseil/xcprivacy (1.20240722.0)
-  - Adapty (3.10.1)
-  - adapty_flutter (3.10.0):
-    - Adapty (= 3.10.1)
-    - AdaptyPlugin (= 3.10.1)
-    - AdaptyUI (= 3.10.1)
-    - Flutter
-  - AdaptyPlugin (3.10.1):
-    - Adapty (= 3.10.1)
-    - AdaptyUI (= 3.10.1)
-  - AdaptyUI (3.10.1):
-    - Adapty (= 3.10.1)
   - agora_rtc_engine (6.5.2):
     - AgoraIrisRTC_iOS (= 4.5.2-build.1)
     - AgoraRtcEngine_iOS (= 4.5.2)
@@ -1660,7 +1649,6 @@ PODS:
     - FlutterMacOS
 
 DEPENDENCIES:
-  - adapty_flutter (from `.symlinks/plugins/adapty_flutter/ios`)
   - agora_rtc_engine (from `.symlinks/plugins/agora_rtc_engine/ios`)
   - camera_avfoundation (from `.symlinks/plugins/camera_avfoundation/ios`)
   - cloud_firestore (from `.symlinks/plugins/cloud_firestore/ios`)
@@ -1696,9 +1684,6 @@ DEPENDENCIES:
 SPEC REPOS:
   trunk:
     - abseil
-    - Adapty
-    - AdaptyPlugin
-    - AdaptyUI
     - AgoraInfra_iOS
     - AgoraIrisRTC_iOS
     - AgoraRtcEngine_iOS
@@ -1743,8 +1728,6 @@ SPEC REPOS:
     - TOCropViewController
 
 EXTERNAL SOURCES:
-  adapty_flutter:
-    :path: ".symlinks/plugins/adapty_flutter/ios"
   agora_rtc_engine:
     :path: ".symlinks/plugins/agora_rtc_engine/ios"
   camera_avfoundation:
@@ -1810,10 +1793,6 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   abseil: a05cc83bf02079535e17169a73c5be5ba47f714b
-  Adapty: 0f442bc6513aa2d83d719fd76491df193ad39fca
-  adapty_flutter: 2e3a349fcd2366f25da971888e64c822ffb3d5c1
-  AdaptyPlugin: d703eded378d715887ed4e3b6d7272f5ca82e0ac
-  AdaptyUI: 86bb1aaa8be6172c1841acb11cd82601192b7266
   agora_rtc_engine: 6a8683bd2d8473e36f059d3bac5f1f475199d571
   AgoraInfra_iOS: 3691b2b277a1712a35ae96de25af319de0d73d08
   AgoraIrisRTC_iOS: eab58c126439adf5ec99632828a558ea216860da

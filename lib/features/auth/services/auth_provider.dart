@@ -535,96 +535,268 @@ class AuthProvider with ChangeNotifier {
   //   notifyListeners();
   // }
 
+
   Future<void> signInWithApple() async {
-    isLoading = true;
-    final userBox = Hive.box('user');
-    final latitude = userBox.get('user_latitude');
-    final longitude = userBox.get('user_longitude');
-    notifyListeners();
+  isLoading = true;
+  notifyListeners();
 
-    try {
-      debugPrint('===========> Apple Login');
-      final result = await SignInWithApple.getAppleIDCredential(
-        scopes: [
-          AppleIDAuthorizationScopes.email,
-          AppleIDAuthorizationScopes.fullName,
-        ],
-        webAuthenticationOptions: WebAuthenticationOptions(
-          clientId:
-              '462485522944-52l4606fg03oqhq3r647vq4tuo3ndboo.apps.googleusercontent.com', // Your client ID for your Firebase project
-          redirectUri: Uri.parse(
-            'https://metfie-f387a.firebaseapp.com/__/auth/handler',
-          ), // Your redirect URI for your Firebase project
-        ),
+  final userBox = Hive.box('user');
+  final latitude = userBox.get('user_latitude');
+  final longitude = userBox.get('user_longitude');
+
+  debugPrint('\n🟢 [AppleSignIn] =======> START');
+  debugPrint('Platform: ${Platform.operatingSystem}');
+  debugPrint('isPhysicalDevice check starting...');
+  debugPrint('--------------------------------------');
+
+  try {
+    // (1) Check platform readiness
+    if (Platform.isIOS) {
+      debugPrint('✅ Detected iOS device.');
+    } else if (Platform.isAndroid) {
+      debugPrint('✅ Detected Android device (web flow expected).');
+    } else {
+      debugPrint('⚠️ Non-mobile platform detected.');
+    }
+
+    // (2) Check Firebase configuration
+    final currentUser = FirebaseAuth.instance.currentUser;
+    debugPrint('Firebase currentUser before Apple sign-in: ${currentUser?.uid ?? "none"}');
+
+    // (3) Prepare scopes
+    final scopes = [
+      AppleIDAuthorizationScopes.email,
+      AppleIDAuthorizationScopes.fullName,
+    ];
+    debugPrint('Apple login scopes: $scopes');
+
+    // (4) Log client + redirect info
+    final clientId = 'com.wedconnect.bsty'; // <-- Apple Services ID
+    final redirectUri = 'https://bsty-68d37.firebaseapp.com/__/auth/handler';
+    debugPrint('clientId: $clientId');
+    debugPrint('redirectUri: $redirectUri');
+
+    // (5) Start Sign In request
+    debugPrint('Requesting Apple credentials now...');
+    final result = await SignInWithApple.getAppleIDCredential(
+      scopes: scopes,
+      webAuthenticationOptions: (!Platform.isIOS)
+          ? WebAuthenticationOptions(
+              clientId: clientId,
+              redirectUri: Uri.parse(redirectUri),
+            )
+          : null,
+    );
+
+    debugPrint('✅ Apple credential result received.');
+    debugPrint('User Identifier: ${result.userIdentifier}');
+    debugPrint('Email: ${result.email}');
+    debugPrint('Given Name: ${result.givenName}');
+    debugPrint('Family Name: ${result.familyName}');
+    debugPrint('State: ${result.state}');
+    debugPrint('Authorization Code length: ${result.authorizationCode?.length}');
+    debugPrint('Identity Token length: ${result.identityToken?.length}');
+    debugPrint('--------------------------------------');
+
+    // (6) Firebase sign-in
+    final appleCredential = OAuthProvider('apple.com').credential(
+      idToken: result.identityToken,
+      accessToken: result.authorizationCode,
+    );
+
+    debugPrint('Firebase credential created, signing in now...');
+    final firebaseUser = await FirebaseAuth.instance.signInWithCredential(appleCredential);
+    debugPrint('✅ Firebase sign-in successful!');
+    debugPrint('User UID: ${firebaseUser.user?.uid}');
+    debugPrint('User Email: ${firebaseUser.user?.email}');
+    debugPrint('--------------------------------------');
+
+    // (7) Server call
+    final response = await sendCredentialsToServer(
+      firebaseUser,
+      true,
+      result.givenName,
+    );
+    debugPrint('Server response: $response');
+    debugPrint('--------------------------------------');
+
+    // (8) Routing
+    if (response) {
+      navigatorKey.currentState!.pushNamedAndRemoveUntil(
+        VerifyPhone.routeName,
+        (route) => false,
       );
-      log('------------------------------------------------------------- ');
-      log('------------------------------------------------------------ ');
-      log('Apple Login result ${result.toString()}');
-      log('Apple Login givenName ${result.givenName.toString()}');
-      // Once you get the Apple ID credential, you can use it to sign in with Firebase
-      log('------------------------------------------------------------- ');
-      log('------------------------------------------------------------ ');
-      final appleIdCredential = OAuthProvider('apple.com').credential(
-        idToken: result.identityToken,
-        accessToken: result.authorizationCode,
-      );
-      log('Apple Login OAuthProvider ${appleIdCredential.toString()}');
-      log('------------------------------------------------------------- ');
-      log('------------------------------------------------------------ ');
-      final firebaseUser = await FirebaseAuth.instance.signInWithCredential(
-        appleIdCredential,
-      );
-      log('firebaseUser --------- ${firebaseUser.toString()}');
-      // return userCredential;
-      log('------------------------------------------------------------- ');
-      log('------------------------------------------------------------ ');
-      if (firebaseUser.user != null) {
-        log(
-          'UserCredential additionalUserInfo --------- ${firebaseUser.additionalUserInfo}',
+    } else {
+      if (latitude == null && longitude == null) {
+        navigatorKey.currentState!.pushNamedAndRemoveUntil(
+          PermitLocation.routeName,
+          (route) => false,
         );
-        log('UserCredential credential --------- ${firebaseUser.credential}');
-        final respose = await sendCredentialsToServer(
-          firebaseUser,
-          true,
-          result.givenName,
+      } else {
+        navigatorKey.currentState!.pushNamedAndRemoveUntil(
+          MainPage.routeName,
+          (route) => false,
         );
-        log('====> $respose');
-        if (respose) {
-          navigatorKey.currentState!.pushNamedAndRemoveUntil(
-            VerifyPhone.routeName,
-            (route) => false,
-          );
-        } else {
-          if (latitude == null && longitude == null) {
-            navigatorKey.currentState!.pushNamedAndRemoveUntil(
-              PermitLocation.routeName,
-              (route) => false,
-            );
-          } else {
-            navigatorKey.currentState!.pushNamedAndRemoveUntil(
-              MainPage.routeName,
-              (route) => false,
-            );
-          }
-        }
-      }
-      isLoading = false;
-
-      notifyListeners();
-    } catch (error) {
-      isLoading = false;
-
-      notifyListeners();
-      debugPrint('===========> Apple Login Error: $error');
-      if (error is DioError) {
-        if (error.message!.contains('SocketException')) {
-          showSnackBar('Please check your internet connection.');
-        }
       }
     }
+  } catch (error, stack) {
+    debugPrint('\n❌ [AppleSignIn] ERROR CAUGHT');
+    debugPrint('Error Type: ${error.runtimeType}');
+    debugPrint('Error Details: $error');
+    debugPrint('Stack Trace:\n$stack');
+    debugPrint('--------------------------------------');
+
+    // Detailed case-by-case analysis
+    if (error is SignInWithAppleAuthorizationException) {
+      debugPrint('➡️ Apple Sign-In Authorization Error');
+      debugPrint('Error Code: ${error.code}');
+      debugPrint('Error Message: ${error.message ?? "No message"}');
+
+      switch (error.code) {
+        case AuthorizationErrorCode.canceled:
+          debugPrint('🟡 User cancelled the Apple login.');
+          showSnackBar('Apple sign-in cancelled.');
+          break;
+        case AuthorizationErrorCode.failed:
+          debugPrint('🔴 Authorization failed (network/config error).');
+          showSnackBar('Apple sign-in failed. Check configuration.');
+          break;
+        case AuthorizationErrorCode.invalidResponse:
+          debugPrint('🔴 Invalid response from Apple auth service.');
+          showSnackBar('Invalid response from Apple.');
+          break;
+        case AuthorizationErrorCode.notHandled:
+          debugPrint('🔴 Sign-in request was not handled by the system.');
+          showSnackBar('Apple sign-in not handled.');
+          break;
+        case AuthorizationErrorCode.notInteractive:
+          debugPrint('🔴 UI not ready for Apple sign-in.');
+          showSnackBar('Apple sign-in UI could not be presented.');
+          break;
+        case AuthorizationErrorCode.unknown:
+          debugPrint('🔴 Unknown Apple Sign-In error.');
+          debugPrint('‼️ This is usually an entitlement or provisioning issue.');
+          debugPrint('Check: Apple Developer → App ID → Capabilities → “Sign in with Apple” ✅');
+          debugPrint('Check: Xcode → Signing & Capabilities → “Sign in with Apple” ✅');
+          debugPrint('Check: Real device, not simulator ✅');
+          showSnackBar('Unknown Apple login error (config or entitlement issue).');
+          break;
+        default:
+          debugPrint('⚠️ Unhandled AuthorizationErrorCode: ${error.code}');
+          showSnackBar('Apple sign-in error: ${error.code}');
+      }
+    } else if (error is DioError) {
+      debugPrint('➡️ DioError encountered');
+      debugPrint('Type: ${error.type}');
+      debugPrint('Message: ${error.message}');
+      if ((error.message ?? '').contains('SocketException')) {
+        showSnackBar('No internet connection.');
+      } else {
+        showSnackBar('Network issue: ${error.message}');
+      }
+    } else {
+      debugPrint('➡️ Unknown error type.');
+      showSnackBar('Unexpected error: ${error.toString()}');
+    }
+  } finally {
+    isLoading = false;
     authStatus = AuthStatus.done;
     notifyListeners();
+    debugPrint('🟣 [AppleSignIn] =======> ENDED\n');
   }
+}
+
+
+  // Future<void> signInWithApple() async {
+  //   isLoading = true;
+  //   final userBox = Hive.box('user');
+  //   final latitude = userBox.get('user_latitude');
+  //   final longitude = userBox.get('user_longitude');
+  //   notifyListeners();
+
+  //   try {
+  //     debugPrint('===========> Apple Login');
+  //     final result = await SignInWithApple.getAppleIDCredential(
+  //       scopes: [
+  //         AppleIDAuthorizationScopes.email,
+  //         AppleIDAuthorizationScopes.fullName,
+  //       ],
+  //       webAuthenticationOptions: WebAuthenticationOptions(
+  //         clientId:
+  //             '462485522944-52l4606fg03oqhq3r647vq4tuo3ndboo.apps.googleusercontent.com', // Your client ID for your Firebase project
+  //         redirectUri: Uri.parse(
+  //           'https://metfie-f387a.firebaseapp.com/__/auth/handler',
+  //         ), // Your redirect URI for your Firebase project
+  //       ),
+  //     );
+  //     log('------------------------------------------------------------- ');
+  //     log('------------------------------------------------------------ ');
+  //     log('Apple Login result ${result.toString()}');
+  //     log('Apple Login givenName ${result.givenName.toString()}');
+  //     // Once you get the Apple ID credential, you can use it to sign in with Firebase
+  //     log('------------------------------------------------------------- ');
+  //     log('------------------------------------------------------------ ');
+  //     final appleIdCredential = OAuthProvider('apple.com').credential(
+  //       idToken: result.identityToken,
+  //       accessToken: result.authorizationCode,
+  //     );
+  //     log('Apple Login OAuthProvider ${appleIdCredential.toString()}');
+  //     log('------------------------------------------------------------- ');
+  //     log('------------------------------------------------------------ ');
+  //     final firebaseUser = await FirebaseAuth.instance.signInWithCredential(
+  //       appleIdCredential,
+  //     );
+  //     log('firebaseUser --------- ${firebaseUser.toString()}');
+  //     // return userCredential;
+  //     log('------------------------------------------------------------- ');
+  //     log('------------------------------------------------------------ ');
+  //     if (firebaseUser.user != null) {
+  //       log(
+  //         'UserCredential additionalUserInfo --------- ${firebaseUser.additionalUserInfo}',
+  //       );
+  //       log('UserCredential credential --------- ${firebaseUser.credential}');
+  //       final respose = await sendCredentialsToServer(
+  //         firebaseUser,
+  //         true,
+  //         result.givenName,
+  //       );
+  //       log('====> $respose');
+  //       if (respose) {
+  //         navigatorKey.currentState!.pushNamedAndRemoveUntil(
+  //           VerifyPhone.routeName,
+  //           (route) => false,
+  //         );
+  //       } else {
+  //         if (latitude == null && longitude == null) {
+  //           navigatorKey.currentState!.pushNamedAndRemoveUntil(
+  //             PermitLocation.routeName,
+  //             (route) => false,
+  //           );
+  //         } else {
+  //           navigatorKey.currentState!.pushNamedAndRemoveUntil(
+  //             MainPage.routeName,
+  //             (route) => false,
+  //           );
+  //         }
+  //       }
+  //     }
+  //     isLoading = false;
+
+  //     notifyListeners();
+  //   } catch (error) {
+  //     isLoading = false;
+
+  //     notifyListeners();
+  //     debugPrint('===========> Apple Login Error: $error');
+  //     if (error is DioError) {
+  //       if (error.message!.contains('SocketException')) {
+  //         showSnackBar('Please check your internet connection.');
+  //       }
+  //     }
+  //   }
+  //   authStatus = AuthStatus.done;
+  //   notifyListeners();
+  // }
 
   Future<String?> login(
     BuildContext context,
