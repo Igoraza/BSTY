@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:bsty/features/auth/models/sign_up_model.dart';
 import 'package:bsty/features/auth/models/verify_otp_args.dart';
+import 'package:bsty/features/auth/pages/initial_profile_steps/select_dob_page.dart';
 import 'package:bsty/features/auth/pages/verification/verify_otp_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -44,14 +45,14 @@ class _VerifyPhoneState extends State<VerifyPhone> {
         return;
       }
       VerifyPhone.formkey.currentState!.save();
-      if (_phoneNum.text.isEmpty) {
-        showSnackBar('Phone number is required');
-        return;
-      }
-      if (!_phoneNum.text.contains(RegExp("^[0-9]+\$"))) {
-        showSnackBar('Enter a valid phone number');
-        return;
-      }
+      // if (_phoneNum.text.isEmpty) {
+      //   showSnackBar('Phone number is required');
+      //   return;
+      // }
+      // if (!_phoneNum.text.contains(RegExp("^[0-9]+\$"))) {
+      //   showSnackBar('Enter a valid phone number');
+      //   return;
+      // }
 
       final reqId = DateTime.now().millisecondsSinceEpoch.toString();
       final phone = _phoneCode.text.substring(1) + _phoneNum.text;
@@ -60,6 +61,7 @@ class _VerifyPhoneState extends State<VerifyPhone> {
         phone: phone,
         requestId: reqId,
       );
+      //TODO: Uncomment this
       context.read<AuthProvider>().signUp(context, userData).then((requestId) {
         log("Request id $requestId");
         if (requestId != null) {
@@ -73,6 +75,7 @@ class _VerifyPhoneState extends State<VerifyPhone> {
               requestId: requestId,
             ),
           );
+          Navigator.of(context).pushReplacementNamed(SelectDob.routeName);
         }
       });
       await AuthProvider().updatePhone(
@@ -97,7 +100,7 @@ class _VerifyPhoneState extends State<VerifyPhone> {
     //   if (formkey.currentState!.validate()) {
     //     formkey.currentState!.save();
     //     context.read<AuthProvider>().verifyEmail(context, email).then((value) {
-    //       if (value) {
+    //       if (value) {za
     //         Navigator.of(context).pushReplacementNamed(SelectDob.routeName);
     //       }
     //     });

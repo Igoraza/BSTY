@@ -326,7 +326,7 @@ class SignInPage extends StatelessWidget {
                           },
                         ),
                         gapV025,
-                        switchToSignUp,
+                        // switchToSignUp,
                       ],
                     ),
                   ),

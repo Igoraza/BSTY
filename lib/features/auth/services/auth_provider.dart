@@ -329,6 +329,10 @@ class AuthProvider with ChangeNotifier {
         userBox.put('plan', response.data['user']['plan'] ?? 1);
 
         await saveUserToken(response.data['access'], response.data['refresh']);
+
+        log(
+          "/////////////////////// saving token : ${response.data['access']}",
+        );
         saveLoggedInStatus(true);
         returnVal = response.data['new_user'];
       } else if (response.data['message'] != null) {
@@ -410,11 +414,13 @@ class AuthProvider with ChangeNotifier {
       log('[STEP 10] Server responded successfully, new user: $response');
 
       if (response) {
-        log('[STEP 11] Navigating to VerifyPhone screen...');
-        navigatorKey.currentState!.pushNamedAndRemoveUntil(
-          VerifyPhone.routeName,
-          (route) => false,
-        );
+        // TODO: Uncomment this
+        // log('[STEP 11] Navigating to VerifyPhone screen...');
+        // navigatorKey.currentState!.pushNamedAndRemoveUntil(
+        //   VerifyPhone.routeName,
+        //   (route) => false,
+        // );
+        navigatorKey.currentState!.pushReplacementNamed(SelectDob.routeName);
       } else {
         log('[STEP 12] Navigating based on location availability...');
         if (latitude == null && longitude == null) {
@@ -532,177 +538,189 @@ class AuthProvider with ChangeNotifier {
   //   notifyListeners();
   // }
 
-
   Future<void> signInWithApple() async {
-  isLoading = true;
-  notifyListeners();
-
-  final userBox = Hive.box('user');
-  final latitude = userBox.get('user_latitude');
-  final longitude = userBox.get('user_longitude');
-
-  debugPrint('\n🟢 [AppleSignIn] =======> START');
-  debugPrint('Platform: ${Platform.operatingSystem}');
-  debugPrint('isPhysicalDevice check starting...');
-  debugPrint('--------------------------------------');
-
-  try {
-    // (1) Check platform readiness
-    if (Platform.isIOS) {
-      debugPrint('✅ Detected iOS device.');
-    } else if (Platform.isAndroid) {
-      debugPrint('✅ Detected Android device (web flow expected).');
-    } else {
-      debugPrint('⚠️ Non-mobile platform detected.');
-    }
-
-    // (2) Check Firebase configuration
-    final currentUser = FirebaseAuth.instance.currentUser;
-    debugPrint('Firebase currentUser before Apple sign-in: ${currentUser?.uid ?? "none"}');
-
-    // (3) Prepare scopes
-    final scopes = [
-      AppleIDAuthorizationScopes.email,
-      AppleIDAuthorizationScopes.fullName,
-    ];
-    debugPrint('Apple login scopes: $scopes');
-
-    // (4) Log client + redirect info
-    final clientId = 'com.wedconnect.bsty'; // <-- Apple Services ID
-    final redirectUri = 'https://bsty-68d37.firebaseapp.com/__/auth/handler';
-    debugPrint('clientId: $clientId');
-    debugPrint('redirectUri: $redirectUri');
-
-    // (5) Start Sign In request
-    debugPrint('Requesting Apple credentials now...');
-    final result = await SignInWithApple.getAppleIDCredential(
-      scopes: scopes,
-      webAuthenticationOptions: (!Platform.isIOS)
-          ? WebAuthenticationOptions(
-              clientId: clientId,
-              redirectUri: Uri.parse(redirectUri),
-            )
-          : null,
-    );
-
-    debugPrint('✅ Apple credential result received.');
-    debugPrint('User Identifier: ${result.userIdentifier}');
-    debugPrint('Email: ${result.email}');
-    debugPrint('Given Name: ${result.givenName}');
-    debugPrint('Family Name: ${result.familyName}');
-    debugPrint('State: ${result.state}');
-    debugPrint('Authorization Code length: ${result.authorizationCode?.length}');
-    debugPrint('Identity Token length: ${result.identityToken?.length}');
-    debugPrint('--------------------------------------');
-
-    // (6) Firebase sign-in
-    final appleCredential = OAuthProvider('apple.com').credential(
-      idToken: result.identityToken,
-      accessToken: result.authorizationCode,
-    );
-
-    debugPrint('Firebase credential created, signing in now...');
-    final firebaseUser = await FirebaseAuth.instance.signInWithCredential(appleCredential);
-    debugPrint('✅ Firebase sign-in successful!');
-    debugPrint('User UID: ${firebaseUser.user?.uid}');
-    debugPrint('User Email: ${firebaseUser.user?.email}');
-    debugPrint('--------------------------------------');
-
-    // (7) Server call
-    final response = await sendCredentialsToServer(
-      firebaseUser,
-      true,
-      result.givenName,
-    );
-    debugPrint('Server response: $response');
-    debugPrint('--------------------------------------');
-
-    // (8) Routing
-    if (response) {
-      navigatorKey.currentState!.pushNamedAndRemoveUntil(
-        VerifyPhone.routeName,
-        (route) => false,
-      );
-    } else {
-      if (latitude == null && longitude == null) {
-        navigatorKey.currentState!.pushNamedAndRemoveUntil(
-          PermitLocation.routeName,
-          (route) => false,
-        );
-      } else {
-        navigatorKey.currentState!.pushNamedAndRemoveUntil(
-          MainPage.routeName,
-          (route) => false,
-        );
-      }
-    }
-  } catch (error, stack) {
-    debugPrint('\n❌ [AppleSignIn] ERROR CAUGHT');
-    debugPrint('Error Type: ${error.runtimeType}');
-    debugPrint('Error Details: $error');
-    debugPrint('Stack Trace:\n$stack');
-    debugPrint('--------------------------------------');
-
-    // Detailed case-by-case analysis
-    if (error is SignInWithAppleAuthorizationException) {
-      debugPrint('➡️ Apple Sign-In Authorization Error');
-      debugPrint('Error Code: ${error.code}');
-      debugPrint('Error Message: ${error.message ?? "No message"}');
-
-      switch (error.code) {
-        case AuthorizationErrorCode.canceled:
-          debugPrint('🟡 User cancelled the Apple login.');
-          showSnackBar('Apple sign-in cancelled.');
-          break;
-        case AuthorizationErrorCode.failed:
-          debugPrint('🔴 Authorization failed (network/config error).');
-          showSnackBar('Apple sign-in failed. Check configuration.');
-          break;
-        case AuthorizationErrorCode.invalidResponse:
-          debugPrint('🔴 Invalid response from Apple auth service.');
-          showSnackBar('Invalid response from Apple.');
-          break;
-        case AuthorizationErrorCode.notHandled:
-          debugPrint('🔴 Sign-in request was not handled by the system.');
-          showSnackBar('Apple sign-in not handled.');
-          break;
-        case AuthorizationErrorCode.notInteractive:
-          debugPrint('🔴 UI not ready for Apple sign-in.');
-          showSnackBar('Apple sign-in UI could not be presented.');
-          break;
-        case AuthorizationErrorCode.unknown:
-          debugPrint('🔴 Unknown Apple Sign-In error.');
-          debugPrint('‼️ This is usually an entitlement or provisioning issue.');
-          debugPrint('Check: Apple Developer → App ID → Capabilities → “Sign in with Apple” ✅');
-          debugPrint('Check: Xcode → Signing & Capabilities → “Sign in with Apple” ✅');
-          debugPrint('Check: Real device, not simulator ✅');
-          showSnackBar('Unknown Apple login error (config or entitlement issue).');
-          break;
-        default:
-          debugPrint('⚠️ Unhandled AuthorizationErrorCode: ${error.code}');
-          showSnackBar('Apple sign-in error: ${error.code}');
-      }
-    } else if (error is DioError) {
-      debugPrint('➡️ DioError encountered');
-      debugPrint('Type: ${error.type}');
-      debugPrint('Message: ${error.message}');
-      if ((error.message ?? '').contains('SocketException')) {
-        showSnackBar('No internet connection.');
-      } else {
-        showSnackBar('Network issue: ${error.message}');
-      }
-    } else {
-      debugPrint('➡️ Unknown error type.');
-      showSnackBar('Unexpected error: ${error.toString()}');
-    }
-  } finally {
-    isLoading = false;
-    authStatus = AuthStatus.done;
+    isLoading = true;
     notifyListeners();
-    debugPrint('🟣 [AppleSignIn] =======> ENDED\n');
-  }
-}
 
+    final userBox = Hive.box('user');
+    final latitude = userBox.get('user_latitude');
+    final longitude = userBox.get('user_longitude');
+
+    debugPrint('\n🟢 [AppleSignIn] =======> START');
+    debugPrint('Platform: ${Platform.operatingSystem}');
+    debugPrint('isPhysicalDevice check starting...');
+    debugPrint('--------------------------------------');
+
+    try {
+      // (1) Check platform readiness
+      if (Platform.isIOS) {
+        debugPrint('✅ Detected iOS device.');
+      } else if (Platform.isAndroid) {
+        debugPrint('✅ Detected Android device (web flow expected).');
+      } else {
+        debugPrint('⚠️ Non-mobile platform detected.');
+      }
+
+      // (2) Check Firebase configuration
+      final currentUser = FirebaseAuth.instance.currentUser;
+      debugPrint(
+        'Firebase currentUser before Apple sign-in: ${currentUser?.uid ?? "none"}',
+      );
+
+      // (3) Prepare scopes
+      final scopes = [
+        AppleIDAuthorizationScopes.email,
+        AppleIDAuthorizationScopes.fullName,
+      ];
+      debugPrint('Apple login scopes: $scopes');
+
+      // (4) Log client + redirect info
+      final clientId = 'com.wedconnect.bsty'; // <-- Apple Services ID
+      final redirectUri = 'https://bsty-68d37.firebaseapp.com/__/auth/handler';
+      debugPrint('clientId: $clientId');
+      debugPrint('redirectUri: $redirectUri');
+
+      // (5) Start Sign In request
+      debugPrint('Requesting Apple credentials now...');
+      final result = await SignInWithApple.getAppleIDCredential(
+        scopes: scopes,
+        webAuthenticationOptions: (!Platform.isIOS)
+            ? WebAuthenticationOptions(
+                clientId: clientId,
+                redirectUri: Uri.parse(redirectUri),
+              )
+            : null,
+      );
+
+      debugPrint('✅ Apple credential result received.');
+      debugPrint('User Identifier: ${result.userIdentifier}');
+      debugPrint('Email: ${result.email}');
+      debugPrint('Given Name: ${result.givenName}');
+      debugPrint('Family Name: ${result.familyName}');
+      debugPrint('State: ${result.state}');
+      debugPrint(
+        'Authorization Code length: ${result.authorizationCode?.length}',
+      );
+      debugPrint('Identity Token length: ${result.identityToken?.length}');
+      debugPrint('--------------------------------------');
+
+      // (6) Firebase sign-in
+      final appleCredential = OAuthProvider('apple.com').credential(
+        idToken: result.identityToken,
+        accessToken: result.authorizationCode,
+      );
+
+      debugPrint('Firebase credential created, signing in now...');
+      final firebaseUser = await FirebaseAuth.instance.signInWithCredential(
+        appleCredential,
+      );
+      debugPrint('✅ Firebase sign-in successful!');
+      debugPrint('User UID: ${firebaseUser.user?.uid}');
+      debugPrint('User Email: ${firebaseUser.user?.email}');
+      debugPrint('--------------------------------------');
+
+      // (7) Server call
+      final response = await sendCredentialsToServer(
+        firebaseUser,
+        true,
+        result.givenName,
+      );
+      debugPrint('Server response: $response');
+      debugPrint('--------------------------------------');
+
+      // (8) Routing
+      if (response) {
+        navigatorKey.currentState!.pushNamedAndRemoveUntil(
+          VerifyPhone.routeName,
+          (route) => false,
+        );
+      } else {
+        if (latitude == null && longitude == null) {
+          navigatorKey.currentState!.pushNamedAndRemoveUntil(
+            PermitLocation.routeName,
+            (route) => false,
+          );
+        } else {
+          navigatorKey.currentState!.pushNamedAndRemoveUntil(
+            MainPage.routeName,
+            (route) => false,
+          );
+        }
+      }
+    } catch (error, stack) {
+      debugPrint('\n❌ [AppleSignIn] ERROR CAUGHT');
+      debugPrint('Error Type: ${error.runtimeType}');
+      debugPrint('Error Details: $error');
+      debugPrint('Stack Trace:\n$stack');
+      debugPrint('--------------------------------------');
+
+      // Detailed case-by-case analysis
+      if (error is SignInWithAppleAuthorizationException) {
+        debugPrint('➡️ Apple Sign-In Authorization Error');
+        debugPrint('Error Code: ${error.code}');
+        debugPrint('Error Message: ${error.message ?? "No message"}');
+
+        switch (error.code) {
+          case AuthorizationErrorCode.canceled:
+            debugPrint('🟡 User cancelled the Apple login.');
+            showSnackBar('Apple sign-in cancelled.');
+            break;
+          case AuthorizationErrorCode.failed:
+            debugPrint('🔴 Authorization failed (network/config error).');
+            showSnackBar('Apple sign-in failed. Check configuration.');
+            break;
+          case AuthorizationErrorCode.invalidResponse:
+            debugPrint('🔴 Invalid response from Apple auth service.');
+            showSnackBar('Invalid response from Apple.');
+            break;
+          case AuthorizationErrorCode.notHandled:
+            debugPrint('🔴 Sign-in request was not handled by the system.');
+            showSnackBar('Apple sign-in not handled.');
+            break;
+          case AuthorizationErrorCode.notInteractive:
+            debugPrint('🔴 UI not ready for Apple sign-in.');
+            showSnackBar('Apple sign-in UI could not be presented.');
+            break;
+          case AuthorizationErrorCode.unknown:
+            debugPrint('🔴 Unknown Apple Sign-In error.');
+            debugPrint(
+              '‼️ This is usually an entitlement or provisioning issue.',
+            );
+            debugPrint(
+              'Check: Apple Developer → App ID → Capabilities → “Sign in with Apple” ✅',
+            );
+            debugPrint(
+              'Check: Xcode → Signing & Capabilities → “Sign in with Apple” ✅',
+            );
+            debugPrint('Check: Real device, not simulator ✅');
+            showSnackBar(
+              'Unknown Apple login error (config or entitlement issue).',
+            );
+            break;
+          default:
+            debugPrint('⚠️ Unhandled AuthorizationErrorCode: ${error.code}');
+            showSnackBar('Apple sign-in error: ${error.code}');
+        }
+      } else if (error is DioError) {
+        debugPrint('➡️ DioError encountered');
+        debugPrint('Type: ${error.type}');
+        debugPrint('Message: ${error.message}');
+        if ((error.message ?? '').contains('SocketException')) {
+          showSnackBar('No internet connection.');
+        } else {
+          showSnackBar('Network issue: ${error.message}');
+        }
+      } else {
+        debugPrint('➡️ Unknown error type.');
+        showSnackBar('Unexpected error: ${error.toString()}');
+      }
+    } finally {
+      isLoading = false;
+      authStatus = AuthStatus.done;
+      notifyListeners();
+      debugPrint('🟣 [AppleSignIn] =======> ENDED\n');
+    }
+  }
 
   // Future<void> signInWithApple() async {
   //   isLoading = true;
@@ -915,6 +933,7 @@ class AuthProvider with ChangeNotifier {
         userBox.put('plan', response.data['user']['plan'] ?? 1);
 
         await saveUserToken(response.data['access'], response.data['refresh']);
+        log("||||||||||||||| saving token : ${response.data['access']}");
         if (args.isLoggingIn) saveLoggedInStatus(true);
 
         returnVal = true;
@@ -950,6 +969,7 @@ class AuthProvider with ChangeNotifier {
   }) async {
     try {
       log("Referral code : $referralCode");
+      log("Updating phone...............");
       final userTokens = await retrieveUserTokens();
       var formData = FormData.fromMap({
         "phone": phone,
@@ -958,13 +978,14 @@ class AuthProvider with ChangeNotifier {
 
       final headers = {"Authorization": "Bearer ${userTokens['access']}"};
       // log('------------}');
+      log("Token for complete profile : ${userTokens['access']}");
       final response = await dio.post(
         Endpoints.completeProfile,
         data: formData,
         options: Options(headers: headers),
       );
-      debugPrint('------------${response.statusCode.toString()}');
-      debugPrint('------------${response.data.toString()}');
+      log('------------${response.statusCode.toString()}');
+      log('------------${response.data.toString()}');
       if (response.statusCode == 200) {
         log("######################### Update phone.......... ::: ${response}");
         // ignore: use_build_context_synchronously
