@@ -45,14 +45,14 @@ class _VerifyPhoneState extends State<VerifyPhone> {
         return;
       }
       VerifyPhone.formkey.currentState!.save();
-      // if (_phoneNum.text.isEmpty) {
-      //   showSnackBar('Phone number is required');
-      //   return;
-      // }
-      // if (!_phoneNum.text.contains(RegExp("^[0-9]+\$"))) {
-      //   showSnackBar('Enter a valid phone number');
-      //   return;
-      // }
+      if (_phoneNum.text.isEmpty) {
+        showSnackBar('Phone number is required');
+        return;
+      }
+      if (!_phoneNum.text.contains(RegExp("^[0-9]+\$"))) {
+        showSnackBar('Enter a valid phone number');
+        return;
+      }
 
       final reqId = DateTime.now().millisecondsSinceEpoch.toString();
       final phone = _phoneCode.text.substring(1) + _phoneNum.text;
@@ -61,7 +61,7 @@ class _VerifyPhoneState extends State<VerifyPhone> {
         phone: phone,
         requestId: reqId,
       );
-      //TODO: Uncomment this
+     
       context.read<AuthProvider>().signUp(context, userData).then((requestId) {
         log("Request id $requestId");
         if (requestId != null) {
@@ -75,7 +75,7 @@ class _VerifyPhoneState extends State<VerifyPhone> {
               requestId: requestId,
             ),
           );
-          Navigator.of(context).pushReplacementNamed(SelectDob.routeName);
+          // Navigator.of(context).pushReplacementNamed(SelectDob.routeName);
         }
       });
       await AuthProvider().updatePhone(
@@ -194,18 +194,18 @@ class _VerifyPhoneState extends State<VerifyPhone> {
                             // SizedBox(height: appHeight * 0.02),
                             formFields,
                             SizedBox(height: appHeight * 0.02),
-                            TextField(
-                              controller: _referralCode,
-                              decoration: kInputDecoration.copyWith(
-                                hintText: 'Enter Referral Code',
-                                prefixIcon: Padding(
-                                  padding: const EdgeInsets.all(16.0),
-                                  child: SvgPicture.asset(
-                                    'assets/images/auth/referral_code.svg',
-                                  ),
-                                ),
-                              ),
-                            ),
+                            // TextField(
+                            //   controller: _referralCode,
+                            //   decoration: kInputDecoration.copyWith(
+                            //     hintText: 'Enter Referral Code',
+                            //     prefixIcon: Padding(
+                            //       padding: const EdgeInsets.all(16.0),
+                            //       child: SvgPicture.asset(
+                            //         'assets/images/auth/referral_code.svg',
+                            //       ),
+                            //     ),
+                            //   ),
+                            // ),
                           ],
                         ),
                       ),

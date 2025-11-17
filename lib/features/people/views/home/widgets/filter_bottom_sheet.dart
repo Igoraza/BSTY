@@ -149,20 +149,21 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                     child: GestureDetector(
                       onTap: () {
                         // TODO: Uncomment this
-                        // if (userPlan == 4 && !planExpired) {
-                        selectLocationDialog();
-                        // } else {
-                        //   // showDialog(
-                        //   //   context: context,
-                        //   //   builder: (context) => UpgradePlanDialog(),
-                        //   // );
+                        if (userPlan == 4 && !planExpired) {
+                          selectLocationDialog();
+                        } else {
+                          // showDialog(
+                          //   context: context,
+                          //   builder: (context) => UpgradePlanDialog(),
+                          // );
 
-                        //   Navigator.pushNamed(
-                        //     context,
-                        //     UpgradePlanScreen.routeName,
-                        //   );
-                        //   return;
-                        // }
+                          Navigator.pushNamed(
+                            context,
+                            UpgradePlanScreen.routeName,
+                            arguments: "Plus",
+                          );
+                          return;
+                        }
                         log(locationNotifier.value);
                       },
                       child: ValueListenableBuilder(
@@ -197,20 +198,21 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                     inactiveColor: AppColors.lightGrey,
                     onChanged: (val) {
                       // TODO: Uncomment this
-                      // if (userPlan > 2 && !planExpired) {
-                      setState(() => distance = (val * 100).round());
-                      // } else {
-                      // showDialog(
-                      //   context: context,
-                      //   builder: (context) => UpgradePlanDialog(),
-                      // );
+                      if (userPlan > 2 && !planExpired) {
+                        setState(() => distance = (val * 100).round());
+                      } else {
+                        // showDialog(
+                        //   context: context,
+                        //   builder: (context) => UpgradePlanDialog(),
+                        // );
 
-                      // Navigator.pushNamed(
-                      //   context,
-                      //   UpgradePlanScreen.routeName,
-                      // );
-                      // return;
-                      // }
+                        Navigator.pushNamed(
+                          context,
+                          UpgradePlanScreen.routeName,
+                          arguments: "Plus",
+                        );
+                        return;
+                      }
                     },
                   ),
                   SizedBox(height: widget.size.height * 0.02),
@@ -282,6 +284,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                                     Navigator.pushNamed(
                                       context,
                                       UpgradePlanScreen.routeName,
+                                      arguments: "Plus",
                                     );
                                     return;
                                   }
@@ -298,6 +301,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                                 Navigator.pushNamed(
                                   context,
                                   UpgradePlanScreen.routeName,
+                                  arguments: "Plus",
                                 );
                                 return;
                               }

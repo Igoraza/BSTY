@@ -853,6 +853,9 @@ class AuthProvider with ChangeNotifier {
         if (error.message!.contains('SocketException')) {
           showSnackBar('Please check your internet connection.');
         }
+        if (error.response?.data["message"] != null) {
+          showSnackBar(error.response?.data["message"]);
+        }
       }
     }
     authStatus = AuthStatus.done;

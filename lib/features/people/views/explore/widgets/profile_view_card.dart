@@ -36,16 +36,16 @@ class ProfileViewCard extends StatelessWidget {
       onTap: () => {
         if (userPlan > 2 && !planExpired)
           {
-        Navigator.pushNamed(
-          context,
-          PersonDetailedPage.routeName,
-          arguments: {
-            'id': user.id,
-            'name': user.name,
-            'image': user.displayImage,
+            Navigator.pushNamed(
+              context,
+              PersonDetailedPage.routeName,
+              arguments: {
+                'id': user.id,
+                'name': user.name,
+                'image': user.displayImage,
+              },
+            ),
           },
-        ),
-        }
       },
       child: Container(
         // padding: EdgeInsets.all(appWidth * 0.02),
@@ -154,6 +154,7 @@ class ProfileViewCard extends StatelessWidget {
                                 Navigator.pushNamed(
                                   context,
                                   UpgradePlanScreen.routeName,
+                                  arguments: "Plus",
                                 );
                               },
                               text: 'See Who Viewed You !',

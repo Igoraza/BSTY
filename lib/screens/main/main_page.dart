@@ -98,7 +98,7 @@ class _MainPageState extends State<MainPage> {
   @override
   void initState() {
     super.initState();
-    initOneSignal();
+    // initOneSignal();
   }
 
   // import 'package:onesignal_flutter/onesignal_flutter.dart';
@@ -137,7 +137,7 @@ class _MainPageState extends State<MainPage> {
     OneSignal.Notifications.addForegroundWillDisplayListener((event) {
       // Will be called whenever a notification is received in foreground
       final data = event.notification.additionalData;
-      debugPrint('===================>>Notification received: $data');
+      log('===================>>Notification received: $data');
 
       if (data != null) {
         switch (data['type']) {
@@ -191,7 +191,7 @@ class _MainPageState extends State<MainPage> {
               },
             );
           } else {
-            debugPrint("===================Call Notification opened $data");
+            log("===================Call Notification opened $data");
             navigatorKey.currentState!.pushNamed(
               IncomingCall.routeName,
               arguments: {

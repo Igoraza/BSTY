@@ -68,7 +68,8 @@ class SignInPage extends StatelessWidget {
         const Text('Don\'t have an account?'),
         TextButton(
           onPressed: () =>
-              Navigator.pushNamed(context, EmailSignInPage.routeName),
+              // Navigator.pushNamed(context, EmailSignInPage.routeName),
+              Navigator.pushNamed(context, VerifyPhone.routeName),
           child: Text(
             'Sign Up',
             style: Theme.of(context).textTheme.titleMedium!.merge(
@@ -326,7 +327,7 @@ class SignInPage extends StatelessWidget {
                           },
                         ),
                         gapV025,
-                        // switchToSignUp,
+                        switchToSignUp,
                       ],
                     ),
                   ),

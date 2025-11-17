@@ -524,7 +524,7 @@ class UpgradePlanScreenState extends State<UpgradePlanScreen> {
   }
 
   void _startPurchase() async {
-    log("Starting purchase");
+    log(">>>>>>>>>>>Starting purchase");
     // Run diagnostics first if store is not available
     if (!await _inAppPurchase.isAvailable()) {
       log('Store not available - running diagnostics...');
@@ -576,7 +576,7 @@ class UpgradePlanScreenState extends State<UpgradePlanScreen> {
     }
 
     setState(() => isLoading = true);
-    log('DEBUG: Starting purchase process...');
+    log('>>>>>>>>> DEBUG: Starting purchase process...');
 
     try {
       // Step 1: Get plan details
@@ -600,7 +600,7 @@ class UpgradePlanScreenState extends State<UpgradePlanScreen> {
       // Step 2: Check store availability FIRST
       print('DEBUG: Checking store availability...');
       bool isStoreAvailable = await _inAppPurchase.isAvailable();
-      print('DEBUG: Store available: $isStoreAvailable');
+      log('DEBUG: Store available: $isStoreAvailable');
 
       if (!isStoreAvailable) {
         // Try to reconnect/retry
@@ -617,13 +617,13 @@ class UpgradePlanScreenState extends State<UpgradePlanScreen> {
       }
 
       // Step 3: Initialize store info
-      print('DEBUG: Initializing store info for plan: $planId');
+      log('>>>>>>>>>>>> DEBUG: Initializing store info for plan: $planId');
       await initStoreInfo({planId});
       print('DEBUG: Store info initialized');
 
       // Step 4: Check if plan was not found
       if (_notFoundIds.isNotEmpty) {
-        print('DEBUG: Plan not found in store. Not found IDs: $_notFoundIds');
+        log('>>>>>>>>>>>>>>>>DEBUG: Plan not found in store. Not found IDs: $_notFoundIds');
         if (_notFoundIds.contains(planId)) {
           Navigator.pop(context);
           showSnackBar(
@@ -650,7 +650,7 @@ class UpgradePlanScreenState extends State<UpgradePlanScreen> {
         return;
       }
 
-      print('DEBUG: Products available: ${_products.length}');
+      log('>>>>>>>>>> //////////// DEBUG: Products available: ${_products.length}');
       for (int i = 0; i < _products.length; i++) {
         final product = _products[i];
         print(
@@ -680,8 +680,8 @@ class UpgradePlanScreenState extends State<UpgradePlanScreen> {
       // Step 7: Check if user already owns this product
       if (purchases.containsKey(planId)) {
         final existingPurchase = purchases[planId]!;
-        print(
-          'DEBUG: User already owns this product. Status: ${existingPurchase.status}',
+        log(
+          '|||||||||||||||||||||||| DEBUG: User already owns this product. Status: ${existingPurchase.status}',
         );
 
         if (existingPurchase.status == PurchaseStatus.purchased) {
@@ -866,7 +866,7 @@ class UpgradePlanScreenState extends State<UpgradePlanScreen> {
         ? planPriceDet.payOptionsPlus
         : planPriceDet.payOptionsPre;
 
-    print('   Available plans: ${planList.length}');
+    log('   Available plans: ${planList.length}');
     for (int i = 0; i < planList.length; i++) {
       print('   Plan $i: ${planList[i]['id']}');
     }

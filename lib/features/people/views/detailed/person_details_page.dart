@@ -94,36 +94,36 @@ class _PersonDetailedPageState extends State<PersonDetailedPage> {
         'onTap': () {
           final swipesBalance = Hive.box('user').get('swipes_balance');
           // TODO: Uncomment this
-          // if (swipesBalance != 0 || !planExpired) {
-          peopleProvider.sendUserAction(context, widget.userId, '1').then((
-            res,
-          ) {
-            debugPrint('=========>> User Action Response: $res');
-            if (res['status']) {
-              showSnackBar('Liked ${widget.userName}');
-              if (res['match']) {
-                showDialog(
-                  context: context,
-                  builder: (_) => MatchedDialog(
-                    id: widget.userId,
-                    name: widget.userName,
-                    image: widget.userImage,
-                    pushId: res['push_id'] ?? '',
-                    matchId: res['match_id'],
-                    chatid: res['chat_id'],
-                  ),
-                );
+          if (swipesBalance != 0 || !planExpired) {
+            peopleProvider.sendUserAction(context, widget.userId, '1').then((
+              res,
+            ) {
+              debugPrint('=========>> User Action Response: $res');
+              if (res['status']) {
+                showSnackBar('Liked ${widget.userName}');
+                if (res['match']) {
+                  showDialog(
+                    context: context,
+                    builder: (_) => MatchedDialog(
+                      id: widget.userId,
+                      name: widget.userName,
+                      image: widget.userImage,
+                      pushId: res['push_id'] ?? '',
+                      matchId: res['match_id'],
+                      chatid: res['chat_id'],
+                    ),
+                  );
+                }
+              } else if (!res['status']) {
+                log('null--------');
               }
-            } else if (!res['status']) {
-              log('null--------');
-            }
-          });
-          // } else {
-          //   showDialog(
-          //     context: context,
-          //     builder: (context) => const ExceedLikeDialog(),
-          //   );
-          // }
+            });
+          } else {
+            showDialog(
+              context: context,
+              builder: (context) => const ExceedLikeDialog(),
+            );
+          }
         },
       },
       {
@@ -132,37 +132,40 @@ class _PersonDetailedPageState extends State<PersonDetailedPage> {
           final superLikesBalance = Hive.box('user').get('super_like_balance');
 
           //TODO: Uncomment this
-          // if (userPlan > 2 && !planExpired) {
-          // if (superLikesBalance == 0) {
-          //   showDialog(
-          //     context: context,
-          //     builder: (context) => BuyPlanDialog(
-          //       title: 'SuperLikes',
-          //       desc: 'Buy SuperLikes As Needed !',
-          //       img: 'assets/svg/upgrade_dialog/super_likes.svg',
-          //       btnText: 'Buy Now',
-          //       paymentList: planDetails.payLikes,
-          //     ),
-          //   );
-          // } else {
-
-          peopleProvider.sendUserAction(context, widget.userId, '2').then((
-            value,
-          ) {
-            if (value['status']) {
-              showSnackBar('Superliked ${widget.userName}');
+          if (userPlan > 2 && !planExpired) {
+            if (superLikesBalance == 0) {
+              showDialog(
+                context: context,
+                builder: (context) => BuyPlanDialog(
+                  title: 'SuperLikes',
+                  desc: 'Buy SuperLikes As Needed !',
+                  img: 'assets/svg/upgrade_dialog/super_likes.svg',
+                  btnText: 'Buy Now',
+                  paymentList: planDetails.payLikes,
+                ),
+              );
+            } else {
+              peopleProvider.sendUserAction(context, widget.userId, '2').then((
+                value,
+              ) {
+                if (value['status']) {
+                  showSnackBar('Superliked ${widget.userName}');
+                }
+              });
             }
-          });
-          // }
-          // } else {
-          //   // showDialog(
-          //   //   context: context,
-          //   //   builder: (context) => UpgradePlanDialog(),
-          //   // );
+          } else {
+            // showDialog(
+            //   context: context,
+            //   builder: (context) => UpgradePlanDialog(),
+            // );
 
-          //   Navigator.pushNamed(context, UpgradePlanScreen.routeName);
-          //   return;
-          // }
+            Navigator.pushNamed(
+              context,
+              UpgradePlanScreen.routeName,
+              arguments: "Plus",
+            );
+            return;
+          }
         },
       },
     ];

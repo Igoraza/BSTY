@@ -23,38 +23,39 @@ class Credits extends StatelessWidget {
     final mq = MediaQuery.of(context).size;
     final authPro = context.read<AuthProvider>();
 
-    final superLikes = Hive.box('user').get('super_like_balance') ?? 0;
+    // final superLikes = Hive.box('user').get('super_like_balance') ?? 0;
     // final profileBoost = Hive.box('user').get('profile_boost_balance') ?? 0;
-    final audioCall = Hive.box('user').get('audio_call_balance') ?? 0;
-    final videoCall = Hive.box('user').get('video_call_balance') ?? 0;
+    // final audioCall = Hive.box('user').get('audio_call_balance') ?? 0;
+    // final videoCall = Hive.box('user').get('video_call_balance') ?? 0;
     // log(profileBoost.runtimeType.toString());
     // final inAppProvider = context.read<InAppProvider>();
-    List<Map<String, dynamic>> data = [
-      {
-        'icon': 'assets/svg/settings/superlike.svg',
-        'title': 'super likes',
-        'count': superLikes.toString(),
-        'bg': AppColors.borderBlue,
-      },
-      {
-        'icon': 'assets/svg/settings/boost.svg',
-        'title': 'boosts',
-        'count': context.read<InAppProvider>().boost.toString(),
-        'bg': AppColors.borderBlue,
-      },
-      {
-        'icon': 'assets/svg/chat/mic_enabled.svg',
-        'title': 'minutes of voice',
-        'count': audioCall.toString(),
-        'bg': AppColors.borderBlue,
-      },
-      {
-        'icon': 'assets/svg/chat/video_enabled.svg',
-        'title': 'minutes of video',
-        'count': videoCall.toString(),
-        'bg': AppColors.borderBlue,
-      },
-    ];
+    // List<Map<String, dynamic>> data = [
+    //   {
+    //     'icon': 'assets/svg/settings/superlike.svg',
+    //     'title': 'super likes',
+    //     'count': superLikes.toString(),
+    //     'bg': AppColors.borderBlue,
+    //   },
+    //   {
+    //     'icon': 'assets/svg/settings/boost.svg',
+    //     'title': 'boosts',
+    //     // 'count': context.read<InAppProvider>().boost.toString(),
+    //     'count': profileBoost.toString(),
+    //     'bg': AppColors.borderBlue,
+    //   },
+    //   {
+    //     'icon': 'assets/svg/chat/mic_enabled.svg',
+    //     'title': 'minutes of voice',
+    //     'count': audioCall.toString(),
+    //     'bg': AppColors.borderBlue,
+    //   },
+    //   {
+    //     'icon': 'assets/svg/chat/video_enabled.svg',
+    //     'title': 'minutes of video',
+    //     'count': videoCall.toString(),
+    //     'bg': AppColors.borderBlue,
+    //   },
+    // ];
 
     return Padding(
       padding: EdgeInsets.symmetric(vertical: mq.height * 0.02),
@@ -71,31 +72,59 @@ class Credits extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            GridView.count(
-              crossAxisCount: authPro.isTab ? 3 : 2,
-              shrinkWrap: true,
-              childAspectRatio: authPro.isTab ? 1 / 1.48 : 1 / 1.3,
-              crossAxisSpacing: authPro.isTab
-                  ? mq.width * 0.05
-                  : mq.width * 0.07,
-              mainAxisSpacing: authPro.isTab
-                  ? mq.width * 0.06
-                  : mq.width * 0.07,
-              children: data
-                  .map(
-                    (e) => Consumer<InAppProvider>(
-                      builder: (context, inAppPr, child) {
-                        return CreditCard(
+            Consumer<InAppProvider>(
+              builder: (context, inAppPro, _) {
+                final List<Map<String, dynamic>> data = [
+                  {
+                    'icon': 'assets/svg/settings/superlike.svg',
+                    'title': 'super likes',
+                    'count': inAppPro.superLikes.toString(),
+                    'bg': AppColors.borderBlue,
+                  },
+                  {
+                    'icon': 'assets/svg/settings/boost.svg',
+                    'title': 'boosts',
+                    'count': inAppPro.boost.toString(),
+                    'bg': AppColors.borderBlue,
+                  },
+                  {
+                    'icon': 'assets/svg/chat/mic_enabled.svg',
+                    'title': 'minutes of voice',
+                    'count': inAppPro.audioCall.toString(),
+                    'bg': AppColors.borderBlue,
+                  },
+                  {
+                    'icon': 'assets/svg/chat/video_enabled.svg',
+                    'title': 'minutes of video',
+                    'count': inAppPro.videoCall.toString(),
+                    'bg': AppColors.borderBlue,
+                  },
+                ];
+                return GridView.count(
+                  crossAxisCount: authPro.isTab ? 3 : 2,
+                  shrinkWrap: true,
+                  childAspectRatio: authPro.isTab ? 1 / 1.48 : 1 / 1.3,
+                  crossAxisSpacing: authPro.isTab
+                      ? mq.width * 0.05
+                      : mq.width * 0.07,
+                  mainAxisSpacing: authPro.isTab
+                      ? mq.width * 0.06
+                      : mq.width * 0.07,
+                  children: data
+                      .map(
+                        (e) => CreditCard(
                           icon: e['icon'],
                           title: e['title'],
-                          count: e['title'] == 'boosts'
-                              ? inAppPr.boost.toString()
-                              : e['count'],
-                        );
-                      },
-                    ),
-                  )
-                  .toList(),
+                          count:
+                              //  e['title'] == 'boosts'
+                              //     ? inAppPr.boost.toString()
+                              //     :
+                              e['count'],
+                        ),
+                      )
+                      .toList(),
+                );
+              },
             ),
             const SizedBox(height: 20),
             StadiumButton(
@@ -142,35 +171,6 @@ class CreditCard extends StatelessWidget {
     final planExpired = Hive.box('user').get('plan_expired') ?? true;
 
     final PlanPriceDetails planDetails = PlanPriceDetails();
-
-    // final superLikes = Hive.box('user').get('super_like_balance') ?? 0;
-    // final profileBoost = Hive.box('user').get('profile_boost_balance') ?? 0;
-    // final audioCall = Hive.box('user').get('audio_call_balance') ?? 0;
-    // final videoCall = Hive.box('user').get('video_call_balance') ?? 0;
-
-    // final List<Map<String, dynamic>> payVideo = [
-    //   {'plan': '60', 'price': 1.19},
-    //   {'plan': '120', 'price': 2.19},
-    //   {'plan': '240', 'price': 3.79},
-    // ];
-
-    // final payAudio = [
-    //   {'plan': '60', 'price': 0.35},
-    //   {'plan': '120', 'price': 0.55},
-    //   {'plan': '240', 'price': 0.89},
-    // ];
-
-    // final payLikes = [
-    //   {'plan': '1', 'price': 0.99},
-    //   {'plan': '3', 'price': 1.69},
-    //   {'plan': '6', 'price': 2.29},
-    // ];
-
-    // final payBoosts = [
-    //   {'plan': '1', 'price': 0.89},
-    //   {'plan': '3', 'price': 1.59},
-    //   {'plan': '6', 'price': 2.19},
-    // ];
 
     final mq = MediaQuery.of(context).size;
     return Stack(

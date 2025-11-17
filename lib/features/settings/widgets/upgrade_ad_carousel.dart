@@ -29,24 +29,24 @@ class UpgradeAdCarousel extends StatelessWidget {
       'icon': 'assets/svg/settings/crownPremium.svg',
       'gradient': AppColors.yellowOrangeH,
     },
-    {
-      'title': 'Get More Boosts !',
-      'subtitle': 'Comes with premium',
-      'icon': 'assets/svg/settings/boost.svg',
-      'gradient': AppColors.redOrangeV,
-    },
-    {
-      'title': 'Get more Super likes !',
-      'subtitle': 'Comes with premium',
-      'icon': 'assets/svg/settings/superlike.svg',
-      'gradient': AppColors.buttonBlueVertical,
-    },
-    {
-      'title': 'Get more Minutes !',
-      'subtitle': 'Comes with premium',
-      'icon': 'assets/svg/membership/get_minutes.svg',
-      'gradient': AppColors.purpleH,
-    },
+    // {
+    //   'title': 'Get More Boosts !',
+    //   'subtitle': 'Comes with premium',
+    //   'icon': 'assets/svg/settings/boost.svg',
+    //   'gradient': AppColors.redOrangeV,
+    // },
+    // {
+    //   'title': 'Get more Super likes !',
+    //   'subtitle': 'Comes with premium',
+    //   'icon': 'assets/svg/settings/superlike.svg',
+    //   'gradient': AppColors.buttonBlueVertical,
+    // },
+    // {
+    //   'title': 'Get more Minutes !',
+    //   'subtitle': 'Comes with premium',
+    //   'icon': 'assets/svg/membership/get_minutes.svg',
+    //   'gradient': AppColors.purpleH,
+    // },
   ];
 
   final PlanPriceDetails planDetails = PlanPriceDetails();

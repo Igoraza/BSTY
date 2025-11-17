@@ -7,7 +7,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
@@ -34,7 +33,7 @@ class _PhotosGridState extends State<PhotosGrid> {
       .read<EditProfileProvider>();
 
   List serverImages = [];
-  List<File?> pickedImages = [null];
+  List<File?> pickedImages = [null]; // last slot is always "add" tile
 
   @override
   void initState() {
@@ -44,89 +43,53 @@ class _PhotosGridState extends State<PhotosGrid> {
     _remoteConfigService.initialize().then((value) => setState(() {}));
   }
 
-  void pickImgFromGallery(int index) async {
-  try {
-    // Pick image from gallery
-    final pickedFile = await ImagePicker().pickImage(
-      source: ImageSource.gallery,
-    );
-
-    if (pickedFile == null) return;
-
-    // Read image bytes and create MemoryImage
-    final imageBytes = await pickedFile.readAsBytes();
-    final imageProvider = MemoryImage(imageBytes);
-
-    if (!mounted) return;
-
-    // Open custom CropImageScreen and get cropped bytes
-    final Uint8List? croppedBytes = await Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => CropImageScreen(
-          image: Image(image: imageProvider),
-          aspectRatio: 8 / 11, // match previous 8:11 ratio
-        ),
-      ),
-    );
-
-    if (croppedBytes != null) {
-      // Save cropped image to temporary file
-      final tempDir = await getTemporaryDirectory();
-      final file = File(
-        '${tempDir.path}/cropped_${DateTime.now().millisecondsSinceEpoch}.jpg',
-      );
-      await file.writeAsBytes(croppedBytes);
-
-      // Update provider
-      editProfileProvider.pickedImages.insert(0, file);
-
-      // Update local state
-      setState(() {
-        if (index < pickedImages.length) {
-          pickedImages[index] = file;
-        } else {
-          pickedImages.insert(0, file);
-        }
-      });
-    }
-  } catch (e, stack) {
-    log("Error picking image from gallery: $e");
-    log("Stack trace: $stack");
+  /// RULE: Must always have >= 2 photos
+  bool canDelete() {
+    int total = serverImages.length + pickedImages.length - 1;
+    return total > 2;
   }
-}
 
+  void pickImgFromGallery(int index) async {
+    try {
+      final pickedFile = await ImagePicker().pickImage(
+        source: ImageSource.gallery,
+      );
 
-  // void pickImgFromGallery(int index) async {
-  //   final pickedFile = await ImagePicker().pickImage(
-  //     source: ImageSource.gallery,
-  //   );
+      if (pickedFile == null) return;
 
-  //   if (pickedFile == null) return;
-  //   CroppedFile? croppedFile = await ImageCropper().cropImage(
-  //     sourcePath: pickedFile.path,
-  //     aspectRatio: const CropAspectRatio(ratioX: 8, ratioY: 11),
-  //     maxWidth: _remoteConfigService.imageMaxWidth,
-  //     maxHeight: _remoteConfigService.imageMaxHeight ,
-  //     uiSettings: [
-  //       AndroidUiSettings(
-  //         toolbarTitle: 'Adjust the Image',
-  //         toolbarColor: Colors.black,
-  //         toolbarWidgetColor: AppColors.white,
-  //         hideBottomControls: true,
-  //       ),
-  //       IOSUiSettings(
-  //         title: 'Cropper',
-  //         aspectRatioPickerButtonHidden: true,
-  //         aspectRatioLockEnabled: true,
-  //       ),
-  //     ],
-  //   );
-  //   if (croppedFile != null) {
-  //     editProfileProvider.pickedImages.insert(0, File(croppedFile.path));
-  //     setState(() => pickedImages.insert(0, File(croppedFile.path)));
-  //   }
-  // }
+      final imageBytes = await pickedFile.readAsBytes();
+      final imageProvider = MemoryImage(imageBytes);
+
+      if (!mounted) return;
+
+      final Uint8List? croppedBytes = await Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => CropImageScreen(
+            image: Image(image: imageProvider),
+            aspectRatio: 8 / 11,
+          ),
+        ),
+      );
+
+      if (croppedBytes != null) {
+        final tempDir = await getTemporaryDirectory();
+        final file = File(
+          '${tempDir.path}/cropped_${DateTime.now().millisecondsSinceEpoch}.jpg',
+        );
+        await file.writeAsBytes(croppedBytes);
+
+        editProfileProvider.pickedImages.insert(0, file);
+
+        setState(() {
+          pickedImages.insert(0, file);
+        });
+      }
+    } catch (e, stack) {
+      log("Error picking image from gallery: $e");
+      log("Stack trace: $stack");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -145,10 +108,7 @@ class _PhotosGridState extends State<PhotosGrid> {
         return GestureDetector(
           onTap: index < serverImages.length
               ? null
-              : () {
-                  debugPrint('Pick image from gallery');
-                  pickImgFromGallery(index);
-                },
+              : () => pickImgFromGallery(index),
           child: getImageWidget(index),
         );
       }),
@@ -156,6 +116,9 @@ class _PhotosGridState extends State<PhotosGrid> {
   }
 
   Widget getImageWidget(int index) {
+    // ------------------------------
+    // SERVER IMAGE
+    // ------------------------------
     if (index < serverImages.length) {
       return Stack(
         alignment: Alignment.center,
@@ -173,41 +136,85 @@ class _PhotosGridState extends State<PhotosGrid> {
             ),
             errorWidget: (context, url, error) => const Icon(Icons.error),
           ),
-          CustomIconBtn(
-            onTap: () {
-              editProfileProvider.deletedImages.add(serverImages[index]['id']);
-              editProfileProvider.serverImageCount = serverImages.length;
-              setState(() {
-                serverImages.removeWhere(
-                  (element) => element['id'] == serverImages[index]['id'],
-                );
-              });
-            },
-            bgColor: AppColors.white,
-            child: const Icon(Icons.close_rounded, color: AppColors.alertRed),
-          ),
-        ],
-      );
-    } else {
-      return (index - serverImages.length < pickedImages.length - 1)
-          ? Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
-                image: DecorationImage(
-                  image: FileImage(pickedImages[index - serverImages.length]!),
-                  fit: BoxFit.cover,
+
+          /// DELETE SERVER IMAGE (only when > 2 images exist)
+          if (canDelete())
+            Positioned(
+              top: 8,
+              right: 8,
+              child: CustomIconBtn(
+                onTap: () {
+                  if (!canDelete()) return;
+                  editProfileProvider.deletedImages.add(
+                    serverImages[index]['id'],
+                  );
+                  editProfileProvider.serverImageCount = serverImages.length;
+
+                  setState(() {
+                    serverImages.removeAt(index);
+                  });
+                },
+                bgColor: AppColors.white,
+                child: const Icon(
+                  Icons.close_rounded,
+                  color: AppColors.alertRed,
                 ),
               ),
-            )
-          : mediaPickCard(mq.width);
+            ),
+        ],
+      );
     }
+
+    // ------------------------------
+    // NEWLY ADDED IMAGE
+    // ------------------------------
+    int pickedIndex = index - serverImages.length;
+
+    if (pickedIndex < pickedImages.length - 1) {
+      File imageFile = pickedImages[pickedIndex]!;
+
+      return Stack(
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              image: DecorationImage(
+                image: FileImage(imageFile),
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+
+          /// DELETE PICKED IMAGE (only when > 2 images exist)
+          if (canDelete())
+            Positioned(
+              top: 8,
+              right: 8,
+              child: CustomIconBtn(
+                onTap: () {
+                  if (!canDelete()) return;
+                  setState(() {
+                    pickedImages.removeAt(pickedIndex);
+                  });
+                },
+                bgColor: Colors.white,
+                child: const Icon(Icons.close_rounded, color: Colors.red),
+              ),
+            ),
+        ],
+      );
+    }
+
+    // ------------------------------
+    // EMPTY SLOT
+    // ------------------------------
+    return mediaPickCard(mq.width);
   }
 
-  /// [show before picking the image]
+  /// MEDIA PICK CARD
   Widget mediaPickCard(double appWidth) => DottedBorder(
     options: RectDottedBorderOptions(
       color: AppColors.titleBlue,
-      // borderRadius: BorderRadius.circular(20),
       dashPattern: const [5, 5],
       strokeWidth: 1.5,
     ),
@@ -224,24 +231,4 @@ class _PhotosGridState extends State<PhotosGrid> {
       ),
     ),
   );
-
-  /// [show after picking the image]
-  Container pickedImageCard(double appWidth, File image, int index) =>
-      Container(
-        alignment: Alignment.topLeft,
-        padding: EdgeInsets.all(appWidth * 0.03),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
-          image: DecorationImage(image: FileImage(image), fit: BoxFit.cover),
-        ),
-        child: GestureDetector(
-          onTap: () => setState(() => pickedImages[index] = null),
-          child: Icon(
-            Icons.delete,
-            color: Colors.red,
-            size: appWidth * 0.08,
-          ) /*  SvgPicture.asset('assets/svg/media/delete.svg',
-                  width: appWidth * 0.1) */,
-        ),
-      );
 }

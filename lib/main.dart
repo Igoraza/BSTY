@@ -3,6 +3,9 @@
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:bsty/features/chat_and_call/models/chat.dart';
+import 'package:bsty/features/chat_and_call/views/call/pages/incoming_call_page.dart';
+import 'package:bsty/features/chat_and_call/views/chat_messages/pages/chat_page.dart';
 import 'package:device_preview/device_preview.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
@@ -133,16 +136,20 @@ void main() async {
     return true;
   };
   await Hive.initFlutter();
+  await Hive.openBox('user'); // 👈 MUST open before use
+  await Hive.openBox('settings'); 
 
   ///  load [ environment variables ] from .env file
   await dotenv.load(fileName: ".env");
 
+  await setupOneSignal();
+
   //
-  try {
-    OneSignal.initialize(dotenv.env['ONE_SIGNAL_APP_ID']!);
-  } catch (e) {
-    log("Onesignal initialize error: $e");
-  }
+  // try {
+  //   OneSignal.initialize(dotenv.env['ONE_SIGNAL_APP_ID']!);
+  // } catch (e) {
+  //   log("Onesignal initialize error: $e");
+  // }
 
   //
 
@@ -164,6 +171,104 @@ void main() async {
 }
 
 final notifyC = NotificationControl();
+
+Future<void> setupOneSignal() async {
+  try {
+    final appId = dotenv.env['ONE_SIGNAL_APP_ID'];
+    if (appId == null) {
+      log("❌ ONE_SIGNAL_APP_ID not found in .env");
+      return;
+    }
+
+    OneSignal.initialize(appId);
+    OneSignal.Debug.setLogLevel(OSLogLevel.verbose);
+
+    // Login external user (optional)
+    final pushId = Hive.box('user').get('push_id');
+    if (pushId != null) {
+      OneSignal.login(pushId);
+      log("✅ OneSignal logged in as $pushId");
+    }
+
+    // Ask permission once
+    final permissionAccepted = await OneSignal.Notifications.requestPermission(
+      true,
+    );
+    if (permissionAccepted) {
+      log("✅ Notification permission granted");
+    } else {
+      log("⚠️ Notification permission denied");
+    }
+
+    // Foreground handler
+    OneSignal.Notifications.addForegroundWillDisplayListener((event) {
+      final data = event.notification.additionalData;
+      log("📩 Foreground notification received: $data");
+
+      if (data != null) {
+        switch (data['type']) {
+          case 'chat':
+            event.preventDefault(); // don’t show
+            break;
+          case 'call':
+            event.preventDefault(); // handled internally
+            break;
+          default:
+            event.notification.display(); // show normally
+        }
+      }
+    });
+
+    // Click listener (global navigation)
+    OneSignal.Notifications.addClickListener((event) async {
+      final data = event.notification.additionalData;
+      log("🖱️ Notification opened: $data");
+
+      if (data == null) return;
+
+      // Prevent multiple navigations
+      if (_navigatingToCall) return;
+      _navigatingToCall = true;
+
+      if (data['type'] == 'call') {
+        navigatorKey.currentState?.pushNamed(
+          IncomingCall.routeName,
+          arguments: {
+            'callId': int.parse(data['call_id'].toString()),
+            'isVideo': int.parse(data['action_type'].toString()) == 2,
+            'user_image': data['user_image'] ?? '',
+            'user_name': data['user_name'] ?? '',
+          },
+        );
+      } else if (data['type'] == 'chat') {
+        final chat = Chat(
+          targetId: data['target_id'],
+          name: data['name'],
+          image: data['image'],
+          pushId: data['pushId'],
+          matchId: data['matchId'],
+          chatId: data['chatId'],
+        );
+        navigatorKey.currentState?.pushNamed(
+          ChatPage.routeName,
+          arguments: chat,
+        );
+      }
+
+      // Reset guard after 2 seconds
+      Future.delayed(
+        const Duration(seconds: 2),
+        () => _navigatingToCall = false,
+      );
+    });
+
+    log("✅ OneSignal setup complete");
+  } catch (e) {
+    log("❌ OneSignal setup failed: $e");
+  }
+}
+
+bool _navigatingToCall = false;
 
 // Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 //      if (Firebase.apps.isEmpty) await Firebase.initializeApp();

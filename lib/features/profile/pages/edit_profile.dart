@@ -149,26 +149,38 @@ class _EditProfileState extends State<EditProfile> {
                     ),
                   ),
                   SizedBox(height: size.height * 0.03),
-                  Text('Phone', style: titleTheme),
-                  SizedBox(height: size.height * 0.01),
-                  TextFormField(
-                    initialValue: profile.phone,
-                    readOnly: true,
-                    decoration: kInputDecoration.copyWith(
-                      fillColor: Colors.white,
+                  if (profile.phone != null)
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Phone', style: titleTheme),
+                        SizedBox(height: size.height * 0.01),
+                        TextFormField(
+                          initialValue: profile.phone,
+                          readOnly: true,
+                          decoration: kInputDecoration.copyWith(
+                            fillColor: Colors.white,
+                          ),
+                        ),
+                        SizedBox(height: size.height * 0.03),
+                      ],
                     ),
-                  ),
-                  SizedBox(height: size.height * 0.03),
-                  Text('Email', style: titleTheme),
-                  SizedBox(height: size.height * 0.01),
-                  TextFormField(
-                    initialValue: profile.email,
-                    readOnly: true,
-                    decoration: kInputDecoration.copyWith(
-                      fillColor: Colors.white,
+                  if (profile.email != null)
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Email', style: titleTheme),
+                        SizedBox(height: size.height * 0.01),
+                        TextFormField(
+                          initialValue: profile.email,
+                          readOnly: true,
+                          decoration: kInputDecoration.copyWith(
+                            fillColor: Colors.white,
+                          ),
+                        ),
+                        SizedBox(height: size.height * 0.03),
+                      ],
                     ),
-                  ),
-                  SizedBox(height: size.height * 0.03),
                   Text('Date of Birth', style: titleTheme),
                   SizedBox(height: size.height * 0.01),
                   TextFormField(

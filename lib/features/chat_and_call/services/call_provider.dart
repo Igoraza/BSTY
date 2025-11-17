@@ -311,6 +311,7 @@ class CallsProvider with ChangeNotifier {
         debugPrint('=============Make Call Response $response');
 
         // SEND PUSH NOTIFICATION TO THE OTHER USER
+        log("%%%%%%%%%%%%%%%%%%%%%%%%%%% Sending notification");
         sendCallNotification(
           // name: userName,
           name: Hive.box('user').get('name'),

@@ -160,20 +160,20 @@ class _MapPageState extends State<MapPage> {
         CustomIconBtn(
           onTap: () {
             // TODO:Uncomment this
-            // if (userPlan == 4 && !planExpired) {
-            showFilterBottomSheet(context, size);
-            // } else {
-            //   // showDialog(
-            //   //   context: context,
-            //   //   builder: (context) => UpgradePlanDialog(title: 'Premium'),
-            //   // );
+            if (userPlan == 4 && !planExpired) {
+              showFilterBottomSheet(context, size);
+            } else {
+              // showDialog(
+              //   context: context,
+              //   builder: (context) => UpgradePlanDialog(title: 'Premium'),
+              // );
 
-            //   Navigator.pushNamed(
-            //     context,
-            //     UpgradePlanScreen.routeName,
-            //     arguments: "Premium",
-            //   );
-            // }
+              Navigator.pushNamed(
+                context,
+                UpgradePlanScreen.routeName,
+                arguments: "Premium",
+              );
+            }
           },
           child: SvgPicture.asset('assets/svg/ui_icons/options.svg'),
         ),

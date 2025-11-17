@@ -22,6 +22,7 @@ class CropImageScreen extends StatefulWidget {
 
 class _CropImageScreenState extends State<CropImageScreen> {
   late final CropController cropController;
+  bool isCropping = false; // ← added
 
   @override
   void initState() {
@@ -38,7 +39,7 @@ class _CropImageScreenState extends State<CropImageScreen> {
   /// Convert Image widget to Uint8List
   Future<Uint8List?> _getCroppedBytes() async {
     try {
-      // Step 1: Get cropped image as Image widget
+      // Step 1: Get cropped Image widget
       final Image croppedImageWidget = await cropController.croppedImage();
 
       // Step 2: Convert Image to ui.Image
@@ -53,10 +54,11 @@ class _CropImageScreenState extends State<CropImageScreen> {
 
       final ui.Image croppedUiImage = await completer.future;
 
-      // Step 3: Convert ui.Image to Uint8List
+      // Step 3: Convert ui.Image to bytes
       final byteData = await croppedUiImage.toByteData(
         format: ui.ImageByteFormat.png,
       );
+
       return byteData?.buffer.asUint8List();
     } catch (e, st) {
       log("Error getting cropped bytes: $e");
@@ -84,8 +86,13 @@ class _CropImageScreenState extends State<CropImageScreen> {
           IconButton(
             icon: const Icon(Icons.check, color: Colors.white),
             onPressed: () async {
+              setState(() => isCropping = true); // Start loading
+
               final croppedBytes = await _getCroppedBytes();
+
               if (!mounted) return;
+
+              setState(() => isCropping = false); // Stop loading
 
               if (croppedBytes != null) {
                 Navigator.pop(context, croppedBytes);
@@ -99,11 +106,24 @@ class _CropImageScreenState extends State<CropImageScreen> {
         ],
       ),
       body: SafeArea(
-        child: CropImage(
-          controller: cropController,
-          image: widget.image,
-          paddingSize: 25.0,
-          alwaysMove: true,
+        child: Stack(
+          children: [
+            CropImage(
+              controller: cropController,
+              image: widget.image,
+              paddingSize: 25.0,
+              alwaysMove: true,
+            ),
+
+            /// LOADING OVERLAY
+            if (isCropping)
+              Container(
+                color: Colors.black54,
+                child: const Center(
+                  child: CircularProgressIndicator(color: Colors.white),
+                ),
+              ),
+          ],
         ),
       ),
     );

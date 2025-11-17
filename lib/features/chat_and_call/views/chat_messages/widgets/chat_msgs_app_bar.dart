@@ -54,80 +54,86 @@ class ChatAppBar extends StatelessWidget implements PreferredSizeWidget {
             log(
               "User name :: $name    /////////////////   target push id :: ${chat.pushId}",
             );
-            //TODO: Uncomment this
-            // if (userPlan > 2 && !planExpired) {
-            // if (audioBalance != 0) {
-            Navigator.of(context).pushNamed(
-              OnGoingCallPage.routeName,
-              arguments: {
-                'callId': 0,
-                'targetUserId': id,
-                'isIncoming': false,
-                'isVideo': false,
-                'user_image': image,
-                'user_name': name,
-                'isOutgoing': true,
-                'targetPushId': chat.pushId,
-              },
-            );
-            // } else {
-            //   showDialog(
-            //     context: context,
-            //     builder: (context) => BuyPlanDialog(
-            //       // title: 'Minute Of Voice',
-            //       desc: 'Buy Audio Minutes As Needed !',
-            //       img: 'assets/svg/upgrade_dialog/minute.svg',
-            //       btnText: 'Buy Now',
-            //       paymentList: planDetails.payAudio,
-            //     ),
-            //   );
-            // }
-            // } else {
-            // showDialog(
-            //   context: context,
-            //   builder: (context) => UpgradePlanDialog(),
-            // );
 
-            // Navigator.pushNamed(context, UpgradePlanScreen.routeName);
-            // }
+            if (userPlan > 2 && !planExpired) {
+              if (audioBalance != 0) {
+                Navigator.of(context).pushNamed(
+                  OnGoingCallPage.routeName,
+                  arguments: {
+                    'callId': 0,
+                    'targetUserId': id,
+                    'isIncoming': false,
+                    'isVideo': false,
+                    'user_image': image,
+                    'user_name': name,
+                    'isOutgoing': true,
+                    'targetPushId': chat.pushId,
+                  },
+                );
+              } else {
+                showDialog(
+                  context: context,
+                  builder: (context) => BuyPlanDialog(
+                    // title: 'Minute Of Voice',
+                    desc: 'Buy Audio Minutes As Needed !',
+                    img: 'assets/svg/upgrade_dialog/minute.svg',
+                    btnText: 'Buy Now',
+                    paymentList: planDetails.payAudio,
+                  ),
+                );
+              }
+            } else {
+              // showDialog(
+              //   context: context,
+              //   builder: (context) => UpgradePlanDialog(),
+              // );
+
+              Navigator.pushNamed(
+                context,
+                UpgradePlanScreen.routeName,
+                arguments: "Plus",
+              );
+            }
           },
           child: const Icon(Icons.call_rounded),
         ),
         CustomIconBtn(
           onTap: () {
-            // TODO: Uncomment this
-            // if (userPlan > 2 && !planExpired) {
-            //   if (videoBalance != 0) {
-            Navigator.of(context).pushNamed(
-              OnGoingCallPage.routeName,
-              arguments: {
-                'callId': 0,
-                'targetUserId': id,
-                'isIncoming': false,
-                'isVideo': true,
-                'user_image': image,
-                'user_name': name,
-                'isOutgoing': true,
-                'targetPushId': chat.pushId,
-              },
-            );
-            // } else {
-            //   showDialog(
-            //     context: context,
-            //     builder: (context) => BuyPlanDialog(
-            //       // title: 'Minute Of Voice',
-            //       desc: 'Buy Video Minutes As Needed !',
-            //       img: 'assets/svg/upgrade_dialog/telephone.svg',
-            //       btnText: 'Buy Now',
-            //       paymentList: planDetails.payVideo,
-            //     ),
-            //   );
-            // }
-            // } else {
-
-            //   Navigator.pushNamed(context, UpgradePlanScreen.routeName);
-            //   return;
-            // }
+            if (userPlan > 2 && !planExpired) {
+              if (videoBalance != 0) {
+                Navigator.of(context).pushNamed(
+                  OnGoingCallPage.routeName,
+                  arguments: {
+                    'callId': 0,
+                    'targetUserId': id,
+                    'isIncoming': false,
+                    'isVideo': true,
+                    'user_image': image,
+                    'user_name': name,
+                    'isOutgoing': true,
+                    'targetPushId': chat.pushId,
+                  },
+                );
+              } else {
+                showDialog(
+                  context: context,
+                  builder: (context) => BuyPlanDialog(
+                    // title: 'Minute Of Voice',
+                    desc: 'Buy Video Minutes As Needed !',
+                    img: 'assets/svg/upgrade_dialog/telephone.svg',
+                    btnText: 'Buy Now',
+                    paymentList: planDetails.payVideo,
+                  ),
+                );
+              }
+            } else {
+              Navigator.pushNamed(
+                context,
+                UpgradePlanScreen.routeName,
+                arguments: "Plus",
+              );
+              return;
+            }
           },
           padding: const EdgeInsets.all(10),
           child: SvgPicture.asset('assets/svg/chat/video_cam.svg'),

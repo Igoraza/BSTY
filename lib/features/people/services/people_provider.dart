@@ -2,6 +2,7 @@
 
 import 'dart:developer';
 
+import 'package:bsty/features/auth/pages/initial_profile_steps/select_dob_page.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -180,15 +181,17 @@ class PeopleProvider with ChangeNotifier {
         } else {
           final int? minAppVersion = response.data['min_app_version'];
           PackageInfo packageInfo = await PackageInfo.fromPlatform();
-          debugPrint(
+          log(
             '=====================> Checkign version: $minAppVersion > ${packageInfo.buildNumber}',
           );
-          // if (minAppVersion != null &&
-          //     minAppVersion > int.parse(packageInfo.buildNumber)) {
-          //   navigatorKey.currentState!.pushNamedAndRemoveUntil(
-          //       ForceUpdatePage.routeName, (route) => false);
-          //   // return ;
-          // }
+          if (minAppVersion != null &&
+              minAppVersion > int.parse(packageInfo.buildNumber)) {
+            navigatorKey.currentState!.pushNamedAndRemoveUntil(
+              ForceUpdatePage.routeName,
+              (route) => false,
+            );
+            // return ;
+          }
           log('++==========${response.data.toString()}');
           log(
             "########################## Profile completed : ${response.data['profile_completed']}",
@@ -229,10 +232,13 @@ class PeopleProvider with ChangeNotifier {
           );
           userBox.put('plan_duration', response.data['plan_duration'] ?? 0);
           if (!response.data['profile_completed']) {
-            navigatorKey.currentState!.pushNamedAndRemoveUntil(
-              VerifyPhone.routeName,
-              (route) => false,
-            );
+            // navigatorKey.currentState!.pushNamedAndRemoveUntil(
+            //   VerifyPhone.routeName,
+            //   (route) => false,
+            // );
+            Navigator.of(
+              context,
+            ).pushNamedAndRemoveUntil(SelectDob.routeName, (route) => false);
           } else if (!response.data['images_uploaded']) {
             navigatorKey.currentState!.pushNamedAndRemoveUntil(
               SelectMedia.routeName,

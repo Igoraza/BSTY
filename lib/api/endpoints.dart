@@ -12,6 +12,7 @@ class Endpoints {
   static String loginVerifyUrl = "${loginUrl}verify/";
   static String completeProfile = "$baseUrl/v1/complete/profile/";
 
+  static String addPhoneToGoogleSignupAccount = "$baseUrl/v1/update/phone/";
 
   static String refreshToken = "$baseUrl/token/refresh/";
   static String updateEmail = "$baseUrl/v1/update/email/";
@@ -71,7 +72,7 @@ class Endpoints {
   static String reportAndBlock = "$baseUrl/v1/report/block/";
 
   static String getMep = "$baseUrl/v1/mep/";
-  static String getPayoutRequests= "$baseUrl/v1/payout/requests/";
+  static String getPayoutRequests = "$baseUrl/v1/payout/requests/";
   static String transHistory = "$baseUrl/v1/transactions/";
   static String getReferrals = "$baseUrl/v1/referrals/";
   static String payRequest = "$baseUrl/v1/payout/request/";

@@ -33,31 +33,38 @@ class _SelectDobState extends State<SelectDob> {
     /// [ Functions ]
 
     Future<void> pickDate(double appHeight) {
+      final now = DateTime.now();
+      final eighteenYearsAgo = DateTime(now.year - 18, now.month, now.day);
+
       return Platform.isIOS
           ? showCupertinoModalPopup(
               context: context,
-              builder: (BuildContext context) {
+              builder: (context) {
                 return SizedBox(
-                    height: appHeight * 0.4,
-                    child: CupertinoDatePicker(
-                        backgroundColor: Colors.white,
-                        mode: CupertinoDatePickerMode.date,
-                        initialDateTime: DateTime.now()
-                            .subtract(const Duration(days: 365 * 18 + 5)),
-                        maximumDate: DateTime.now()
-                            .subtract(const Duration(days: 365 * 18 + 5)),
-                        onDateTimeChanged: (DateTime newdate) {
-                          setState(() => selectedDate = newdate);
-                        }));
-              })
+                  height: appHeight * 0.4,
+                  child: CupertinoDatePicker(
+                    backgroundColor: Colors.white,
+                    mode: CupertinoDatePickerMode.date,
+                    initialDateTime: eighteenYearsAgo,
+                    maximumDate: eighteenYearsAgo,
+                    minimumDate: DateTime(1900),
+                    onDateTimeChanged: (DateTime newdate) {
+                      setState(() => selectedDate = newdate);
+                    },
+                  ),
+                );
+              },
+            )
           : showDatePicker(
-                  context: context,
-                  initialDate:
-                      DateTime.now().subtract(const Duration(days: 365 * 18)),
-                  firstDate: DateTime(1900),
-                  lastDate:
-                      DateTime.now().subtract(const Duration(days: 365 * 18)))
-              .then((value) => setState(() => selectedDate = value));
+              context: context,
+              initialDate: eighteenYearsAgo,
+              firstDate: DateTime(1900),
+              lastDate: eighteenYearsAgo,
+            ).then((value) {
+              if (value != null) {
+                setState(() => selectedDate = value);
+              }
+            });
     }
 
     void saveUserDob(BuildContext context, DateTime dob) {
@@ -69,69 +76,82 @@ class _SelectDobState extends State<SelectDob> {
     /// [ Widgets ]
 
     final continueBtn = StadiumButton(
-        gradient: AppColors.buttonBlue,
-        visualDensity: VisualDensity.standard,
-        onPressed: () {
-          if (selectedDate == null) {
-            showSnackBar('Please select your date of birth');
-            return;
-          }
-          saveUserDob(context, selectedDate!);
-        },
-        child: Text('Continue',
-            style: Theme.of(context)
-                .textTheme
-                .titleMedium!
-                .copyWith(color: AppColors.white)));
+      gradient: AppColors.buttonBlue,
+      visualDensity: VisualDensity.standard,
+      onPressed: () {
+        if (selectedDate == null) {
+          showSnackBar('Please select your date of birth');
+          return;
+        }
+        saveUserDob(context, selectedDate!);
+      },
+      child: Text(
+        'Continue',
+        style: Theme.of(
+          context,
+        ).textTheme.titleMedium!.copyWith(color: AppColors.white),
+      ),
+    );
 
     return BackgroundImage(
-        child: Scaffold(
-            backgroundColor: Colors.transparent,
-            appBar: AppBar(title: const Text('Select Date of Birth')),
-            body: Padding(
-                padding: EdgeInsets.all(appWidth * 0.05)
-                    .copyWith(bottom: appHeight * 0.05),
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      const Spacer(),
-                      Text('Your Birthday?',
-                          style: Theme.of(context).textTheme.titleLarge),
-                      SizedBox(height: appHeight * 0.025),
-                      GestureDetector(
-                          onTap: () => pickDate(appHeight),
-                          child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Expanded(
-                                  child: BirthdayDisplayItem(
-                                      title: selectedDate != null
-                                          ? selectedDate!.year.toString()
-                                          : 'Year'),
-                                ),
-                                SizedBox(width: appWidth * 0.05),
-                                Expanded(
-                                  child: BirthdayDisplayItem(
-                                      title: selectedDate != null
-                                          ? DateFormat.MMM()
-                                              .format(selectedDate!)
-                                          : 'Month'),
-                                ),
-                                SizedBox(width: appWidth * 0.05),
-                                Expanded(
-                                  child: BirthdayDisplayItem(
-                                      title: selectedDate != null
-                                          ? selectedDate!.day.toString()
-                                          : 'Day'),
-                                )
-                              ])),
-                      const Spacer(),
-                      const Text(
-                        'To complete the registration, you must be at least\n18 years of age.',
-                        textAlign: TextAlign.center,
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        appBar: AppBar(title: const Text('Select Date of Birth')),
+        body: Padding(
+          padding: EdgeInsets.all(
+            appWidth * 0.05,
+          ).copyWith(bottom: appHeight * 0.05),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const Spacer(),
+              Text(
+                'Your Birthday?',
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+              SizedBox(height: appHeight * 0.025),
+              GestureDetector(
+                onTap: () => pickDate(appHeight),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: BirthdayDisplayItem(
+                        title: selectedDate != null
+                            ? selectedDate!.year.toString()
+                            : 'Year',
                       ),
-                      SizedBox(height: appHeight * 0.025),
-                      continueBtn
-                    ]))));
+                    ),
+                    SizedBox(width: appWidth * 0.05),
+                    Expanded(
+                      child: BirthdayDisplayItem(
+                        title: selectedDate != null
+                            ? DateFormat.MMM().format(selectedDate!)
+                            : 'Month',
+                      ),
+                    ),
+                    SizedBox(width: appWidth * 0.05),
+                    Expanded(
+                      child: BirthdayDisplayItem(
+                        title: selectedDate != null
+                            ? selectedDate!.day.toString()
+                            : 'Day',
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const Spacer(),
+              const Text(
+                'To complete the registration, you must be at least\n18 years of age.',
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: appHeight * 0.025),
+              continueBtn,
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }
