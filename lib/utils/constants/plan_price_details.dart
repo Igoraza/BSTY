@@ -2,7 +2,11 @@ import 'dart:io';
 
 class PlanPriceDetails {
   final List<Map<String, dynamic>> payVideo = [
-    {'id': 'video_call_60', 'plan': '60', 'price': 99},
+    {
+      'id': Platform.isIOS ? '60_video_call' : 'video_call_60',
+      'plan': '60',
+      'price': 99,
+    },
     {'id': 'video_call_120', 'plan': '120', 'price': 182},
     {'id': 'video_call_240', 'plan': '240', 'price': 315},
   ];
@@ -17,13 +21,11 @@ class PlanPriceDetails {
     {'id': 'audio_call_240', 'plan': '240', 'price': 74},
   ];
 
-
   final payLikes = [
     {'id': 'like_1', 'plan': '1', 'price': 83},
     {'id': 'like_3', 'plan': '3', 'price': 140},
     {'id': 'like_6', 'plan': '6', 'price': 190},
   ];
-
 
   final payBoosts = [
     {'id': 'boost_1', 'plan': '1', 'price': 74},
