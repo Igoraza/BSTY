@@ -623,7 +623,9 @@ class UpgradePlanScreenState extends State<UpgradePlanScreen> {
 
       // Step 4: Check if plan was not found
       if (_notFoundIds.isNotEmpty) {
-        log('>>>>>>>>>>>>>>>>DEBUG: Plan not found in store. Not found IDs: $_notFoundIds');
+        log(
+          '>>>>>>>>>>>>>>>>DEBUG: Plan not found in store. Not found IDs: $_notFoundIds',
+        );
         if (_notFoundIds.contains(planId)) {
           Navigator.pop(context);
           showSnackBar(
@@ -650,7 +652,9 @@ class UpgradePlanScreenState extends State<UpgradePlanScreen> {
         return;
       }
 
-      log('>>>>>>>>>> //////////// DEBUG: Products available: ${_products.length}');
+      log(
+        '>>>>>>>>>> //////////// DEBUG: Products available: ${_products.length}',
+      );
       for (int i = 0; i < _products.length; i++) {
         final product = _products[i];
         print(
@@ -726,6 +730,12 @@ class UpgradePlanScreenState extends State<UpgradePlanScreen> {
       final bool purchaseResult = await _inAppPurchase.buyNonConsumable(
         purchaseParam: purchaseParam,
       );
+
+      // log('##############------- buying  consumable');
+      // final bool purchaseResult = await _inAppPurchase.buyConsumable(
+      //   purchaseParam: purchaseParam,
+      //   autoConsume: _kAutoConsume,
+      // );
 
       log('DEBUG: Purchase initiated. Result: ${purchaseResult.toString()}');
       debugPrint('DEBUG: Purchase initiated. Result: $purchaseResult');

@@ -41,6 +41,16 @@
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
 
+	<key>NSCameraUsageDescription</key>
+	<string>This app requires camera access to allow users to upload or capture photos for their profile.</string>
+
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>This app requires location access to show relevant content based on your location.</string>
+
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>This app may need background location access to improve app functionality.</string>
+
+
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>

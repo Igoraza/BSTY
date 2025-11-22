@@ -7,30 +7,30 @@ class PlanPriceDetails {
       'plan': '60',
       'price': 99,
     },
-    {'id': 'video_call_120', 'plan': '120', 'price': 182},
-    {'id': 'video_call_240', 'plan': '240', 'price': 315},
+    {'id': 'video_call_120', 'plan': '120', 'price': 182}, // 185
+    {'id': 'video_call_240', 'plan': '240', 'price': 315},//315
   ];
 
   final payAudio = [
     {
       'id': Platform.isIOS ? '60_audio_call' : 'audio_call_60',
       'plan': '60',
-      'price': Platform.isIOS ? 33 : 30,
-    },
-    {'id': 'audio_call_120', 'plan': '120', 'price': Platform.isIOS ? 49 : 46},
-    {'id': 'audio_call_240', 'plan': '240', 'price': 74},
+      'price': Platform.isIOS ? 33 : 30,  
+    }, // 35
+    {'id': 'audio_call_120', 'plan': '120', 'price': Platform.isIOS ? 49 : 46}, // 49
+    {'id': 'audio_call_240', 'plan': '240', 'price': 74}, // 75
   ];
 
   final payLikes = [
-    {'id': 'like_1', 'plan': '1', 'price': 83},
-    {'id': 'like_3', 'plan': '3', 'price': 140},
-    {'id': 'like_6', 'plan': '6', 'price': 190},
+    {'id': 'like_1', 'plan': '1', 'price': 83}, // 85
+    {'id': 'like_3', 'plan': '3', 'price': 140}, // 140
+    {'id': 'like_6', 'plan': '6', 'price': 190}, // 190
   ];
 
   final payBoosts = [
-    {'id': 'boost_1', 'plan': '1', 'price': 74},
-    {'id': 'boost_3', 'plan': '3', 'price': 132},
-    {'id': 'boost_6', 'plan': '6', 'price': 182},
+    {'id': 'boost_1', 'plan': '1', 'price': 74}, // 75
+    {'id': 'boost_3', 'plan': '3', 'price': 132}, // 135
+    {'id': 'boost_6', 'plan': '6', 'price': 182}, // 185
   ];
 
   final List payOptionsPlus = [
